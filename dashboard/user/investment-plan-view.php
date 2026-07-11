@@ -99,10 +99,9 @@ $pageTitle = $siteName . ' | ' . $displayName;
 $pageHeading = '';
 $pageSubtitle = '';
 $pageExtraStyles = <<<'CSS'
-<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
 <style>
 .plan-trading-page { margin-top: -0.25rem; }
-.plan-market-chart-wrap tv-mini-chart {
+.plan-market-chart-wrap .market-replay-chart {
   display: block;
   width: 100% !important;
   max-width: 100%;
@@ -198,32 +197,6 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-end.php';
 require_once __DIR__ . '/../../includes/dashboard/subscribe-plan-modal.php';
 require_once __DIR__ . '/../../includes/app-script.php';
 require_once __DIR__ . '/../../includes/dashboard/subscribe-plan-script.php';
+require_once __DIR__ . '/../../includes/market-replay-scripts.php';
 ?>
-<script src="/js/crypto-config.js"></script>
-<script src="/js/crypto-prices.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-<?php if ($isCrypto && $coingeckoId): ?>
-  if (window.BloombitCryptoPrices) {
-    var coinId = <?php echo json_encode($coingeckoId); ?>;
-    window.BloombitCryptoPrices.init([coinId], { refreshInterval: 120000 }).then(function(prices) {
-      var header = document.querySelector('.crypto-detail-header');
-      if (!header) return;
-      var p = prices[coinId];
-      var cfg = window.BloombitCryptoConfig || {};
-      var logo = cfg.getLogo ? cfg.getLogo(coinId) : '';
-      var img = header.querySelector('.crypto-logo');
-      if (img && logo) { img.src = logo; img.alt = <?php echo json_encode($instrument['name']); ?>; }
-      var priceEl = header.querySelector('.crypto-price');
-      var changeEl = header.querySelector('.crypto-change');
-      if (p && priceEl) priceEl.textContent = window.BloombitCryptoPrices.formatPrice(p.usd);
-      if (p && changeEl && p.usd_24h_change != null) {
-        changeEl.textContent = window.BloombitCryptoPrices.formatChange(p.usd_24h_change);
-        changeEl.className = 'crypto-change font-data-mono text-sm ' + (p.usd_24h_change >= 0 ? 'text-success' : 'text-critical');
-      }
-    });
-  }
-<?php endif; ?>
-});
-</script>
 </body></html>

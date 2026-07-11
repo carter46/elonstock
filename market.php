@@ -136,7 +136,12 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </div>
 </div>
 <?php endif; ?>
-<tv-mini-chart symbol="<?php echo htmlspecialchars($instrument['symbol']); ?>" style="width: 100%; height: 360px; max-width: 100%;"></tv-mini-chart>
+<?php
+$replayChartHeight = 360;
+$replayChartShowStatus = true;
+$replayChartTheme = 'light';
+require_once __DIR__ . '/includes/market-replay-chart.php';
+?>
 <?php require_once __DIR__ . '/includes/market-chart-disclaimer.php'; ?>
 </div>
 </div>
@@ -270,32 +275,6 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </section>
 
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
-
-<script src="/js/crypto-config.js"></script>
-<script src="/js/crypto-prices.js"></script>
-<?php if ($isCrypto && $coingeckoId): ?>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  if (!window.BloombitCryptoPrices) return;
-  var coinId = '<?php echo htmlspecialchars($coingeckoId); ?>';
-  window.BloombitCryptoPrices.init([coinId], { refreshInterval: 120000 }).then(function(prices) {
-    var header = document.querySelector('.crypto-detail-header');
-    if (!header) return;
-    var p = prices[coinId];
-    var cfg = window.BloombitCryptoConfig || {};
-    var logo = cfg.getLogo ? cfg.getLogo(coinId) : '';
-    var img = header.querySelector('.crypto-logo');
-    if (img && logo) { img.src = logo; img.alt = '<?php echo htmlspecialchars(addslashes($instrument['name'])); ?>'; }
-    var priceEl = header.querySelector('.crypto-price');
-    var changeEl = header.querySelector('.crypto-change');
-    if (p && priceEl) priceEl.textContent = window.BloombitCryptoPrices.formatPrice(p.usd);
-    if (p && changeEl && p.usd_24h_change != null) {
-      changeEl.textContent = window.BloombitCryptoPrices.formatChange(p.usd_24h_change);
-      changeEl.className = 'crypto-change font-data-mono text-sm ' + (p.usd_24h_change >= 0 ? 'text-success' : 'text-critical');
-    }
-  });
-});
-</script>
-<?php endif; ?>
+<?php require_once __DIR__ . '/includes/market-replay-scripts.php'; ?>
 </body>
 </html>
