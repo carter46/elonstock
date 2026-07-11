@@ -88,6 +88,7 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 }
 </style>
 
+<div class="dash-page w-full min-w-0">
 <section class="mb-8">
 <div class="glass-panel rounded-xl p-4 md:p-6 flex flex-wrap justify-between items-center gap-4">
 <div class="flex items-center gap-4 min-w-0">
@@ -132,13 +133,13 @@ Select a plan below to invest from your wallet balance.
 <?php foreach ($activePlanTypes as $typeKey => $typeLabel):
     $typePlans = $plansByType[$typeKey];
 ?>
-<div class="plan-type-panel grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8<?php echo ($typeKey === $defaultTab || !$showPlanTabs) ? ' is-active' : ''; ?>" data-plan-panel="<?php echo htmlspecialchars($typeKey); ?>">
+<div class="plan-type-panel bento-grid mb-8<?php echo ($typeKey === $defaultTab || !$showPlanTabs) ? ' is-active' : ''; ?>" data-plan-panel="<?php echo htmlspecialchars($typeKey); ?>">
 <?php foreach ($typePlans as $plan):
     $planDays = plan_duration_days($plan);
     $riskBadge = plan_investment_risk_badge($plan['investment_risk'] ?? 'mid');
     $periodReturn = format_plan_period_return($plan['yield_min'] ?? 0, $planDays);
 ?>
-<div class="plan-asset-card glass-panel rounded-xl p-5 md:p-6 flex flex-col h-full">
+<div class="plan-asset-card asset-card glass-panel rounded-xl p-5 md:p-6 flex flex-col h-full">
 <div class="flex justify-between items-start gap-3 mb-4">
 <div class="flex items-center gap-3 min-w-0">
 <?php echo plan_logo_markup($plan['logo_url'] ?? null, $plan['name'], 'w-10 h-10', 'text-sm'); ?>
@@ -234,6 +235,7 @@ Select a plan below to invest from your wallet balance.
 </div>
 </div>
 
+</div>
 <?php require_once __DIR__ . '/../../includes/dashboard/user-layout-end.php'; ?>
 <?php require_once __DIR__ . '/../../includes/app-script.php'; ?>
 <script>

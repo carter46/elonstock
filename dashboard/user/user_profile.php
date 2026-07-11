@@ -19,41 +19,50 @@ $profileVerified = !empty($profileUser['verified']);
 $profileKycStatus = $profileUser['kyc_status'] ?? 'none';
 $profile2FA = isset($profileUser['two_factor_enabled']) ? (bool)$profileUser['two_factor_enabled'] : false;
 $pageTitle = $siteName . ' | Profile and Security Settings';
+$pageHeading = 'System Settings';
+$pageSubtitle = 'Manage your profile, security preferences, and account details.';
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
+include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 ?>
-<div class="max-w-7xl mx-auto">
+<style>
+@media (max-width: 639px) {
+  .profile-login-table th,
+  .profile-login-table td { padding: 0.65rem 0.75rem; font-size: 11px; }
+}
+</style>
+<div class="dash-page w-full min-w-0 max-w-7xl mx-auto">
 <!-- Profile Header Section -->
-<div class="glass-panel rounded-xl p-6 mb-8">
+<div class="glass-panel rounded-xl p-5 sm:p-6 mb-6 md:mb-8">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-<div class="flex items-center gap-6">
-<div class="relative group">
-<?php if ($profileAvatar): ?><img alt="Profile" class="w-24 h-24 rounded-full object-cover border-4 border-primary/10" src="<?php echo htmlspecialchars($profileAvatar); ?>"/><?php else: ?><div class="w-24 h-24 rounded-full bg-primary/20 border-4 border-primary/10 flex items-center justify-center text-primary text-3xl font-bold"><?php echo htmlspecialchars($profileInitials); ?></div><?php endif; ?>
-<button class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg hover:scale-105 transition-transform">
+<div class="flex flex-col sm:flex-row items-center sm:items-center gap-5 sm:gap-6 text-center sm:text-left w-full md:w-auto min-w-0">
+<div class="relative group shrink-0">
+<?php if ($profileAvatar): ?><img alt="Profile" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-primary-container/20" src="<?php echo htmlspecialchars($profileAvatar); ?>"/><?php else: ?><div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary-container/20 border-4 border-primary-container/20 flex items-center justify-center text-primary-container text-2xl sm:text-3xl font-bold"><?php echo htmlspecialchars($profileInitials); ?></div><?php endif; ?>
+<button class="absolute bottom-0 right-0 bg-primary-container text-on-primary p-1.5 rounded-full shadow-lg hover:scale-105 transition-transform">
 <span class="material-symbols-outlined text-sm">edit</span>
 </button>
 </div>
-<div>
-<div class="flex items-center gap-3">
-<h1 class="text-2xl font-bold" data-profile-name><?php echo htmlspecialchars($profileName); ?></h1>
+<div class="min-w-0">
+<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 justify-center sm:justify-start">
+<h1 class="text-xl sm:text-2xl font-bold text-on-surface" data-profile-name><?php echo htmlspecialchars($profileName); ?></h1>
 <?php if ($profileVerified): ?>
-<span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+<span class="bg-success/15 text-success text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 justify-center sm:justify-start w-fit mx-auto sm:mx-0">
 <span class="material-symbols-outlined text-[14px]">verified</span> Verified
 </span>
 <?php endif; ?>
 </div>
-<p class="text-text-secondary" data-profile-email><?php echo htmlspecialchars($profileEmail); ?></p>
+<p class="text-text-secondary text-sm sm:text-base break-all" data-profile-email><?php echo htmlspecialchars($profileEmail); ?></p>
 <p class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">User ID: <span data-user-id><?php echo htmlspecialchars($profileUserId); ?></span></p>
 </div>
 </div>
-<div class="flex gap-3">
-<a href="/dashboard/user/kyc" class="bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center gap-2">
+<div class="flex gap-3 justify-center md:justify-end w-full md:w-auto">
+<a href="/dashboard/user/kyc" class="w-full sm:w-auto justify-center bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex items-center gap-2">
 <span class="material-symbols-outlined text-sm">shield</span>
                         Verify Identity
                     </a>
 </div>
 </div>
 </div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 min-w-0">
 <!-- Left Column: Settings Forms -->
 <div class="lg:col-span-2 space-y-8">
 <!-- Profile Details -->
@@ -87,8 +96,8 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 </div>
 </div>
 <div id="profile-save-message" class="text-sm hidden"></div>
-<div class="mt-8 flex justify-end">
-<button type="submit" class="bg-primary-container text-on-primary px-8 py-2.5 rounded-lg font-bold hover:bg-primary-container/90 transition-all">
+<div class="mt-8 flex justify-stretch sm:justify-end">
+<button type="submit" class="w-full sm:w-auto bg-primary-container text-on-primary px-8 py-2.5 rounded-lg font-bold hover:bg-primary-container/90 transition-all">
                             Save Changes
                         </button>
 </div>
@@ -104,7 +113,7 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
 <input id="2fa-toggle" class="sr-only peer" type="checkbox" <?php echo $profile2FA ? 'checked' : ''; ?>/>
-<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-background-dark/60 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<div class="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-low after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
 </label>
 </div>
 <h3 class="font-bold text-lg mb-1">Two-Factor Auth</h3>
@@ -128,36 +137,44 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 </div>
 </div>
 <!-- Login Activity -->
-<section class="glass-panel rounded-xl overflow-hidden">
-<div class="p-6 border-b border-low flex justify-between items-center">
+<section class="glass-panel rounded-xl overflow-hidden min-w-0">
+<div class="p-5 sm:p-6 border-b border-low flex justify-between items-center">
 <h2 class="text-lg font-bold text-on-surface">Recent Login Activity</h2>
 </div>
-<div class="overflow-x-auto">
-<table class="w-full text-left">
+<div class="overflow-x-auto min-w-0">
+<table class="w-full text-left table-fixed min-w-0 profile-login-table">
 <thead class="bg-surface-container-high text-on-surface-variant text-xs uppercase tracking-wider font-bold">
 <tr>
-<th class="px-6 py-4">Device</th>
-<th class="px-6 py-4">IP Address</th>
-<th class="px-6 py-4">Location</th>
-<th class="px-6 py-4">Time</th>
-<th class="px-6 py-4"></th>
+<th class="px-4 sm:px-6 py-3 sm:py-4">Device</th>
+<th class="px-4 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">Status</th>
+<th class="px-4 sm:px-6 py-3 sm:py-4 hidden md:table-cell">IP Address</th>
+<th class="px-4 sm:px-6 py-3 sm:py-4 hidden lg:table-cell">Location</th>
+<th class="px-4 sm:px-6 py-3 sm:py-4 hidden lg:table-cell">Time</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-primary/5">
+<tbody class="divide-y divide-low">
 <tr class="hover:bg-surface-container-high/50 transition-colors">
-<td class="px-6 py-4 flex items-center gap-3">
-<span class="material-symbols-outlined text-on-surface-variant">desktop_windows</span>
-<span class="font-medium text-sm text-on-surface">Current Session</span>
+<td class="px-4 sm:px-6 py-3 sm:py-4 min-w-0">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-on-surface-variant shrink-0">desktop_windows</span>
+<div class="min-w-0">
+<span class="font-medium text-sm text-on-surface block truncate">Current Session</span>
+<span class="text-[10px] text-on-surface-variant sm:hidden mt-1 inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-success inline-block"></span> Active</span>
+</div>
+</div>
 </td>
-<td class="px-6 py-4">
+<td class="px-4 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">
 <span class="w-2 h-2 rounded-full bg-success inline-block mr-2"></span>
 <span class="text-sm text-text-secondary">Active</span>
 </td>
+<td class="px-4 sm:px-6 py-3 sm:py-4 hidden md:table-cell text-sm text-on-surface-variant">—</td>
+<td class="px-4 sm:px-6 py-3 sm:py-4 hidden lg:table-cell text-sm text-on-surface-variant">—</td>
+<td class="px-4 sm:px-6 py-3 sm:py-4 hidden lg:table-cell text-sm text-on-surface-variant">Now</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p class="px-6 py-4 text-sm text-text-secondary">Session logging coming soon.</p>
+<p class="px-4 sm:px-6 py-4 text-sm text-text-secondary">Session logging coming soon.</p>
 </section>
 </div>
 <!-- Right Column: KYC Status -->
@@ -178,7 +195,7 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 </h3>
 <div class="space-y-4">
 <div class="flex items-center gap-4">
-<div class="w-8 h-8 rounded-full <?php echo $profileVerified ? 'bg-green-100 dark:bg-green-900/30 text-green-600' : 'bg-slate-100 dark:bg-background-dark/60 text-slate-400'; ?> flex items-center justify-center">
+<div class="w-8 h-8 rounded-full <?php echo $profileVerified ? 'bg-success/15 text-success' : 'bg-surface-container-high text-on-surface-variant'; ?> flex items-center justify-center">
 <span class="material-symbols-outlined text-sm"><?php echo $profileVerified ? 'check' : 'mail'; ?></span>
 </div>
 <div class="flex-1">
@@ -187,7 +204,7 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 </div>
 </div>
 <div class="flex items-center gap-4">
-<div class="w-8 h-8 rounded-full <?php echo $profileKycStatus === 'verified' ? 'bg-green-100 dark:bg-green-900/30 text-green-600' : ($profileKycStatus === 'pending' ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-background-dark/60 text-slate-400'); ?> flex items-center justify-center">
+<div class="w-8 h-8 rounded-full <?php echo $profileKycStatus === 'verified' ? 'bg-success/15 text-success' : ($profileKycStatus === 'pending' ? 'bg-primary-container/15 text-primary-container' : 'bg-surface-container-high text-on-surface-variant'); ?> flex items-center justify-center">
 <span class="material-symbols-outlined text-sm"><?php echo $profileKycStatus === 'verified' ? 'check' : ($profileKycStatus === 'pending' ? 'hourglass_empty' : 'verified_user'); ?></span>
 </div>
 <div class="flex-1">
@@ -224,6 +241,7 @@ else echo 'Complete verification to withdraw';
 </li>
 </ul>
 </section>
+</div>
 </div>
 </div>
 <?php require_once __DIR__ . '/../../includes/dashboard/user-layout-end.php'; ?>

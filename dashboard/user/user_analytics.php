@@ -363,6 +363,7 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 .dark .analytics-filter-btn.is-active:hover { background: rgb(39 39 42); }
 .portfolio-tab.is-active { color: #f9bd0b; border-bottom-color: #f9bd0b; }
 </style>
+<div class="dash-page w-full min-w-0">
 <!-- Top Stats Grid -->
 <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 <div class="glass-panel p-5 rounded-xl">
@@ -714,6 +715,7 @@ foreach ($analyticsTx as $tx):
 </div>
 <div class="p-4 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-between">
 <span class="text-xs text-slate-400 font-medium">Showing <?php echo min(count($analyticsTx), 50); ?> entries</span>
+</div>
 </div>
 </div>
 <?php require_once __DIR__ . '/../../includes/dashboard/user-layout-end.php'; ?>

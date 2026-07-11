@@ -109,6 +109,7 @@ $chartBtnIdle = 'px-3 py-1 text-label-xs text-on-surface-variant hover:bg-white/
 <h2 class="font-headline-lg dash-greeting text-primary-container"><?php echo $greeting; ?>, <?php echo htmlspecialchars($dashboardUserName); ?>.</h2>
 <p class="text-sm sm:text-body-lg text-text-secondary mt-1">Welcome back to your institutional trading hub.</p>
 </section>
+<div class="dash-page w-full min-w-0">
 <section class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-gutter">
 <div class="dash-card-balance-hero glass-panel p-6 md:p-8 flex flex-col justify-between rounded-xl">
 <div>
@@ -313,6 +314,7 @@ Subscribe to New Investment Plan
 Subscribe to New Investment Plan
 </a>
 <?php endif; ?>
+</div>
 </div>
 </div>
 </div>

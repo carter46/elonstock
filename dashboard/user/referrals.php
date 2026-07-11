@@ -71,7 +71,13 @@ $pageSubtitle = 'Share your link. When people join and invest, you earn USDT bon
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 ?>
-<div class="max-w-4xl mx-auto space-y-6 md:space-y-8">
+<style>
+@media (max-width: 639px) {
+  .referral-table th,
+  .referral-table td { padding: 0.65rem 0.75rem; font-size: 11px; }
+}
+</style>
+<div class="dash-page w-full min-w-0 max-w-4xl mx-auto space-y-6 md:space-y-8">
 <div class="glass-panel rounded-xl p-5 sm:p-6 space-y-5">
 <h2 class="text-base sm:text-lg font-semibold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-xl">help</span> How it works</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -131,14 +137,14 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 <?php if (empty($referralEarningsHistory)): ?>
 <p class="p-6 text-slate-500 dark:text-zinc-400 text-center text-sm">No referral earnings yet. You earn when people in your network make their first deposit or receive daily payouts.</p>
 <?php else: ?>
-<div class="overflow-x-auto">
-<table class="w-full text-left">
+<div class="overflow-x-auto min-w-0">
+<table class="w-full text-left table-fixed min-w-0 referral-table">
 <thead class="bg-slate-50/80 dark:bg-slate-800/50">
 <tr>
 <th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Date</th>
 <th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">From</th>
-<th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Source</th>
-<th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-right">Rate</th>
+<th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider hidden md:table-cell">Source</th>
+<th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-right hidden sm:table-cell">Rate</th>
 <th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider text-right">Amount</th>
 </tr>
 </thead>
@@ -156,11 +162,14 @@ foreach ($referralEarningsHistory as $e):
     $pctUsed = isset($e['percent_used']) && $e['percent_used'] !== null ? $fmtPct((float)$e['percent_used']) . '%' : '—';
 ?>
 <tr class="border-t border-slate-100 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-<td class="px-4 sm:px-6 py-3 text-sm text-slate-600 dark:text-zinc-400"><?php echo $e['created_at'] ? date('M j, Y H:i', strtotime($e['created_at'])) : '—'; ?></td>
-<td class="px-4 sm:px-6 py-3 text-sm"><?php echo htmlspecialchars($e['referred_name'] ?: $e['referred_email'] ?: '—'); ?></td>
-<td class="px-4 sm:px-6 py-3 text-xs text-slate-500 dark:text-zinc-500"><?php echo htmlspecialchars($sourceLabel); ?></td>
-<td class="px-4 sm:px-6 py-3 text-xs text-slate-500 dark:text-zinc-500 text-right"><?php echo htmlspecialchars($pctUsed); ?></td>
-<td class="px-4 sm:px-6 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400 text-right">+$<?php echo format_usd_amount($e['amount_usd']); ?></td>
+<td class="px-4 sm:px-6 py-3 text-sm text-slate-600 dark:text-zinc-400 whitespace-nowrap"><?php echo $e['created_at'] ? date('M j, Y H:i', strtotime($e['created_at'])) : '—'; ?></td>
+<td class="px-4 sm:px-6 py-3 text-sm min-w-0">
+<span class="block truncate"><?php echo htmlspecialchars($e['referred_name'] ?: $e['referred_email'] ?: '—'); ?></span>
+<span class="text-[10px] text-slate-500 dark:text-zinc-500 md:hidden mt-0.5 block truncate"><?php echo htmlspecialchars($sourceLabel); ?></span>
+</td>
+<td class="px-4 sm:px-6 py-3 text-xs text-slate-500 dark:text-zinc-500 hidden md:table-cell"><?php echo htmlspecialchars($sourceLabel); ?></td>
+<td class="px-4 sm:px-6 py-3 text-xs text-slate-500 dark:text-zinc-500 text-right hidden sm:table-cell"><?php echo htmlspecialchars($pctUsed); ?></td>
+<td class="px-4 sm:px-6 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400 text-right whitespace-nowrap">+$<?php echo format_usd_amount($e['amount_usd']); ?></td>
 </tr>
 <?php endforeach; ?>
 </tbody>
@@ -175,21 +184,24 @@ foreach ($referralEarningsHistory as $e):
 <?php if (empty($referrals)): ?>
 <p class="p-6 text-slate-500 dark:text-zinc-400 text-center text-sm">No referrals yet. Share your link below to get started.</p>
 <?php else: ?>
-<div class="overflow-x-auto">
-<table class="w-full text-left">
+<div class="overflow-x-auto min-w-0">
+<table class="w-full text-left table-fixed min-w-0 referral-table">
 <thead class="bg-slate-50/80 dark:bg-slate-800/50">
 <tr>
 <th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Name</th>
-<th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Email</th>
+<th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider hidden sm:table-cell">Email</th>
 <th class="px-4 sm:px-6 py-3 text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Joined</th>
 </tr>
 </thead>
 <tbody>
 <?php foreach ($referrals as $r): ?>
 <tr class="border-t border-slate-100 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-<td class="px-4 sm:px-6 py-3 font-medium text-sm"><?php echo htmlspecialchars($r['name'] ?: '—'); ?></td>
-<td class="px-4 sm:px-6 py-3 text-sm text-slate-600 dark:text-zinc-400"><?php echo htmlspecialchars($r['email']); ?></td>
-<td class="px-4 sm:px-6 py-3 text-sm text-slate-500 dark:text-zinc-500"><?php echo $r['created_at'] ? date('M j, Y', strtotime($r['created_at'])) : '—'; ?></td>
+<td class="px-4 sm:px-6 py-3 font-medium text-sm min-w-0">
+<span class="block truncate"><?php echo htmlspecialchars($r['name'] ?: '—'); ?></span>
+<span class="text-[10px] text-slate-500 dark:text-zinc-500 sm:hidden mt-0.5 block truncate"><?php echo htmlspecialchars($r['email']); ?></span>
+</td>
+<td class="px-4 sm:px-6 py-3 text-sm text-slate-600 dark:text-zinc-400 hidden sm:table-cell truncate"><?php echo htmlspecialchars($r['email']); ?></td>
+<td class="px-4 sm:px-6 py-3 text-sm text-slate-500 dark:text-zinc-500 whitespace-nowrap"><?php echo $r['created_at'] ? date('M j, Y', strtotime($r['created_at'])) : '—'; ?></td>
 </tr>
 <?php endforeach; ?>
 </tbody>

@@ -109,12 +109,25 @@ body.user-dashboard {
 .user-dash-main {
   padding-top: calc(5rem + env(safe-area-inset-top, 0px));
   box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
 }
 .user-dash-content {
   max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+.dash-page,
+.wallet-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 .user-topbar {
   padding-top: env(safe-area-inset-top, 0px);
@@ -259,6 +272,18 @@ body.user-dashboard {
     font-size: 32px;
     line-height: 40px;
   }
+}
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.asset-card {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+}
+.asset-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

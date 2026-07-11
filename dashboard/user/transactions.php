@@ -29,16 +29,28 @@ $pageSubtitle = 'All your deposits, withdrawals, payouts, and investment payment
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 ?>
-<div class="glass-panel rounded-xl overflow-hidden">
-<div class="overflow-x-auto">
-<table class="w-full text-left">
+<style>
+.tx-history-table th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 639px) {
+  .tx-history-table th,
+  .tx-history-table td { padding: 0.65rem 0.75rem; font-size: 11px; }
+  .tx-history-table .material-symbols-outlined { font-size: 16px !important; }
+}
+</style>
+<div class="dash-page glass-panel rounded-xl overflow-hidden min-w-0">
+<div class="overflow-x-auto min-w-0">
+<table class="w-full text-left table-fixed min-w-0 tx-history-table">
 <thead>
 <tr class="text-on-surface-variant text-[10px] uppercase tracking-wider border-b border-low">
-<th class="px-6 py-4 font-semibold">Type / Date</th>
-<th class="px-6 py-4 font-semibold">Asset</th>
-<th class="px-6 py-4 font-semibold text-right">Amount</th>
-<th class="px-6 py-4 font-semibold text-center">Status</th>
-<th class="px-6 py-4 font-semibold text-right">TXID</th>
+<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold w-[46%] sm:w-[36%]">Type / Date</th>
+<th class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 font-semibold w-[14%]">Asset</th>
+<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-right w-[32%] sm:w-[22%]">Amount</th>
+<th class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 font-semibold text-center w-[20%]">Status</th>
+<th class="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 font-semibold text-right w-[18%]">TXID</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-low">
@@ -58,25 +70,29 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
   $typeLabel = $txTypeLabels[$tx['type']] ?? ucfirst(str_replace('_', ' ', $tx['type']));
 ?>
 <tr class="hover:bg-white/[0.02] transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined <?php echo $isIncoming ? 'text-success' : 'text-critical'; ?> text-lg"><?php echo $isIncoming ? 'arrow_downward' : 'arrow_upward'; ?></span>
-<div>
-<p class="text-sm font-bold text-on-surface"><?php echo htmlspecialchars($typeLabel); ?></p>
-<p class="text-[10px] text-on-surface-variant"><?php echo date('M j, Y H:i', strtotime($tx['created_at'])); ?></p>
+<td class="px-3 sm:px-6 py-3 sm:py-4 min-w-0">
+<div class="flex items-start gap-2 min-w-0">
+<span class="material-symbols-outlined <?php echo $isIncoming ? 'text-success' : 'text-critical'; ?> text-lg shrink-0 mt-0.5"><?php echo $isIncoming ? 'arrow_downward' : 'arrow_upward'; ?></span>
+<div class="min-w-0">
+<p class="text-sm font-bold text-on-surface truncate"><?php echo htmlspecialchars($typeLabel); ?></p>
+<p class="text-[10px] text-on-surface-variant truncate"><?php echo date('M j, Y H:i', strtotime($tx['created_at'])); ?></p>
+<p class="text-[10px] text-on-surface-variant sm:hidden mt-0.5"><?php echo htmlspecialchars($tx['currency']); ?></p>
+<div class="mt-2 sm:hidden">
+<span class="inline-block px-2 py-1 <?php echo $statusClass; ?> text-[10px] font-bold rounded-full uppercase"><?php echo htmlspecialchars($tx['status']); ?></span>
+</div>
 </div>
 </div>
 </td>
-<td class="px-6 py-4 text-sm font-medium"><?php echo htmlspecialchars($tx['currency']); ?></td>
-<td class="px-6 py-4 text-right text-sm font-bold <?php echo $isIncoming ? 'text-success' : 'text-critical'; ?>"><?php echo $isIncoming ? '+' : '-'; ?><?php echo format_usd_amount($displayAmt); ?></td>
-<td class="px-6 py-4 text-center">
+<td class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 text-sm font-medium text-on-surface"><?php echo htmlspecialchars($tx['currency']); ?></td>
+<td class="px-3 sm:px-6 py-3 sm:py-4 text-right text-sm font-bold whitespace-nowrap <?php echo $isIncoming ? 'text-success' : 'text-critical'; ?>"><?php echo $isIncoming ? '+' : '-'; ?><?php echo format_usd_amount($displayAmt); ?></td>
+<td class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 text-center">
 <span class="px-2 py-1 <?php echo $statusClass; ?> text-[10px] font-bold rounded-full uppercase"><?php echo htmlspecialchars($tx['status']); ?></span>
 </td>
-<td class="px-6 py-4 text-right font-mono text-[10px] text-on-surface-variant"><?php echo $tx['reference'] ? substr($tx['reference'], 0, 6) . '...' . substr($tx['reference'], -4) : '—'; ?></td>
+<td class="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 text-right font-mono text-[10px] text-on-surface-variant"><?php echo $tx['reference'] ? substr($tx['reference'], 0, 6) . '...' . substr($tx['reference'], -4) : '—'; ?></td>
 </tr>
 <?php endforeach; ?>
 <?php if (empty($transactions)): ?>
-<tr><td class="px-6 py-12 text-center text-on-surface-variant" colspan="5">No transactions yet.</td></tr>
+<tr><td class="px-3 sm:px-6 py-12 text-center text-on-surface-variant" colspan="5">No transactions yet.</td></tr>
 <?php endif; ?>
 </tbody>
 </table>

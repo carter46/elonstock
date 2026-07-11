@@ -11,7 +11,7 @@ $pageSubtitle = 'Optional identity verification for your account. Withdrawals do
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 ?>
-<div class="max-w-2xl mx-auto">
+<div class="dash-page w-full min-w-0 max-w-2xl mx-auto">
 
 <?php if ($kycStatus === 'verified'): ?>
 <div class="glass-panel rounded-xl p-8 text-center">
