@@ -533,7 +533,7 @@ function fetch_portfolio_active_investments(PDO $pdo, int $userId): array
     $stmt = $pdo->prepare(
         'SELECT ui.id, ui.amount, ui.start_date, ui.created_at, ui.status,
                 ui.duration_days AS investment_duration_days,
-                p.name AS plan_name, p.yield_min, p.yield_max,
+                p.name AS plan_name, p.slug AS plan_slug, p.yield_min, p.yield_max,
                 p.duration_days AS plan_duration_days, p.liquidation_cost
          FROM user_investments ui
          INNER JOIN plans p ON p.id = ui.plan_id
@@ -549,7 +549,7 @@ function fetch_portfolio_investments(PDO $pdo, int $userId, string $status): arr
     $stmt = $pdo->prepare(
         'SELECT ui.id, ui.amount, ui.start_date, ui.created_at, ui.status,
                 ui.duration_days AS investment_duration_days,
-                p.name AS plan_name, p.yield_min, p.yield_max,
+                p.name AS plan_name, p.slug AS plan_slug, p.yield_min, p.yield_max,
                 p.duration_days AS plan_duration_days, p.liquidation_cost
          FROM user_investments ui
          INNER JOIN plans p ON p.id = ui.plan_id

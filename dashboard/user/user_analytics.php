@@ -324,15 +324,21 @@ function portfolio_plan_card(array $ap, string $tab, float $userUsdBalance): voi
             <div><span class="text-slate-400 block text-xs"><?= $tab === 'active' ? 'Days left' : 'Duration' ?></span><span class="font-bold"><?= $tab === 'active' ? (int) $daysLeft : $durationDays . ' days' ?></span></div>
         </div>
         <?php if ($tab === 'active'): ?>
+        <div class="flex flex-col sm:flex-row gap-2">
+        <a href="/dashboard/user/portfolio/<?= $invId ?>"
+            class="flex-1 py-2 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary text-sm font-semibold text-center transition-colors flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-base">visibility</span> View
+        </a>
         <button type="button"
-            class="liquidate-plan-btn w-full py-2 rounded-lg border border-amber-500/50 text-amber-600 dark:text-amber-400 text-sm font-semibold hover:bg-amber-500/10 transition-colors"
+            class="liquidate-plan-btn flex-1 py-2 rounded-lg border border-amber-500/50 text-amber-600 dark:text-amber-400 text-sm font-semibold hover:bg-amber-500/10 transition-colors"
             data-investment-id="<?= $invId ?>"
             data-plan-name="<?= htmlspecialchars($ap['plan_name'] ?? 'Plan', ENT_QUOTES, 'UTF-8') ?>"
             data-amount="<?= htmlspecialchars(number_format($amount, 2, '.', ''), ENT_QUOTES, 'UTF-8') ?>"
             data-fee="<?= htmlspecialchars(number_format($liqFee, 2, '.', ''), ENT_QUOTES, 'UTF-8') ?>"
             data-balance="<?= htmlspecialchars(number_format($userUsdBalance, 2, '.', ''), ENT_QUOTES, 'UTF-8') ?>">
-            Liquidate Plan
+            Liquidate
         </button>
+        </div>
         <?php elseif ($tab === 'matured'): ?>
         <p class="text-xs text-slate-500">Principal returned to your USD wallet at maturity.</p>
         <?php else: ?>

@@ -32,6 +32,7 @@ Options -Indexes
     RewriteRule ^dashboard/user/profile$ dashboard/user/user_profile.php [L]
     RewriteRule ^dashboard/user/kyc$ dashboard/user/user_kyc.php [L]
     RewriteRule ^dashboard/user/analytics$ dashboard/user/user_analytics.php [L]
+    RewriteRule ^dashboard/user/portfolio/([0-9]+)$ dashboard/user/investment-position-view.php?id=$1 [L,QSA]
     RewriteRule ^dashboard/user/transactions$ dashboard/user/transactions.php [L]
     RewriteRule ^dashboard/user/referrals$ dashboard/user/referrals.php [L]
     RewriteRule ^dashboard/user/investment-plans/([a-z0-9-]+)$ dashboard/user/investment-plan-view.php?slug=$1 [L,QSA]
