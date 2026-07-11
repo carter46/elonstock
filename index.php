@@ -334,7 +334,6 @@ Read Module <span class="material-symbols-outlined ml-1 text-sm">chevron_right</
 </section>
 
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
-<?php require_once __DIR__ . '/includes/market-replay-scripts.php'; ?>
 
 <script src="/js/crypto-config.js"></script>
 <script src="/js/crypto-prices.js"></script>
@@ -342,7 +341,7 @@ Read Module <span class="material-symbols-outlined ml-1 text-sm">chevron_right</
 document.addEventListener('DOMContentLoaded', function() {
   if (window.BloombitCryptoPrices) {
     window.BloombitCryptoPrices.init(['bitcoin','ethereum','binancecoin','solana'], {
-      tickerSelector: '.crypto-ticker',
+      marketCardsSelector: '.market-cards',
       refreshInterval: 120000
     });
   }

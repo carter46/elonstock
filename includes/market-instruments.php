@@ -159,13 +159,6 @@ function market_instrument_bitcoin(): array {
         ],
         'ai_help_bullets' => ['Volatility regime detection', 'Trend and momentum monitoring', 'Cross-market correlation alerts', '24/7 BTC surveillance'],
         'related_slugs' => ['ethereum', 'solana', 'binancecoin', 'msft'],
-        'replay' => [
-            'provider' => 'binance',
-            'symbol' => 'BTCUSDT',
-            'interval' => '1s',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -209,13 +202,6 @@ function market_instrument_ethereum(): array {
         ],
         'ai_help_bullets' => ['ETH/BTC ratio tracking', 'DeFi sentiment indicators', 'Volatility alerts', 'Trend analysis'],
         'related_slugs' => ['bitcoin', 'solana', 'binancecoin', 'googl'],
-        'replay' => [
-            'provider' => 'binance',
-            'symbol' => 'ETHUSDT',
-            'interval' => '1s',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -259,13 +245,6 @@ function market_instrument_binancecoin(): array {
         ],
         'ai_help_bullets' => ['Liquidity monitoring', 'Correlation tracking', 'Momentum alerts', 'Risk-aware notifications'],
         'related_slugs' => ['bitcoin', 'ethereum', 'solana', 'meta'],
-        'replay' => [
-            'provider' => 'binance',
-            'symbol' => 'BNBUSDT',
-            'interval' => '1s',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -309,13 +288,6 @@ function market_instrument_solana(): array {
         ],
         'ai_help_bullets' => ['Ecosystem activity signals', 'Volatility spike detection', 'Relative strength vs BTC', 'Automated trend alerts'],
         'related_slugs' => ['bitcoin', 'ethereum', 'binancecoin', 'tsla'],
-        'replay' => [
-            'provider' => 'binance',
-            'symbol' => 'SOLUSDT',
-            'interval' => '1s',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -359,14 +331,6 @@ function market_instrument_tsla(): array {
         ],
         'ai_help_bullets' => ['Earnings-season alerts', 'Volatility monitoring', 'Tech sector correlation', 'Sentiment trend analysis'],
         'related_slugs' => ['msft', 'googl', 'meta', 'bitcoin'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'TSLA',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'market_hours' => 'us',
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -410,14 +374,6 @@ function market_instrument_msft(): array {
         ],
         'ai_help_bullets' => ['Sector trend analysis', 'Earnings sentiment monitoring', 'Cloud/AI narrative tracking', 'Portfolio risk alerts'],
         'related_slugs' => ['googl', 'meta', 'tsla', 'bitcoin'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'MSFT',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'market_hours' => 'us',
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -461,14 +417,6 @@ function market_instrument_googl(): array {
         ],
         'ai_help_bullets' => ['Ad-sector proxy tracking', 'AI competitive monitoring', 'Earnings volatility alerts', 'Mega-cap correlation'],
         'related_slugs' => ['msft', 'meta', 'tsla', 'ethereum'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'GOOGL',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'market_hours' => 'us',
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -512,14 +460,6 @@ function market_instrument_meta(): array {
         ],
         'ai_help_bullets' => ['Social sector monitoring', 'Earnings volatility tracking', 'Ad-revenue sentiment', 'Risk-aware alerts'],
         'related_slugs' => ['googl', 'msft', 'tsla', 'solana'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'META',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'market_hours' => 'us',
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -563,13 +503,6 @@ function market_instrument_audcad(): array {
         ],
         'ai_help_bullets' => ['Macro event alerts', 'Commodity correlation tracking', 'Volatility monitoring', 'Cross-pair analysis'],
         'related_slugs' => ['usdjpy', 'eurjpy', 'nzdusd', 'bitcoin'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'AUDCAD=X',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -613,13 +546,6 @@ function market_instrument_usdjpy(): array {
         ],
         'ai_help_bullets' => ['Yield-spread monitoring', 'Safe-haven flow detection', 'Volatility alerts', 'Macro calendar integration'],
         'related_slugs' => ['eurjpy', 'audcad', 'nzdusd', 'msft'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'USDJPY=X',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -663,13 +589,6 @@ function market_instrument_eurjpy(): array {
         ],
         'ai_help_bullets' => ['ECB event tracking', 'Risk sentiment correlation', 'Cross-pair momentum', 'Volatility regime alerts'],
         'related_slugs' => ['usdjpy', 'audcad', 'nzdusd', 'googl'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'EURJPY=X',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
 }
 
@@ -713,42 +632,5 @@ function market_instrument_nzdusd(): array {
         ],
         'ai_help_bullets' => ['Commodity proxy alerts', 'USD strength tracking', 'RBNZ event monitoring', 'Risk-on/off detection'],
         'related_slugs' => ['audcad', 'usdjpy', 'eurjpy', 'ethereum'],
-        'replay' => [
-            'provider' => 'yahoo',
-            'symbol' => 'NZDUSD=X',
-            'interval' => '1m',
-            'delay_seconds' => 900,
-            'enabled' => true,
-        ],
     ]);
-}
-
-/**
- * Active replay config for an instrument, or null if disabled.
- *
- * @return array{provider:string,symbol:string,interval?:string,delay_seconds?:int,enabled?:bool,market_hours?:string}|null
- */
-function market_instrument_replay_config(array $instrument): ?array
-{
-    $replay = $instrument['replay'] ?? null;
-    if (!is_array($replay) || empty($replay['enabled'])) {
-        return null;
-    }
-    if (empty($replay['provider']) || empty($replay['symbol'])) {
-        return null;
-    }
-    return $replay;
-}
-
-/** @return array<int, array> */
-function market_replay_enabled_instruments(): array
-{
-    return array_values(array_filter(market_instruments_all(), function ($instrument) {
-        return market_instrument_replay_config($instrument) !== null;
-    }));
-}
-
-function market_instrument_has_replay(array $instrument): bool
-{
-    return market_instrument_replay_config($instrument) !== null;
 }

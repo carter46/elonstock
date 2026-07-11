@@ -3,5 +3,3 @@ config.php
 .env
 .DS_Store
 data/
-storage/cache/
-backup/

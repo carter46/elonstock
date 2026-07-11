@@ -9,7 +9,9 @@ $pageTitle = $pageTitle ?? get_site_name();
 <?php output_favicon_tags(); ?>
 <?php output_site_brand_meta_tags(); ?>
 <?php require_once __DIR__ . '/pwa-head.php'; ?>
-<?php if (!defined('BB_MARKET_REPLAY_SCRIPTS')) { define('BB_MARKET_REPLAY_SCRIPTS', true); } ?>
+<?php if (!defined('BB_TV_MINI_CHART_SCRIPT')) { define('BB_TV_MINI_CHART_SCRIPT', true); ?>
+<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
+<?php } ?>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -276,11 +278,12 @@ body.marketing-page {
   position: relative;
   overflow: hidden;
 }
-.market-detail-chart-wrap .market-replay-chart {
+.market-detail-chart-wrap tv-mini-chart {
   display: block;
   width: 100% !important;
   max-width: 100%;
-  min-height: 360px;
+  height: 360px !important;
+  margin-bottom: -32px;
 }
 .sr-only {
   position: absolute;
@@ -293,14 +296,29 @@ body.marketing-page {
   white-space: nowrap;
   border: 0;
 }
-.market-card-preview .market-replay-wrap {
-  min-height: 240px;
+.stock-market-card,
+.forex-market-card {
+  min-height: 168px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
-.market-card-preview .market-replay-chart {
-  flex: 1;
-  min-height: 200px;
+.stock-market-card tv-mini-chart,
+.forex-market-card tv-mini-chart {
+  display: block;
+  width: 100% !important;
+  max-width: 500px;
+  height: 300px !important;
+  max-height: 300px;
+  margin: 0 auto -28px;
+}
+@media (max-width: 640px) {
+  .stock-market-card tv-mini-chart,
+  .forex-market-card tv-mini-chart {
+    height: 220px !important;
+    max-height: 220px;
+  }
 }
 </style>
 <script>

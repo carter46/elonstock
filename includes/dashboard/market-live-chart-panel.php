@@ -70,12 +70,11 @@ $backUrl = htmlspecialchars((string) ($marketChartBackUrl ?? '/dashboard/user/in
 </div>
 <?php endif; ?>
 
-<?php
-$replayChartHeight = 360;
-$replayChartShowStatus = true;
-$replayChartTheme = 'dark';
-require __DIR__ . '/../market-replay-chart.php';
-?>
+<?php if ($chartSymbol !== ''): ?>
+<tv-mini-chart symbol="<?php echo $chartSymbol; ?>" style="width: 100%; height: 360px; max-width: 100%;"></tv-mini-chart>
+<?php else: ?>
+<p class="text-sm text-text-secondary text-center py-12">Chart unavailable for this market.</p>
+<?php endif; ?>
 
 <?php require __DIR__ . '/../market-chart-disclaimer.php'; ?>
 </div>
