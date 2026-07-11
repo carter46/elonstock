@@ -8,6 +8,7 @@ function get_plan_types(): array
     return [
         'crypto' => 'Crypto',
         'stocks' => 'Stocks',
+        'forex' => 'Forex',
         'equities' => 'Equities',
         'shares' => 'Shares',
         'real_estate' => 'Real Estate',
@@ -133,4 +134,42 @@ function plan_duration_days(array $plan): int
         return max(1, (int) $plan['duration_days']);
     }
     return 1;
+}
+
+/** Maps investment plan_type to market-instruments category (crypto, stock, forex). */
+function plan_type_market_category(?string $type): ?string
+{
+    $key = strtolower(trim((string) $type));
+    $map = [
+        'crypto' => 'crypto',
+        'stocks' => 'stock',
+        'equities' => 'stock',
+        'shares' => 'stock',
+        'forex' => 'forex',
+    ];
+    return $map[$key] ?? null;
+}
+
+function plan_has_live_markets($planOrType): bool
+{
+    if (is_array($planOrType)) {
+        if (plan_market_instrument($planOrType) !== null) {
+            return true;
+        }
+        return plan_type_market_category($planOrType['plan_type'] ?? '') !== null;
+    }
+    return plan_type_market_category($planOrType) !== null;
+}
+
+/** Resolve linked market instrument when plan slug matches registry (e.g. usdjpy). */
+function plan_market_instrument(array $plan): ?array
+{
+    $slug = strtolower(trim((string) ($plan['slug'] ?? '')));
+    if ($slug === '') {
+        return null;
+    }
+    if (!function_exists('get_market_instrument')) {
+        require_once __DIR__ . '/market-instruments.php';
+    }
+    return get_market_instrument($slug);
 }
