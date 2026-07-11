@@ -101,18 +101,7 @@ $pageSubtitle = '';
 $pageExtraStyles = <<<'CSS'
 <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
 <style>
-.plan-market-hero {
-  position: relative;
-  overflow: hidden;
-}
-.plan-market-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(145deg, rgba(255, 195, 92, 0.08) 0%, transparent 55%);
-  pointer-events: none;
-}
-.plan-market-hero > * { position: relative; z-index: 1; }
+.plan-trading-page { margin-top: -0.25rem; }
 .plan-market-chart-wrap tv-mini-chart {
   display: block;
   width: 100% !important;
@@ -134,32 +123,13 @@ CSS;
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 ?>
 
-<div class="dash-page w-full min-w-0 space-y-6 md:space-y-8">
-<!-- Hero: market identity first -->
-<section class="plan-market-hero glass-panel rounded-xl p-6 md:p-8">
-<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-<div class="flex flex-wrap items-center gap-2">
-<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-low text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-<span class="material-symbols-outlined text-primary-container text-sm">candlestick_chart</span>
-<?php echo htmlspecialchars($marketTypeLabel); ?>
-</span>
-<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-bold uppercase tracking-wider text-red-400">
-<span class="w-2 h-2 bg-red-500 rounded-full pulse-live"></span> Live
-</span>
-<span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
-<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded"><?php echo htmlspecialchars($categoryLabel); ?></span>
-</div>
-<a href="/dashboard/user/investment-plans" class="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-primary-container transition-colors shrink-0">
-<span class="material-symbols-outlined text-sm">arrow_back</span> All plans
-</a>
-</div>
-<h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary leading-tight mb-2"><?php echo htmlspecialchars($displayName); ?></h1>
-<p class="text-lg font-semibold text-primary-container mb-3"><?php echo htmlspecialchars($instrument['pair_label']); ?></p>
-<p class="text-sm md:text-base text-text-secondary max-w-3xl"><?php echo htmlspecialchars($heroIntro); ?></p>
-</section>
-
+<div class="dash-page plan-trading-page w-full min-w-0 space-y-6 md:space-y-8">
 <?php
-$marketChartCompact = true;
+$marketChartLead = true;
+$marketChartLeadTitle = $displayName;
+$marketChartLeadPair = $instrument['pair_label'];
+$marketChartLeadType = $marketTypeLabel;
+$marketChartBackUrl = '/dashboard/user/investment-plans';
 require __DIR__ . '/../../includes/dashboard/market-live-chart-panel.php';
 ?>
 
@@ -169,6 +139,13 @@ require __DIR__ . '/../../includes/dashboard/market-live-chart-panel.php';
 <div class="min-w-0">
 <h2 class="text-lg font-bold text-text-primary mb-1">Investment Plan</h2>
 <p class="text-sm text-text-secondary"><?php echo htmlspecialchars($plan['description']); ?></p>
+<?php if (!empty($heroIntro) && $heroIntro !== $plan['description']): ?>
+<p class="text-xs text-on-surface-variant mt-2 leading-relaxed"><?php echo htmlspecialchars($heroIntro); ?></p>
+<?php endif; ?>
+<div class="flex flex-wrap items-center gap-2 mt-3">
+<span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded"><?php echo htmlspecialchars($categoryLabel); ?></span>
+</div>
 </div>
 <button type="button"
   data-plan-id="<?php echo $plan['id']; ?>"
