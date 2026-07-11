@@ -1,0 +1,258 @@
+<?php
+/**
+ * Bloombit - Admin Transactions API
+ * POST /api/admin/transactions.php - Approve or reject transactions (deposits/withdrawals)
+ */
+
+header('Content-Type: application/json');
+
+require_once dirname(__DIR__, 2) . '/includes/session-bootstrap.php';
+require_once dirname(__DIR__, 2) . '/includes/helpers.php';
+require_once dirname(__DIR__, 2) . '/includes/usd-wallet.php';
+require_once dirname(__DIR__, 2) . '/includes/deposit-expiry.php';
+require_once dirname(__DIR__, 2) . '/includes/admin-audit-log.php';
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+    exit;
+}
+
+try {
+    $pdo = require dirname(__DIR__, 2) . '/includes/db.php';
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database unavailable']);
+    exit;
+}
+
+// Best-effort cleanup: expire old pending deposits (idempotent)
+try { expire_pending_deposits($pdo); } catch (Throwable $e) {}
+
+$input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+$action = strtolower(trim($input['action'] ?? ''));
+$transactionId = (int) ($input['transaction_id'] ?? 0);
+
+if (!in_array($action, ['approve', 'reject'], true) || $transactionId <= 0) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid action or transaction ID']);
+    exit;
+}
+
+// Fetch transaction (include amount_usd and reference when columns exist)
+$cols = 'id, user_id, type, amount, currency, status';
+try {
+    $chk = $pdo->query("SHOW COLUMNS FROM transactions LIKE 'amount_usd'");
+    if ($chk && $chk->rowCount() > 0) $cols .= ', amount_usd';
+    $chk2 = $pdo->query("SHOW COLUMNS FROM transactions LIKE 'reference'");
+    if ($chk2 && $chk2->rowCount() > 0) $cols .= ', reference';
+} catch (Throwable $e) {}
+$stmt = $pdo->prepare("SELECT $cols FROM transactions WHERE id = ?");
+$stmt->execute([$transactionId]);
+$tx = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$tx) {
+    http_response_code(404);
+    echo json_encode(['success' => false, 'error' => 'Transaction not found']);
+    exit;
+}
+
+if ($tx['status'] !== 'pending') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Transaction is not pending']);
+    exit;
+}
+
+// Fetch user email and name for email notification
+$userStmt = $pdo->prepare('SELECT email, name FROM users WHERE id = ?');
+$userStmt->execute([$tx['user_id']]);
+$user = $userStmt->fetch(PDO::FETCH_ASSOC);
+$userEmail = $user['email'] ?? null;
+$userName = $user['name'] ?? 'User';
+
+// Get transaction reference if available
+$reference = $tx['reference'] ?? '';
+
+$pdo->beginTransaction();
+try {
+    if ($action === 'approve') {
+        // Update transaction status
+        $pdo->prepare('UPDATE transactions SET status = ? WHERE id = ?')->execute(['completed', $transactionId]);
+        
+        // For deposits, credit user wallet
+        if ($tx['type'] === 'deposit') {
+            $amountUsd = null;
+            if (isset($tx['amount_usd']) && $tx['amount_usd'] !== null && (float) $tx['amount_usd'] > 0) {
+                $amountUsd = (float) $tx['amount_usd'];
+            } else {
+                $cur = strtoupper((string) $tx['currency']);
+                if (in_array($cur, ['USD', 'USDT', 'USDC', 'BUSD', 'DAI'], true)) {
+                    $amountUsd = (float) $tx['amount'];
+                } else {
+                    $price = get_coin_usd_price($pdo, $cur);
+                    if ($price !== null && $price > 0) {
+                        $amountUsd = round((float) $tx['amount'] * (float) $price, 2);
+                    }
+                }
+            }
+            if ($amountUsd !== null && $amountUsd > 0) {
+                credit_user_usd($pdo, (int) $tx['user_id'], $amountUsd);
+            }
+
+            // Referral bonus on first approved deposit only (2-level: 15% direct, 10% upline)
+            $baseUsd = $amountUsd !== null ? (float) $amountUsd : 0.0;
+            if ($baseUsd > 0) {
+                try {
+                    pay_referral_chain($pdo, (int) $tx['user_id'], $baseUsd, 'first_deposit', $transactionId, 'ref_deposit_');
+                } catch (Throwable $e) {
+                    // Do not fail deposit approval if referral logic fails
+                }
+            }
+
+            // Universal deposit bonus (to depositor, non-referral)
+            $baseUsdDeposit = $amountUsd !== null ? (float)$amountUsd : 0.0;
+            if ($baseUsdDeposit > 0) {
+                try {
+                    $depositBonusPct = (float) (get_site_setting('deposit_bonus_percentage', '10') ?: '10');
+                    $depositBonusPct = max(0, min(100, $depositBonusPct));
+                    if ($depositBonusPct > 0) {
+                        $bonusUsd = round($baseUsdDeposit * ($depositBonusPct / 100), 2);
+                        if ($bonusUsd > 0) {
+                            $depositorId = (int) $tx['user_id'];
+                            credit_user_usd($pdo, $depositorId, (float) $bonusUsd);
+                            $refCurrency = user_usd_wallet_currency();
+                            $hasAmountUsdCol = false;
+                            try {
+                                $colChk = $pdo->query("SHOW COLUMNS FROM transactions LIKE 'amount_usd'");
+                                $hasAmountUsdCol = $colChk && $colChk->rowCount() > 0;
+                            } catch (Throwable $e) {}
+                            if ($hasAmountUsdCol) {
+                                $pdo->prepare('INSERT INTO transactions (user_id, type, amount, amount_usd, currency, status, reference) VALUES (?, ?, ?, ?, ?, ?, ?)')
+                                    ->execute([$depositorId, 'deposit_bonus', $bonusUsd, $bonusUsd, $refCurrency, 'completed', 'dep_bonus_' . $transactionId]);
+                            } else {
+                                $pdo->prepare('INSERT INTO transactions (user_id, type, amount, currency, status, reference) VALUES (?, ?, ?, ?, ?, ?)')
+                                    ->execute([$depositorId, 'deposit_bonus', $bonusUsd, $refCurrency, 'completed', 'dep_bonus_' . $transactionId]);
+                            }
+                        }
+                    }
+                } catch (Throwable $e) {
+                    // Do not fail deposit approval if deposit bonus logic fails
+                }
+            }
+        }
+        // For withdrawals, status update is sufficient (balance already debited on request)
+        
+        $pdo->commit();
+        
+        // Send email notification
+        if ($userEmail) {
+            try {
+                require_once dirname(__DIR__, 2) . '/includes/email-templates/render.php';
+                $mail = require dirname(__DIR__, 2) . '/includes/mailer.php';
+                $mail->clearAddresses();
+                $mail->addAddress($userEmail);
+                $mail->Subject = ucfirst($tx['type']) . ' Approved - ' . get_site_name();
+                $amountUsd = isset($tx['amount_usd']) && $tx['amount_usd'] !== null ? (float)$tx['amount_usd'] : (float)$tx['amount'];
+                $mail->Body = renderEmailTemplate('transaction-status.php', [
+                    'name' => $userName,
+                    'status' => 'approved',
+                    'type' => $tx['type'],
+                    'amount' => $tx['amount'],
+                    'currency' => $tx['currency'],
+                    'amountUsd' => $amountUsd,
+                    'reference' => $reference,
+                ]);
+                $mail->AltBody = "Your {$tx['type']} request has been approved. Amount: {$tx['currency']} " . number_format((float)$tx['amount'], 8, '.', ',') . ".";
+                $mail->isHTML(true);
+                $mail->send();
+            } catch (Throwable $e) {
+                // Email failure should not block the operation
+            }
+        }
+        
+        admin_audit_log(
+            $pdo,
+            'approve',
+            'transaction',
+            $transactionId,
+            'Approved ' . $tx['type'] . ' transaction #' . $transactionId . ' for user #' . (int) $tx['user_id'],
+            ['status' => 'pending', 'type' => $tx['type'], 'amount' => $tx['amount'], 'currency' => $tx['currency']],
+            ['status' => 'completed']
+        );
+        echo json_encode([
+            'success' => true,
+            'data' => ['message' => 'Transaction approved successfully'],
+        ]);
+    } else { // reject
+        // Update transaction status
+        $pdo->prepare('UPDATE transactions SET status = ? WHERE id = ?')->execute(['rejected', $transactionId]);
+        
+        // For withdrawals, credit back the user balance
+        if ($tx['type'] === 'withdrawal') {
+            $refundUsd = 0.0;
+            if (isset($tx['amount_usd']) && $tx['amount_usd'] !== null && (float) $tx['amount_usd'] > 0) {
+                $refundUsd = (float) $tx['amount_usd'];
+            } else {
+                $cur = strtoupper((string) $tx['currency']);
+                if (in_array($cur, ['USD', 'USDT', 'USDC', 'BUSD', 'DAI'], true)) {
+                    $refundUsd = (float) $tx['amount'];
+                }
+            }
+            if ($refundUsd > 0) {
+                credit_user_usd($pdo, (int) $tx['user_id'], $refundUsd);
+            }
+        }
+        // For deposits, no balance change needed (user hasn't been credited yet)
+        
+        $pdo->commit();
+        
+        // Send email notification
+        if ($userEmail) {
+            try {
+                require_once dirname(__DIR__, 2) . '/includes/email-templates/render.php';
+                $mail = require dirname(__DIR__, 2) . '/includes/mailer.php';
+                $mail->clearAddresses();
+                $mail->addAddress($userEmail);
+                $mail->Subject = ucfirst($tx['type']) . ' Rejected - ' . get_site_name();
+                $amountUsd = isset($tx['amount_usd']) && $tx['amount_usd'] !== null ? (float)$tx['amount_usd'] : (float)$tx['amount'];
+                $mail->Body = renderEmailTemplate('transaction-status.php', [
+                    'name' => $userName,
+                    'status' => 'rejected',
+                    'type' => $tx['type'],
+                    'amount' => $tx['amount'],
+                    'currency' => $tx['currency'],
+                    'amountUsd' => $amountUsd,
+                    'reference' => $reference,
+                ]);
+                $mail->AltBody = "Your {$tx['type']} request has been rejected. Amount: {$tx['currency']} " . number_format((float)$tx['amount'], 8, '.', ',') . ".";
+                $mail->isHTML(true);
+                $mail->send();
+            } catch (Throwable $e) {
+                // Email failure should not block the operation
+            }
+        }
+        
+        admin_audit_log(
+            $pdo,
+            'reject',
+            'transaction',
+            $transactionId,
+            'Rejected ' . $tx['type'] . ' transaction #' . $transactionId . ' for user #' . (int) $tx['user_id'],
+            ['status' => 'pending', 'type' => $tx['type'], 'amount' => $tx['amount'], 'currency' => $tx['currency']],
+            ['status' => 'rejected']
+        );
+        echo json_encode([
+            'success' => true,
+            'data' => ['message' => 'Transaction rejected'],
+        ]);
+    }
+} catch (Throwable $e) {
+    $pdo->rollBack();
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Failed to process transaction']);
+}

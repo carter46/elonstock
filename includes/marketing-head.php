@@ -1,0 +1,338 @@
+<?php
+/**
+ * Shared marketing page head assets (fonts, Tailwind config, base styles).
+ * Include inside <head> on marketing pages.
+ */
+$pageTitle = $pageTitle ?? get_site_name();
+?>
+<title><?php echo htmlspecialchars($pageTitle); ?></title>
+<?php output_favicon_tags(); ?>
+<?php output_site_brand_meta_tags(); ?>
+<?php require_once __DIR__ . '/pwa-head.php'; ?>
+<?php if (!defined('BB_TV_MINI_CHART_SCRIPT')) { define('BB_TV_MINI_CHART_SCRIPT', true); ?>
+<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
+<?php } ?>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#ffe6c3",
+        "surface-container-low": "#191c1f",
+        "inverse-primary": "#7e5700",
+        "surface-dim": "#111417",
+        "surface-container-lowest": "#0b0e11",
+        "on-secondary-container": "#b1b5bd",
+        "surface-bright": "#37393d",
+        "surface-container-high": "#272a2e",
+        "on-tertiary": "#003544",
+        "outline": "#9c8f7d",
+        "surface-variant": "#323538",
+        "on-background": "#e1e2e7",
+        "secondary-fixed-dim": "#c2c7cf",
+        "on-tertiary-fixed-variant": "#004d61",
+        "on-error": "#690005",
+        "on-surface": "#e1e2e7",
+        "inverse-surface": "#e1e2e7",
+        "primary-container": "#ffc35c",
+        "error-container": "#93000a",
+        "text-secondary": "#A0A7B4",
+        "on-secondary-fixed-variant": "#42474e",
+        "background": "#111417",
+        "on-primary-fixed": "#281900",
+        "surface-container-highest": "#323538",
+        "on-primary": "#432c00",
+        "on-error-container": "#ffdad6",
+        "on-tertiary-container": "#005f76",
+        "on-secondary-fixed": "#171c22",
+        "error": "#ffb4ab",
+        "primary-fixed-dim": "#f8bc56",
+        "inverse-on-surface": "#2e3134",
+        "border-low": "rgba(255, 255, 255, 0.08)",
+        "secondary-fixed": "#dee3eb",
+        "secondary": "#c2c7cf",
+        "primary-fixed": "#ffdead",
+        "tertiary-fixed-dim": "#6ed3f7",
+        "bg-subtle": "#161B22",
+        "success": "#20B26C",
+        "on-secondary": "#2c3137",
+        "on-surface-variant": "#d4c4b0",
+        "secondary-container": "#42474e",
+        "critical": "#EF454A",
+        "outline-variant": "#504536",
+        "on-tertiary-fixed": "#001f28",
+        "text-primary": "#FFFFFF",
+        "on-primary-fixed-variant": "#604100",
+        "tertiary-fixed": "#b8eaff",
+        "surface": "#111417",
+        "tertiary": "#cbefff",
+        "on-primary-container": "#755000",
+        "surface-container": "#1d2023",
+        "tertiary-container": "#75dafe",
+        "surface-tint": "#f8bc56"
+      },
+      borderRadius: {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      spacing: {
+        "container-max": "1440px",
+        "section-padding": "96px",
+        "unit": "4px",
+        "margin-desktop": "32px",
+        "margin-mobile": "16px",
+        "gutter": "16px"
+      },
+      fontFamily: {
+        "label-sm": ["Inter", "sans-serif"],
+        "body-lg": ["Inter", "sans-serif"],
+        "data-mono": ["Inter", "sans-serif"],
+        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+        "body-md": ["Inter", "sans-serif"],
+        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+        "label-xs": ["Inter", "sans-serif"],
+        "display": ["Plus Jakarta Sans", "sans-serif"]
+      },
+      fontSize: {
+        "label-sm": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+        "data-mono": ["16px", {"lineHeight": "1", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+        "headline-lg-mobile": ["40px", {"lineHeight": "1.1", "fontWeight": "800"}],
+        "label-xs": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "800"}],
+        "display": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+#bb-global-loader,
+#bb-global-loader-style {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.glass-panel {
+  background: rgba(30, 35, 41, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 195, 92, 0.3);
+}
+.hero-gradient {
+  background: radial-gradient(circle at top right, rgba(255, 195, 92, 0.1), transparent 50%),
+              radial-gradient(circle at bottom left, rgba(17, 20, 23, 1), transparent 80%);
+}
+.hero-section {
+  background-color: #0b0e11;
+}
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.hero-bg-overlay {
+  background:
+    linear-gradient(
+      to top,
+      rgba(2, 4, 8, 0.99) 0%,
+      rgba(3, 5, 10, 0.98) 15%,
+      rgba(4, 6, 12, 0.96) 30%,
+      rgba(5, 7, 14, 0.93) 45%,
+      rgba(6, 8, 16, 0.88) 58%,
+      rgba(7, 9, 18, 0.80) 70%,
+      rgba(8, 10, 20, 0.70) 80%,
+      rgba(9, 11, 22, 0.55) 88%,
+      rgba(10, 12, 20, 0.38) 94%,
+      rgba(11, 14, 17, 0.20) 98%,
+      rgba(11, 14, 17, 0) 100%
+    ),
+    rgba(4, 6, 12, 0.35);
+}
+.wealth-image-wrap {
+  background: linear-gradient(145deg, #050508 0%, #0a0d14 45%, #0c1424 100%);
+  border: 1px solid rgba(30, 45, 75, 0.35);
+  padding: 1.75rem;
+}
+.wealth-image-bg {
+  background: radial-gradient(ellipse at 50% 60%, #0f1a2e 0%, #080b12 55%, #030408 100%);
+  border-radius: 1rem;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wealth-image-bg img {
+  border: none;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+.hero-image-animate {
+  opacity: 0;
+  animation: heroFadeInMobile 0.9s ease-out forwards;
+  animation-delay: 0.2s;
+}
+@media (min-width: 1024px) {
+  .hero-image-animate {
+    animation-name: heroFadeInDesktop;
+  }
+}
+@keyframes heroFadeInDesktop {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes heroFadeInMobile {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+body.marketing-page {
+  background-color: #0b0e11;
+  color: #e1e2e7;
+  -webkit-font-smoothing: antialiased;
+}
+.market-ticker-scroll {
+  animation: ticker 30s linear infinite;
+}
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.btn-get-started {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.btn-get-started:hover {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+.market-card-link {
+  position: relative;
+}
+.market-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0b0e11;
+  background: #ffc35c;
+  border: 1px solid rgba(255, 195, 92, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  pointer-events: auto;
+  text-decoration: none;
+}
+.market-view-btn:hover {
+  background: #ffd080;
+  box-shadow: 0 4px 12px rgba(255, 195, 92, 0.35);
+  transform: translateY(-1px);
+}
+.pulse-live {
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  animation: pulse-red 2s infinite;
+}
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.market-hero-glow {
+  background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(255, 195, 92, 0.12), transparent);
+}
+.market-cta-glow {
+  background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(255, 195, 92, 0.08), transparent);
+}
+.market-illustration {
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: #1a1d21;
+}
+.market-detail-chart-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.market-detail-chart-wrap tv-mini-chart {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  height: 360px !important;
+  margin-bottom: -32px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.stock-market-card,
+.forex-market-card {
+  min-height: 168px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.stock-market-card tv-mini-chart,
+.forex-market-card tv-mini-chart {
+  display: block;
+  width: 100% !important;
+  max-width: 500px;
+  height: 300px !important;
+  max-height: 300px;
+  margin: 0 auto -28px;
+}
+@media (max-width: 640px) {
+  .stock-market-card tv-mini-chart,
+  .forex-market-card tv-mini-chart {
+    height: 220px !important;
+    max-height: 220px;
+  }
+}
+</style>
+<script>
+(function () {
+  function stripLoader() {
+    var el = document.getElementById('bb-global-loader');
+    var style = document.getElementById('bb-global-loader-style');
+    if (el) el.remove();
+    if (style) style.remove();
+  }
+  stripLoader();
+  document.addEventListener('DOMContentLoaded', stripLoader);
+  if (typeof MutationObserver !== 'undefined' && document.documentElement) {
+    new MutationObserver(stripLoader).observe(document.documentElement, { childList: true, subtree: true });
+  }
+})();
+</script>

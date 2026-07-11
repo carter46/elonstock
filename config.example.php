@@ -1,0 +1,36 @@
+<?php
+/**
+ * Bloombit - Configuration Template
+ * Use as reference. Configure config.php directly or set environment variables.
+ */
+return [
+    'mail' => [
+        'smtp_host' => 'smtp.example.com',
+        'smtp_port' => 587,
+        'smtp_username' => 'your-smtp-username',
+        'smtp_password' => 'your-smtp-password',
+        'smtp_encryption' => 'tls',
+        'from_email' => 'noreply@bloombit.com',
+        'from_name' => 'Site',
+        'reply_to' => 'support@bloombit.com',
+    ],
+    'email_verification' => [
+        'expiry_hours' => 24,
+        'secret' => 'generate-a-random-secret-key-here',
+        'password_reset_expiry_minutes' => 60,
+    ],
+    'site' => [
+        'name' => 'Site',
+        'debug' => false,
+        'timezone' => 'UTC',
+    ],
+    'db' => [
+        'host' => 'localhost',
+        'name' => 'bloombit',
+        'user' => 'db_username',
+        'pass' => 'db_password',
+    ],
+    'admin' => [
+        'user_ids' => [1],
+    ],
+];

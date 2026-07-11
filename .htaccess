@@ -1,0 +1,75 @@
+# Bloombit - Clean URL Routing
+# Requires mod_rewrite enabled
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Protect sensitive config files
+    <FilesMatch "^config\.php$">
+        Require all denied
+    </FilesMatch>
+
+    # Skip rewrite for API and vendor (must be before .php redirect)
+    RewriteRule ^api/ - [L]
+    RewriteRule ^vendor/ - [L]
+    RewriteRule ^scripts/ - [L]
+
+    # Redirect .html and .php URLs to clean URLs (301 permanent) - exclude api, scripts, vendor
+    RewriteCond %{REQUEST_URI} \.(html|php)$
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_URI} !^/scripts/
+    RewriteRule ^(.*)\.(html|php)$ /$1 [R=301,L]
+    # Root -> index.php
+    RewriteRule ^$ index.php [L]
+
+    # Dashboard - router redirects by role; explicit mappings (clean URL -> PHP)
+    RewriteRule ^dashboard/?$ dashboard/index.php [L]
+    RewriteRule ^dashboard/user/dashboard$ dashboard/user/dashboard.php [L]
+    RewriteRule ^dashboard/user/wallet$ dashboard/user/user_wallet.php [L]
+    RewriteRule ^dashboard/user/profile$ dashboard/user/user_profile.php [L]
+    RewriteRule ^dashboard/user/kyc$ dashboard/user/user_kyc.php [L]
+    RewriteRule ^dashboard/user/analytics$ dashboard/user/user_analytics.php [L]
+    RewriteRule ^dashboard/user/transactions$ dashboard/user/transactions.php [L]
+    RewriteRule ^dashboard/user/referrals$ dashboard/user/referrals.php [L]
+    RewriteRule ^dashboard/user/investment-plans$ dashboard/user/investment-plans.php [L]
+    RewriteRule ^dashboard/admin$ dashboard/admin/admin_dashboard.php [L]
+    RewriteRule ^dashboard/admin/activity-log$ dashboard/admin/activity_log.php [L]
+    RewriteRule ^dashboard/admin/audit-log$ dashboard/admin/audit_log.php [L]
+    RewriteRule ^dashboard/admin/users$ dashboard/admin/user_management.php [L]
+    RewriteRule ^dashboard/admin/plans$ dashboard/admin/plan_management.php [L]
+    RewriteRule ^dashboard/admin/addresses$ dashboard/admin/addresses.php [L]
+    RewriteRule ^dashboard/admin/communication$ dashboard/admin/communication_hub.php [L]
+    RewriteRule ^dashboard/admin/kyc$ dashboard/admin/kyc_management.php [L]
+    RewriteRule ^dashboard/admin/ai-config$ dashboard/admin/ai_bot_config.php [L]
+    RewriteRule ^dashboard/admin/settings$ dashboard/admin/settings.php [L]
+
+    # Market detail pages
+    RewriteRule ^markets/([a-z0-9-]+)/?$ market.php?slug=$1 [L,QSA]
+
+    # PWA manifest
+    RewriteRule ^manifest\.webmanifest$ manifest.php [L]
+
+    # Auth pages (clean URL -> PHP)
+    RewriteRule ^login$ login.php [L]
+    RewriteRule ^register$ register.php [L]
+    RewriteRule ^forgot-password$ forgot-password.php [L]
+    RewriteRule ^reset-password$ reset-password.php [L]
+    RewriteRule ^logout$ logout.php [L]
+
+    # Skip rewrite for existing files and directories (static assets: js, css, images)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Generic: try .php first, then .html (for about_us, plans, help_centre, legal_centre, trading_signals)
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+)$ $1.php [L]
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^(.+)$ $1.html [L]
+</IfModule>
+
+# Default index
+DirectoryIndex index.php index.html

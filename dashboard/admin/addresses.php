@@ -1,0 +1,660 @@
+<?php
+require_once __DIR__ . '/../../includes/admin-check.php';
+$currentPage = 'addresses';
+require_once __DIR__ . '/../../includes/helpers.php';
+$siteName = get_site_name();
+
+$pageTitle = $siteName . ' | Payment Methods';
+require_once __DIR__ . '/../../includes/dashboard/admin-layout-start.php';
+?>
+<style>
+.custom-scrollbar::-webkit-scrollbar { width: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+.material-symbols-outlined { font-size: 24px; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; }
+.pm-type-btn { transition: all 0.15s ease; }
+.pm-type-btn:hover { border-color: rgb(var(--primary) / 0.5); background: rgb(var(--primary) / 0.05); }
+.pm-type-btn.selected { border-color: rgb(var(--primary)); background: rgb(var(--primary) / 0.1); }
+.pm-tab { transition: all 0.15s ease; }
+.pm-tab.active { background: white; color: #18181b; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.dark .pm-tab.active { background: #27272a; color: #fafafa; }
+.pm-methods-card { overflow: visible; }
+.pm-methods-table-wrap { overflow-x: auto; overflow-y: visible; }
+</style>
+<?php
+$pageHeading = 'Payment Methods';
+$pageSubtitle = 'Configure crypto, bank transfer, and card options for user deposits and withdrawals.';
+include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
+?>
+<div class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
+<div id="pm-tabs" class="inline-flex gap-1 p-1 bg-slate-100 dark:bg-zinc-800 rounded-lg w-full sm:w-auto overflow-x-auto">
+<button type="button" class="pm-tab active flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-zinc-300 whitespace-nowrap" data-tab="crypto">
+<span class="material-symbols-outlined text-base">currency_bitcoin</span> Crypto <span id="pm-count-crypto" class="text-xs font-bold px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-700">0</span>
+</button>
+<button type="button" class="pm-tab flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-zinc-300 whitespace-nowrap" data-tab="bank">
+<span class="material-symbols-outlined text-base">account_balance</span> Bank Transfer <span id="pm-count-bank" class="text-xs font-bold px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-700">0</span>
+</button>
+<button type="button" class="pm-tab flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-slate-600 dark:text-zinc-300 whitespace-nowrap" data-tab="card">
+<span class="material-symbols-outlined text-base">credit_card</span> Card <span id="pm-count-card" class="text-xs font-bold px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-700">0</span>
+</button>
+</div>
+<button type="button" id="add-method-btn" class="w-full sm:w-fit shrink-0 bg-primary text-zinc-900 px-6 py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all">
+<span class="material-symbols-outlined text-lg">add</span> Add Method
+</button>
+</div>
+<div id="messageContainer" class="mb-4"></div>
+<div class="bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-zinc-800 pm-methods-card">
+<div id="methods-container-crypto" class="pm-tab-panel p-4 sm:p-6">
+<div class="text-center py-8 sm:py-10 text-slate-500">Loading crypto methods...</div>
+</div>
+<div id="methods-container-bank" class="pm-tab-panel hidden p-4 sm:p-6">
+<div class="text-center py-8 sm:py-10 text-slate-500">Loading bank methods...</div>
+</div>
+<div id="methods-container-card" class="pm-tab-panel hidden p-4 sm:p-6">
+<div class="text-center py-8 sm:py-10 text-slate-500">Loading card methods...</div>
+</div>
+</div>
+
+<div id="pm-actions-menu" class="hidden fixed z-[100] py-1 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg shadow-xl min-w-[120px]" role="menu" aria-hidden="true">
+<button type="button" id="pm-action-menu-edit" class="block w-full text-left px-3 py-2 text-sm text-primary hover:bg-slate-50 dark:hover:bg-zinc-700">Edit</button>
+<button type="button" id="pm-action-menu-delete" class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-slate-50 dark:hover:bg-zinc-700">Delete</button>
+</div>
+
+<?php require_once __DIR__ . '/../../includes/dashboard/admin-layout-end.php'; ?>
+
+<!-- Modal -->
+<div id="method-modal" class="fixed inset-0 z-50 hidden">
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="method-modal-backdrop"></div>
+<div id="method-modal-overlay" class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+<div class="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-zinc-800 overflow-hidden relative my-8">
+<div class="p-6 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-3">
+<h2 id="method-modal-title" class="text-xl font-bold">Add Payment Method</h2>
+<button type="button" id="method-modal-close" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800"><span class="material-symbols-outlined">close</span></button>
+</div>
+
+<div id="method-step-type" class="p-6 space-y-4">
+<p class="text-sm text-slate-500">Select the type of payment method to add.</p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<button type="button" class="pm-type-btn border-2 border-slate-200 dark:border-zinc-700 rounded-xl p-4 text-left" data-type="crypto">
+<span class="material-symbols-outlined text-primary mb-2">currency_bitcoin</span>
+<p class="font-bold text-sm">Crypto</p>
+<p class="text-xs text-slate-500 mt-1">Wallet address per coin</p>
+</button>
+<button type="button" class="pm-type-btn border-2 border-slate-200 dark:border-zinc-700 rounded-xl p-4 text-left" data-type="bank">
+<span class="material-symbols-outlined text-primary mb-2">account_balance</span>
+<p class="font-bold text-sm">Bank Transfer</p>
+<p class="text-xs text-slate-500 mt-1">Bank account details</p>
+</button>
+<button type="button" class="pm-type-btn border-2 border-slate-200 dark:border-zinc-700 rounded-xl p-4 text-left" data-type="card">
+<span class="material-symbols-outlined text-primary mb-2">credit_card</span>
+<p class="font-bold text-sm">Card</p>
+<p class="text-xs text-slate-500 mt-1">Visa, Mastercard, Amex</p>
+</button>
+</div>
+</div>
+
+<form id="method-form" class="hidden p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+<input type="hidden" id="method-type" value=""/>
+
+<div id="fields-crypto" class="hidden space-y-4">
+<div>
+<label class="block text-sm font-medium mb-2">Coin</label>
+<div class="flex items-center gap-3 min-w-0">
+<select id="method-coin-id" class="flex-1 min-w-0 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"></select>
+<div id="method-coin-logo" class="w-10 h-10 rounded-full overflow-hidden bg-slate-100 dark:bg-zinc-800 shrink-0 hidden"></div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Wallet Address</label>
+<input type="text" id="method-wallet-address" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2 font-mono text-sm" placeholder="Enter wallet address"/>
+</div>
+</div>
+
+<div id="fields-bank" class="hidden space-y-4">
+<div>
+<label class="block text-sm font-medium mb-2">Label <span class="text-slate-400 font-normal">(optional)</span></label>
+<input type="text" id="method-bank-label" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2" placeholder="e.g. USD Wire"/>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="block text-sm font-medium mb-2">Bank Name <span class="text-red-500">*</span></label>
+<input type="text" id="method-bank-name" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Account Name <span class="text-red-500">*</span></label>
+<input type="text" id="method-account-name" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Account Number <span class="text-red-500">*</span></label>
+<input type="text" id="method-account-number" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2 font-mono text-sm"/>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="block text-sm font-medium mb-2">Routing Number</label>
+<input type="text" id="method-routing-number" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">SWIFT / BIC</label>
+<input type="text" id="method-swift-code" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="block text-sm font-medium mb-2">IBAN</label>
+<input type="text" id="method-iban" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Branch</label>
+<input type="text" id="method-bank-branch" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Bank Address</label>
+<textarea id="method-bank-address" rows="2" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm"></textarea>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Notes</label>
+<textarea id="method-bank-notes" rows="2" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm" placeholder="Optional instructions for users"></textarea>
+</div>
+</div>
+
+<div id="fields-card" class="hidden space-y-4">
+<div>
+<label class="block text-sm font-medium mb-2">Label <span class="text-slate-400 font-normal">(optional)</span></label>
+<input type="text" id="method-card-label" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2" placeholder="e.g. Corporate Visa"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Card Brand <span class="text-red-500">*</span></label>
+<select id="method-card-brand" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2">
+<option value="">Select brand</option>
+<option value="visa">Visa</option>
+<option value="mastercard">Mastercard</option>
+<option value="amex">American Express</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Cardholder Name</label>
+<input type="text" id="method-card-holder" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">Card Number <span class="text-red-500">*</span></label>
+<input type="text" id="method-card-number" inputmode="numeric" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2 font-mono text-sm" placeholder="4111 1111 1111 1111"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-sm font-medium mb-2">Expiry</label>
+<input type="text" id="method-card-expiry" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2" placeholder="MM/YY"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2">CVC</label>
+<input type="text" id="method-card-cvc" inputmode="numeric" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2" placeholder="123"/>
+</div>
+</div>
+</div>
+
+<div class="flex gap-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
+<button type="button" id="method-form-back" class="px-4 py-2 border border-slate-200 dark:border-zinc-700 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-zinc-800">Back</button>
+<button type="button" id="method-modal-cancel" class="flex-1 px-4 py-2 border border-slate-200 dark:border-zinc-700 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-zinc-800">Cancel</button>
+<button type="submit" class="flex-1 px-4 py-2 bg-primary text-zinc-900 rounded-lg font-semibold hover:shadow-lg">Save</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<?php require_once __DIR__ . '/../../includes/app-script.php'; ?>
+<script>
+(function(){
+var allMethods = [];
+var allCoins = [];
+var activeTab = 'crypto';
+var modal = document.getElementById('method-modal');
+var stepType = document.getElementById('method-step-type');
+var methodForm = document.getElementById('method-form');
+var editingId = null;
+var selectedType = null;
+var pmMenuId = null;
+var pmActionsMenu = document.getElementById('pm-actions-menu');
+
+function escapeHtml(text) {
+  if (text == null) return '';
+  var d = document.createElement('div');
+  d.textContent = String(text);
+  return d.innerHTML;
+}
+
+function showMessage(msg, type) {
+  var el = document.getElementById('messageContainer');
+  var bg = type === 'success' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400';
+  el.innerHTML = '<div class="' + bg + ' px-4 py-3 rounded-lg text-sm">' + escapeHtml(msg) + '</div>';
+  setTimeout(function(){ el.innerHTML = ''; }, 5000);
+}
+
+function typeLabel(t) {
+  if (t === 'crypto') return 'Crypto';
+  if (t === 'bank') return 'Bank Transfer';
+  if (t === 'card') return 'Card';
+  return t;
+}
+
+function methodSummary(m) {
+  if (m.method_type === 'crypto') {
+    return '<span class="font-mono text-xs break-all">' + escapeHtml(m.wallet_address || m.address || '') + '</span>';
+  }
+  if (m.method_type === 'bank') {
+    var parts = [m.bank_name, m.account_name, m.account_number ? '•••' + String(m.account_number).slice(-4) : ''].filter(Boolean);
+    return escapeHtml(parts.join(' · '));
+  }
+  var brand = (m.card_brand || 'card').toUpperCase();
+  var num = m.card_number ? '•••• ' + String(m.card_number).slice(-4) : '';
+  return escapeHtml(brand + (num ? ' — ' + num : ''));
+}
+
+function loadCoins() {
+  return fetch('/api/admin/coins.php').then(function(r){ return r.json(); }).then(function(d){
+    if (d.success && d.coins) allCoins = d.coins;
+  });
+}
+
+function switchTab(tab) {
+  if (!['crypto', 'bank', 'card'].includes(tab)) return;
+  activeTab = tab;
+  document.querySelectorAll('.pm-tab').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
+  });
+  document.querySelectorAll('.pm-tab-panel').forEach(function(panel){
+    panel.classList.toggle('hidden', panel.id !== 'methods-container-' + tab);
+  });
+}
+
+function updateTabCounts() {
+  var counts = { crypto: 0, bank: 0, card: 0 };
+  allMethods.forEach(function(m){
+    if (counts[m.method_type] != null) counts[m.method_type]++;
+  });
+  ['crypto', 'bank', 'card'].forEach(function(t){
+    var el = document.getElementById('pm-count-' + t);
+    if (el) el.textContent = String(counts[t]);
+  });
+}
+
+function loadMethods() {
+  return fetch('/api/admin/addresses.php').then(function(r){ return r.json(); }).then(function(d){
+    if (d.success && (d.methods || d.addresses)) {
+      allMethods = d.methods || d.addresses;
+      updateTabCounts();
+      renderMethods();
+    } else {
+      ['crypto', 'bank', 'card'].forEach(function(t){
+        var c = document.getElementById('methods-container-' + t);
+        if (c) c.innerHTML = '<div class="text-center py-10 text-red-500">Failed to load payment methods</div>';
+      });
+    }
+  }).catch(function(){
+    ['crypto', 'bank', 'card'].forEach(function(t){
+      var c = document.getElementById('methods-container-' + t);
+      if (c) c.innerHTML = '<div class="text-center py-10 text-red-500">Error loading payment methods</div>';
+    });
+  });
+}
+
+function closeAllDropdowns() {
+  if (pmActionsMenu) {
+    pmActionsMenu.classList.add('hidden');
+    pmActionsMenu.setAttribute('aria-hidden', 'true');
+  }
+  pmMenuId = null;
+}
+
+function openActionsMenu(btn, id) {
+  if (!pmActionsMenu || !btn) return;
+  pmMenuId = id;
+  pmActionsMenu.classList.remove('hidden');
+  pmActionsMenu.setAttribute('aria-hidden', 'false');
+  pmActionsMenu.style.visibility = 'hidden';
+  pmActionsMenu.style.top = '0';
+  pmActionsMenu.style.left = '0';
+  requestAnimationFrame(function(){
+    var rect = btn.getBoundingClientRect();
+    var menuW = pmActionsMenu.offsetWidth;
+    var menuH = pmActionsMenu.offsetHeight;
+    var left = rect.right - menuW;
+    var top = rect.bottom + 4;
+    if (left < 8) left = 8;
+    if (left + menuW > window.innerWidth - 8) left = window.innerWidth - menuW - 8;
+    if (top + menuH > window.innerHeight - 8) top = rect.top - menuH - 4;
+    if (top < 8) top = 8;
+    pmActionsMenu.style.left = left + 'px';
+    pmActionsMenu.style.top = top + 'px';
+    pmActionsMenu.style.visibility = 'visible';
+  });
+}
+
+function bindTableActions(container) {
+  if (!container) return;
+  container.querySelectorAll('.pm-actions-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var id = parseInt(btn.getAttribute('data-id'), 10);
+      if (pmActionsMenu && !pmActionsMenu.classList.contains('hidden') && pmMenuId === id) {
+        closeAllDropdowns();
+        return;
+      }
+      closeAllDropdowns();
+      openActionsMenu(btn, id);
+    });
+  });
+}
+
+function actionsCell(id) {
+  return '<button type="button" class="pm-actions-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-500" data-id="' + id + '" aria-label="Actions"><span class="material-symbols-outlined text-lg">more_vert</span></button>';
+}
+
+function renderCryptoTable(methods) {
+  var c = document.getElementById('methods-container-crypto');
+  if (!c) return;
+  if (!methods.length) {
+    c.innerHTML = '<div class="text-center py-8 sm:py-10 text-slate-500">No crypto methods yet. Add a wallet address for each coin.</div>';
+    return;
+  }
+  function safeLogo(url) { return (url && /^https?:\/\//i.test(url)) ? '<img src="' + url.replace(/"/g,'&quot;') + '" alt="" class="w-8 h-8 rounded-full object-cover shrink-0"/>' : ''; }
+  var rows = methods.map(function(m){
+    var logo = safeLogo(m.logo);
+    var icon = logo || '<span class="material-symbols-outlined text-slate-400 text-xl">currency_bitcoin</span>';
+    var name = (m.display_name || m.symbol || '') + ' (' + (m.symbol || '') + ')';
+    return '<tr class="hover:bg-slate-50 dark:hover:bg-zinc-800/50">' +
+      '<td class="px-4 sm:px-6 py-3 text-sm">' + m.id + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-sm"><div class="flex items-center gap-3">' + icon + '<span class="font-semibold">' + escapeHtml(name) + '</span></div></td>' +
+      '<td class="px-4 sm:px-6 py-3 text-sm max-w-md"><span class="font-mono text-xs break-all">' + escapeHtml(m.wallet_address || m.address || '') + '</span></td>' +
+      '<td class="px-4 sm:px-6 py-3 text-right">' + actionsCell(m.id) + '</td>' +
+    '</tr>';
+  }).join('');
+  c.innerHTML = '<div class="pm-methods-table-wrap"><table class="w-full text-left"><thead class="bg-slate-50 dark:bg-zinc-800"><tr><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">ID</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">Coin</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">Wallet Address</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500 text-right">Actions</th></tr></thead><tbody class="divide-y divide-slate-200 dark:divide-zinc-800">' + rows + '</tbody></table></div>';
+  bindTableActions(c);
+}
+
+function renderBankTable(methods) {
+  var c = document.getElementById('methods-container-bank');
+  if (!c) return;
+  if (!methods.length) {
+    c.innerHTML = '<div class="text-center py-8 sm:py-10 text-slate-500">No bank transfer methods yet. Add bank account details for deposits and withdrawals.</div>';
+    return;
+  }
+  var rows = methods.map(function(m){
+    var name = m.label || m.bank_name || 'Bank Transfer';
+    var summary = methodSummary(m);
+    return '<tr class="hover:bg-slate-50 dark:hover:bg-zinc-800/50">' +
+      '<td class="px-4 sm:px-6 py-3 text-sm">' + m.id + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-sm font-semibold">' + escapeHtml(name) + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-sm max-w-md">' + summary + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-right">' + actionsCell(m.id) + '</td>' +
+    '</tr>';
+  }).join('');
+  c.innerHTML = '<div class="pm-methods-table-wrap"><table class="w-full text-left"><thead class="bg-slate-50 dark:bg-zinc-800"><tr><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">ID</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">Label</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">Bank Details</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500 text-right">Actions</th></tr></thead><tbody class="divide-y divide-slate-200 dark:divide-zinc-800">' + rows + '</tbody></table></div>';
+  bindTableActions(c);
+}
+
+function renderCardTable(methods) {
+  var c = document.getElementById('methods-container-card');
+  if (!c) return;
+  if (!methods.length) {
+    c.innerHTML = '<div class="text-center py-8 sm:py-10 text-slate-500">No card methods yet. Add Visa, Mastercard, or Amex details.</div>';
+    return;
+  }
+  var rows = methods.map(function(m){
+    var name = m.label || ((m.card_brand || 'card').toUpperCase() + ' Card');
+    var summary = methodSummary(m);
+    return '<tr class="hover:bg-slate-50 dark:hover:bg-zinc-800/50">' +
+      '<td class="px-4 sm:px-6 py-3 text-sm">' + m.id + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-sm font-semibold">' + escapeHtml(name) + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-sm max-w-md">' + summary + '</td>' +
+      '<td class="px-4 sm:px-6 py-3 text-right">' + actionsCell(m.id) + '</td>' +
+    '</tr>';
+  }).join('');
+  c.innerHTML = '<div class="pm-methods-table-wrap"><table class="w-full text-left"><thead class="bg-slate-50 dark:bg-zinc-800"><tr><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">ID</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">Label</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500">Card Details</th><th class="px-4 sm:px-6 py-3 text-xs font-bold uppercase text-slate-500 text-right">Actions</th></tr></thead><tbody class="divide-y divide-slate-200 dark:divide-zinc-800">' + rows + '</tbody></table></div>';
+  bindTableActions(c);
+}
+
+function renderMethods() {
+  var crypto = allMethods.filter(function(m){ return m.method_type === 'crypto'; });
+  var bank = allMethods.filter(function(m){ return m.method_type === 'bank'; });
+  var card = allMethods.filter(function(m){ return m.method_type === 'card'; });
+  renderCryptoTable(crypto);
+  renderBankTable(bank);
+  renderCardTable(card);
+  switchTab(activeTab);
+}
+
+function getCoinsAlreadyUsed() {
+  return allMethods.filter(function(m){ return m.method_type === 'crypto'; }).map(function(m){ return m.coin_id; });
+}
+
+function showTypeStep() {
+  stepType.classList.remove('hidden');
+  methodForm.classList.add('hidden');
+  selectedType = null;
+  document.querySelectorAll('.pm-type-btn').forEach(function(b){ b.classList.remove('selected'); });
+}
+
+function showFormStep(type) {
+  selectedType = type;
+  document.getElementById('method-type').value = type;
+  stepType.classList.add('hidden');
+  methodForm.classList.remove('hidden');
+  document.getElementById('fields-crypto').classList.toggle('hidden', type !== 'crypto');
+  document.getElementById('fields-bank').classList.toggle('hidden', type !== 'bank');
+  document.getElementById('fields-card').classList.toggle('hidden', type !== 'card');
+}
+
+function populateCryptoCoins(currentCoinId) {
+  var sel = document.getElementById('method-coin-id');
+  var used = getCoinsAlreadyUsed();
+  var options = allCoins.map(function(coin){
+    var usedAlready = used.indexOf(coin.id) >= 0;
+    var isCurrent = currentCoinId === coin.id;
+    if (!editingId && usedAlready) return '';
+    return '<option value="' + coin.id + '"' + (isCurrent ? ' selected' : '') + '>' + escapeHtml(coin.display_name) + ' (' + escapeHtml(coin.symbol) + ')' + (usedAlready && !isCurrent ? ' — already added' : '') + '</option>';
+  }).filter(function(o){ return o.length > 0; });
+  sel.innerHTML = '<option value="">Select a coin</option>' + options.join('');
+  var logoEl = document.getElementById('method-coin-logo');
+  function updateLogo() {
+    var id = parseInt(sel.value, 10);
+    var coin = allCoins.find(function(c){ return c.id === id; });
+    if (coin && coin.logo && /^https?:\/\//i.test(coin.logo)) {
+      logoEl.innerHTML = '<img src="' + coin.logo.replace(/"/g,'&quot;') + '" alt="" class="w-full h-full object-cover"/>';
+      logoEl.classList.remove('hidden');
+    } else { logoEl.innerHTML = ''; logoEl.classList.add('hidden'); }
+  }
+  sel.onchange = updateLogo;
+  updateLogo();
+}
+
+function clearFormFields() {
+  ['method-wallet-address','method-bank-label','method-bank-name','method-account-name','method-account-number','method-routing-number','method-swift-code','method-iban','method-bank-branch','method-bank-address','method-bank-notes','method-card-label','method-card-holder','method-card-number','method-card-expiry','method-card-cvc'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('method-card-brand').value = '';
+}
+
+function fillFormFromMethod(m) {
+  if (m.method_type === 'crypto') {
+    populateCryptoCoins(m.coin_id);
+    document.getElementById('method-wallet-address').value = m.wallet_address || m.address || '';
+  } else if (m.method_type === 'bank') {
+    document.getElementById('method-bank-label').value = m.label || '';
+    document.getElementById('method-bank-name').value = m.bank_name || '';
+    document.getElementById('method-account-name').value = m.account_name || '';
+    document.getElementById('method-account-number').value = m.account_number || '';
+    document.getElementById('method-routing-number').value = m.routing_number || '';
+    document.getElementById('method-swift-code').value = m.swift_code || '';
+    document.getElementById('method-iban').value = m.iban || '';
+    document.getElementById('method-bank-branch').value = m.bank_branch || '';
+    document.getElementById('method-bank-address').value = m.bank_address || '';
+    document.getElementById('method-bank-notes').value = m.bank_notes || '';
+  } else if (m.method_type === 'card') {
+    document.getElementById('method-card-label').value = m.label || '';
+    document.getElementById('method-card-brand').value = m.card_brand || '';
+    document.getElementById('method-card-holder').value = m.card_holder_name || '';
+    document.getElementById('method-card-number').value = m.card_number || '';
+    document.getElementById('method-card-expiry').value = m.card_expiry || '';
+    document.getElementById('method-card-cvc').value = m.card_cvc || '';
+  }
+}
+
+function openModal(title, methodId) {
+  editingId = methodId || null;
+  document.getElementById('method-modal-title').textContent = title;
+  clearFormFields();
+  if (methodId) {
+    var m = allMethods.find(function(x){ return x.id === methodId; });
+    if (!m) return;
+    showFormStep(m.method_type);
+    fillFormFromMethod(m);
+  } else {
+    showTypeStep();
+  }
+  modal.classList.remove('hidden');
+}
+
+function closeModal() {
+  modal.classList.add('hidden');
+  editingId = null;
+  selectedType = null;
+}
+
+function openAddForType(type) {
+  if (type === 'crypto') {
+    var used = getCoinsAlreadyUsed();
+    if (allCoins.length > 0 && used.length >= allCoins.length) {
+      showMessage('All coins already have crypto methods. Delete one first to add another.', 'error');
+      return;
+    }
+    populateCryptoCoins(null);
+  }
+  editingId = null;
+  document.getElementById('method-modal-title').textContent = 'Add ' + typeLabel(type) + ' Method';
+  clearFormFields();
+  showFormStep(type);
+  modal.classList.remove('hidden');
+}
+
+function openAdd() {
+  if (allCoins.length === 0) { loadCoins().then(openAdd); return; }
+  openAddForType(activeTab);
+}
+
+function openEdit(id) {
+  if (allCoins.length === 0) { loadCoins().then(function(){ openEdit(id); }); return; }
+  var m = allMethods.find(function(x){ return x.id === id; });
+  if (!m) return;
+  switchTab(m.method_type);
+  openModal('Edit ' + typeLabel(m.method_type) + ' Method', id);
+}
+
+function buildPayload() {
+  var type = editingId ? (allMethods.find(function(m){ return m.id === editingId; }) || {}).method_type : selectedType;
+  if (!type) return null;
+  var payload = { method_type: type };
+  if (type === 'crypto') {
+    payload.coin_id = parseInt(document.getElementById('method-coin-id').value, 10);
+    payload.wallet_address = document.getElementById('method-wallet-address').value.trim();
+    if (!payload.coin_id || !payload.wallet_address) return { error: 'Coin and wallet address are required' };
+  } else if (type === 'bank') {
+    payload.label = document.getElementById('method-bank-label').value.trim();
+    payload.bank_name = document.getElementById('method-bank-name').value.trim();
+    payload.account_name = document.getElementById('method-account-name').value.trim();
+    payload.account_number = document.getElementById('method-account-number').value.trim();
+    payload.routing_number = document.getElementById('method-routing-number').value.trim();
+    payload.swift_code = document.getElementById('method-swift-code').value.trim();
+    payload.iban = document.getElementById('method-iban').value.trim();
+    payload.bank_branch = document.getElementById('method-bank-branch').value.trim();
+    payload.bank_address = document.getElementById('method-bank-address').value.trim();
+    payload.bank_notes = document.getElementById('method-bank-notes').value.trim();
+    if (!payload.bank_name || !payload.account_name || !payload.account_number) return { error: 'Bank name, account name, and account number are required' };
+  } else {
+    payload.label = document.getElementById('method-card-label').value.trim();
+    payload.card_brand = document.getElementById('method-card-brand').value;
+    payload.card_holder_name = document.getElementById('method-card-holder').value.trim();
+    payload.card_number = document.getElementById('method-card-number').value.trim();
+    payload.card_expiry = document.getElementById('method-card-expiry').value.trim();
+    payload.card_cvc = document.getElementById('method-card-cvc').value.trim();
+    if (!payload.card_brand || !payload.card_number) return { error: 'Card brand and number are required' };
+  }
+  return payload;
+}
+
+function saveMethod(e) {
+  e.preventDefault();
+  var payload = buildPayload();
+  if (!payload) { showMessage('Select a payment method type', 'error'); return; }
+  if (payload.error) { showMessage(payload.error, 'error'); return; }
+  var url = '/api/admin/addresses.php';
+  var method = editingId ? 'PUT' : 'POST';
+  if (editingId) url += '?id=' + editingId;
+  fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success) { closeModal(); showMessage(editingId ? 'Payment method updated' : 'Payment method added', 'success'); loadMethods(); }
+      else showMessage(d.error || 'Failed', 'error');
+    })
+    .catch(function(){ showMessage('Error', 'error'); });
+}
+
+function confirmDelete(id) {
+  if (!confirm('Delete this payment method? This cannot be undone.')) return;
+  fetch('/api/admin/addresses.php?id=' + id, { method: 'DELETE' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.success) { showMessage('Payment method deleted', 'success'); loadMethods(); }
+      else showMessage(d.error || 'Failed', 'error');
+    })
+    .catch(function(){ showMessage('Error', 'error'); });
+}
+
+document.getElementById('add-method-btn').addEventListener('click', openAdd);
+document.querySelectorAll('.pm-tab').forEach(function(btn){
+  btn.addEventListener('click', function(){ switchTab(btn.getAttribute('data-tab')); });
+});
+var pmMenuEdit = document.getElementById('pm-action-menu-edit');
+var pmMenuDelete = document.getElementById('pm-action-menu-delete');
+if (pmMenuEdit) pmMenuEdit.addEventListener('click', function(e){
+  e.stopPropagation();
+  if (pmMenuId) openEdit(pmMenuId);
+  closeAllDropdowns();
+});
+if (pmMenuDelete) pmMenuDelete.addEventListener('click', function(e){
+  e.stopPropagation();
+  if (pmMenuId) confirmDelete(pmMenuId);
+  closeAllDropdowns();
+});
+document.addEventListener('click', closeAllDropdowns);
+window.addEventListener('resize', closeAllDropdowns);
+window.addEventListener('scroll', closeAllDropdowns, true);
+document.getElementById('method-modal-backdrop').addEventListener('click', closeModal);
+document.getElementById('method-modal-overlay').addEventListener('click', function(ev){ if (ev.target.id === 'method-modal-overlay') closeModal(); });
+document.getElementById('method-modal-cancel').addEventListener('click', closeModal);
+document.getElementById('method-modal-close').addEventListener('click', closeModal);
+document.getElementById('method-form-back').addEventListener('click', function(){ if (editingId) closeModal(); else showTypeStep(); });
+document.getElementById('method-form').addEventListener('submit', saveMethod);
+document.querySelectorAll('.pm-type-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var type = btn.getAttribute('data-type');
+    if (type === 'crypto') {
+      var used = getCoinsAlreadyUsed();
+      if (allCoins.length > 0 && used.length >= allCoins.length) {
+        showMessage('All coins already have crypto methods. Delete one first or add a bank/card method.', 'error');
+        return;
+      }
+      populateCryptoCoins(null);
+    }
+    showFormStep(type);
+  });
+});
+
+Promise.all([loadCoins(), loadMethods()]);
+})();
+</script>
+<?php require_once __DIR__ . '/../../includes/dashboard/admin-layout-close.php'; ?>
