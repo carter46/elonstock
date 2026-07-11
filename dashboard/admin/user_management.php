@@ -115,7 +115,7 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 <thead class="bg-slate-50 dark:bg-zinc-800/50 border-b border-slate-200 dark:border-zinc-800">
 <tr>
 <th class="px-6 py-4 w-10">
-<input class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<input id="select-all-users" class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox" aria-label="Select all users on this page"/>
 </th>
 <th class="px-6 py-4 font-semibold text-slate-600 dark:text-zinc-400">Name</th>
 <th class="px-6 py-4 font-semibold text-slate-600 dark:text-zinc-400">Total Balance</th>
@@ -134,7 +134,7 @@ foreach ($users as $i => $u):
     $kc = $kycClasses[$u['kyc_status']] ?? 'bg-slate-100 dark:bg-zinc-800 text-slate-500';
 ?>
 <tr class="user-row hover:bg-primary/5 cursor-pointer transition-colors border-l-4 border-l-transparent" data-user-id="<?php echo $u['id']; ?>">
-<td class="px-6 py-4" onclick="event.stopPropagation()"><input class="rounded border-slate-300 text-primary focus:ring-primary user-checkbox" type="checkbox"/></td>
+<td class="px-6 py-4" onclick="event.stopPropagation()"><input class="rounded border-slate-300 text-primary focus:ring-primary user-checkbox" type="checkbox" value="<?php echo $u['id']; ?>" data-user-id="<?php echo $u['id']; ?>" aria-label="Select <?php echo htmlspecialchars($u['name']); ?>"/></td>
 <td class="px-6 py-4">
 <div class="flex items-center gap-3">
 <?php if (!empty($u['avatar_url'])): ?><img src="<?php echo htmlspecialchars($u['avatar_url']); ?>" alt="" class="w-9 h-9 rounded-full object-cover shrink-0"/><?php else: ?><div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs <?php echo $avClass; ?> shrink-0"><?php echo htmlspecialchars($initials); ?></div><?php endif; ?>
@@ -227,24 +227,16 @@ $baseUrl = '/dashboard/admin/users' . ($q ? '?' . $q . '&' : '?');
 <!-- Floating Batch Actions Bar (Visible when rows selected) -->
 <div id="batch-actions-bar" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 dark:bg-zinc-800 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 z-50 hidden">
 <div class="flex items-center gap-2 pr-6 border-r border-zinc-700">
-<span class="bg-primary text-background-dark w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
-<span class="text-sm font-medium">User Selected</span>
+<span id="batch-selected-count" class="bg-primary text-background-dark w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+<span id="batch-selected-label" class="text-sm font-medium">Users Selected</span>
 </div>
 <div class="flex items-center gap-4">
-<button class="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-lg">mail</span>
-                Send Email
-            </button>
-<button class="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-lg">account_balance_wallet</span>
-                Adjust Balance
-            </button>
-<button class="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
+<button type="button" id="batch-delete-btn" class="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
 <span class="material-symbols-outlined text-lg">delete</span>
-                Delete
+                Delete Selected
             </button>
 </div>
-<button class="ml-4 p-1 hover:bg-zinc-700 rounded-full text-zinc-400">
+<button type="button" id="batch-bar-close" class="ml-4 p-1 hover:bg-zinc-700 rounded-full text-zinc-400" aria-label="Clear selection">
 <span class="material-symbols-outlined text-sm">close</span>
 </button>
 </div>
@@ -695,6 +687,92 @@ document.getElementById('drawer-avatar-input').addEventListener('change', functi
     }).catch(function(){ alert('Upload failed'); });
   this.value = '';
 });
+
+(function initBulkUserActions() {
+  var batchBar = document.getElementById('batch-actions-bar');
+  var selectAll = document.getElementById('select-all-users');
+  var countEl = document.getElementById('batch-selected-count');
+  var labelEl = document.getElementById('batch-selected-label');
+  var deleteBtn = document.getElementById('batch-delete-btn');
+  var closeBtn = document.getElementById('batch-bar-close');
+  if (!batchBar) return;
+
+  function getCheckboxes() {
+    return Array.prototype.slice.call(document.querySelectorAll('.user-checkbox'));
+  }
+
+  function getSelectedIds() {
+    return getCheckboxes().filter(function(cb) { return cb.checked; }).map(function(cb) {
+      return parseInt(cb.getAttribute('data-user-id') || cb.value, 10);
+    }).filter(function(id) { return id > 0; });
+  }
+
+  function updateBatchBar() {
+    var ids = getSelectedIds();
+    var n = ids.length;
+    if (countEl) countEl.textContent = String(n);
+    if (labelEl) labelEl.textContent = n === 1 ? 'User Selected' : 'Users Selected';
+    batchBar.classList.toggle('hidden', n === 0);
+    if (selectAll) {
+      var boxes = getCheckboxes();
+      selectAll.checked = boxes.length > 0 && boxes.every(function(cb) { return cb.checked; });
+      selectAll.indeterminate = n > 0 && n < boxes.length;
+    }
+  }
+
+  function clearSelection() {
+    getCheckboxes().forEach(function(cb) { cb.checked = false; });
+    if (selectAll) { selectAll.checked = false; selectAll.indeterminate = false; }
+    updateBatchBar();
+  }
+
+  getCheckboxes().forEach(function(cb) {
+    cb.addEventListener('change', updateBatchBar);
+  });
+
+  if (selectAll) {
+    selectAll.addEventListener('change', function() {
+      var checked = selectAll.checked;
+      getCheckboxes().forEach(function(cb) { cb.checked = checked; });
+      updateBatchBar();
+    });
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', clearSelection);
+
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', function() {
+      var ids = getSelectedIds();
+      if (!ids.length) return;
+      var msg = ids.length === 1
+        ? 'Permanently delete this user? This cannot be undone.'
+        : 'Permanently delete ' + ids.length + ' users? This cannot be undone.';
+      if (!confirm(msg)) return;
+      deleteBtn.disabled = true;
+      fetch('/api/admin/users.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'bulk_delete', user_ids: ids })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (res.success) {
+            var skipped = (res.data && res.data.skipped) ? res.data.skipped : [];
+            if (skipped.length) {
+              alert((res.data.message || 'Done') + '\n\nSkipped:\n' + skipped.map(function(s) {
+                return '#' + s.id + ': ' + (s.reason || 'skipped');
+              }).join('\n'));
+            }
+            window.location.reload();
+          } else {
+            alert(res.error || 'Bulk delete failed');
+          }
+        })
+        .catch(function() { alert('Request failed'); })
+        .finally(function() { deleteBtn.disabled = false; });
+    });
+  }
+})();
 })();
 </script>
 <?php require_once __DIR__ . '/../../includes/dashboard/admin-layout-close.php'; ?>

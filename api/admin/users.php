@@ -315,6 +315,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'bulk_delete') {
+        $rawIds = $input['user_ids'] ?? [];
+        if (!is_array($rawIds) || count($rawIds) === 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'No users selected']);
+            exit;
+        }
+        $ids = array_values(array_unique(array_filter(array_map('intval', $rawIds), static fn($id) => $id > 0)));
+        if (count($ids) === 0) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'No valid user IDs']);
+            exit;
+        }
+        $currentAdminId = (int) ($_SESSION['user_id'] ?? 0);
+        $deleted = 0;
+        $skipped = [];
+        $delStmt = $pdo->prepare('SELECT id, email, name, role, active FROM users WHERE id = ?');
+        $deleteStmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
+
+        foreach ($ids as $userId) {
+            if ($userId === $currentAdminId) {
+                $skipped[] = ['id' => $userId, 'reason' => 'Cannot delete your own account'];
+                continue;
+            }
+            $delStmt->execute([$userId]);
+            $row = $delStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) {
+                $skipped[] = ['id' => $userId, 'reason' => 'User not found'];
+                continue;
+            }
+            if (($row['role'] ?? '') === 'admin') {
+                $skipped[] = ['id' => $userId, 'reason' => 'Cannot delete admin user'];
+                continue;
+            }
+            $deleteStmt->execute([$userId]);
+            admin_audit_log(
+                $pdo,
+                'delete',
+                'user',
+                $userId,
+                'Bulk deleted user #' . $userId . ': ' . ($row['email'] ?? ''),
+                $row,
+                null
+            );
+            $deleted++;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'message' => $deleted . ' user' . ($deleted === 1 ? '' : 's') . ' deleted',
+                'deleted' => $deleted,
+                'skipped' => $skipped,
+            ],
+        ]);
+        exit;
+    }
+
     $userId = isset($input['user_id']) ? (int) $input['user_id'] : 0;
     if ($userId <= 0) {
         http_response_code(400);
