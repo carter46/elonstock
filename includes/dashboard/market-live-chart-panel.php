@@ -13,12 +13,15 @@ $coingeckoId = $instrument['coingecko_id'] ?? '';
 $chartSymbol = htmlspecialchars($instrument['symbol'] ?? '', ENT_QUOTES, 'UTF-8');
 $pairLabel = htmlspecialchars($instrument['pair_label'] ?? $instrument['name'] ?? '', ENT_QUOTES, 'UTF-8');
 $instrumentName = htmlspecialchars($instrument['name'] ?? '', ENT_QUOTES, 'UTF-8');
+$chartCompact = !empty($marketChartCompact);
 ?>
 <div class="glass-panel rounded-xl overflow-hidden min-w-0">
+<?php if (!$chartCompact): ?>
 <div class="p-5 md:p-6 border-b border-low">
 <h3 class="text-lg font-bold text-text-primary">Live Price Chart</h3>
 <p class="text-sm text-text-secondary mt-1"><?php echo $pairLabel; ?> — same live feed as our public market page.</p>
 </div>
+<?php endif; ?>
 <div class="p-4 md:p-6">
 <div class="market-detail-chart-wrap plan-market-chart-wrap rounded-xl border border-low bg-[#F7F8FA] dark:bg-surface-container p-4 md:p-6 min-w-0">
 <?php if ($isCrypto && $coingeckoId): ?>
@@ -35,7 +38,7 @@ $instrumentName = htmlspecialchars($instrument['name'] ?? '', ENT_QUOTES, 'UTF-8
 <div class="crypto-change font-data-mono text-sm text-gray-400">--</div>
 </div>
 </div>
-<?php else: ?>
+<?php elseif (!$chartCompact): ?>
 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
 <div>
 <div class="font-bold text-surface-container-lowest dark:text-text-primary text-lg"><?php echo $instrumentName; ?></div>

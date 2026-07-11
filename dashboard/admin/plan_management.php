@@ -21,7 +21,7 @@ try {
     $planStats['avg_payout'] = $avgRow && $avgRow['avg_yield'] ? number_format((float)$avgRow['avg_yield'], 1) : '0';
     
     $planStatsById = [];
-    $stmt2 = $pdo->query('SELECT plan_id, COUNT(*) AS users, COALESCE(SUM(amount),0) AS capital FROM user_investments WHERE status="active" GROUP BY plan_id');
+    $stmt2 = $pdo->query('SELECT plan_id, COUNT(*) AS users, COALESCE(SUM(amount),0) AS capital FROM user_investments WHERE status IN (\'active\', \'paused\') GROUP BY plan_id');
     while ($r = $stmt2->fetch(PDO::FETCH_ASSOC)) {
         $planStatsById[(int)$r['plan_id']] = ['users' => (int)$r['users'], 'capital' => (float)$r['capital']];
     }
@@ -144,7 +144,7 @@ foreach ($adminPlans as $idx => $p):
 <button type="button" class="plan-delete-btn w-10 h-10 rounded-lg flex items-center justify-center border border-slate-200 dark:border-zinc-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600" data-plan-id="<?php echo (int)$p['id']; ?>" data-plan-name="<?php echo htmlspecialchars($p['name']); ?>">
 <span class="material-symbols-outlined text-sm">delete</span>
 </button>
-<label class="relative inline-flex items-center cursor-pointer" title="<?php echo $activeUsers > 0 ? 'Cannot disable: plan has ' . $activeUsers . ' active user(s)' : ''; ?>">
+<label class="relative inline-flex items-center cursor-pointer" title="<?php echo $activeUsers > 0 ? 'Cannot disable: plan has ' . $activeUsers . ' active or paused investment(s)' : ''; ?>">
 <input class="sr-only peer plan-enabled-toggle" type="checkbox" data-plan-id="<?php echo (int)$p['id']; ?>" data-active-users="<?php echo $activeUsers; ?>" <?php echo $enabled ? 'checked' : ''; ?> <?php echo $activeUsers > 0 ? 'disabled' : ''; ?>/>
 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
 </label>
@@ -430,7 +430,7 @@ if (drawer) {
       var id = btn.getAttribute('data-plan-id');
       var name = btn.getAttribute('data-plan-name') || 'this plan';
       if (!id) return;
-      if (!confirm('Delete ' + name + '?\\n\\nThis can only delete plans with NO investment history. Otherwise, disable the plan instead.')) return;
+      if (!confirm('Delete ' + name + '?\\n\\nAllowed when no users have active or paused investments on this plan. Completed, cancelled, or liquidated history will be removed with the plan.')) return;
       fetch('/api/admin/plans.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -448,7 +448,7 @@ if (drawer) {
       var id = cb.getAttribute('data-plan-id');
       var activeUsers = parseInt(cb.getAttribute('data-active-users'), 10) || 0;
       var enabled = cb.checked;
-      if (!enabled && activeUsers > 0) { cb.checked = true; alert('Cannot disable: plan has ' + activeUsers + ' active user(s)'); return; }
+      if (!enabled && activeUsers > 0) { cb.checked = true; alert('Cannot disable: plan has ' + activeUsers + ' active or paused investment(s)'); return; }
       fetch('/api/admin/plans.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

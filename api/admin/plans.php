@@ -70,12 +70,37 @@ function admin_audit_fetch_plan(PDO $pdo, int $id): ?array
     return $row ?: null;
 }
 
+/** Investments that still block plan disable/delete (existing users with active or paused plans). */
+function admin_plan_live_investment_count(PDO $pdo, int $planId): int
+{
+    $stmt = $pdo->prepare(
+        "SELECT COUNT(*)
+         FROM user_investments ui
+         INNER JOIN users u ON u.id = ui.user_id
+         WHERE ui.plan_id = ? AND ui.status IN ('active', 'paused')"
+    );
+    $stmt->execute([$planId]);
+    return (int) $stmt->fetchColumn();
+}
+
+/** Remove investment rows whose user was already deleted (orphans without FK cascade). */
+function admin_plan_cleanup_orphan_investments(PDO $pdo, int $planId): int
+{
+    $stmt = $pdo->prepare(
+        'DELETE ui FROM user_investments ui
+         LEFT JOIN users u ON u.id = ui.user_id
+         WHERE ui.plan_id = ? AND u.id IS NULL'
+    );
+    $stmt->execute([$planId]);
+    return $stmt->rowCount();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
     $action = trim((string)($input['action'] ?? ''));
     $id = isset($input['id']) ? (int) $input['id'] : 0;
 
-    // Delete plan (safe: only if there are no investments at all for the plan)
+    // Delete plan when no live investments remain (active/paused on existing users).
     if ($action === 'delete') {
         if ($id <= 0) {
             http_response_code(400);
@@ -83,14 +108,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         try {
-            $cnt = $pdo->prepare('SELECT COUNT(*) FROM user_investments WHERE plan_id = ?');
-            $cnt->execute([$id]);
-            $total = (int) $cnt->fetchColumn();
-            if ($total > 0) {
+            $liveCount = admin_plan_live_investment_count($pdo, $id);
+            if ($liveCount > 0) {
                 http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'Cannot delete: this plan has ' . $total . ' investment record(s). Disable it instead to preserve history.']);
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'Cannot delete: this plan still has ' . $liveCount . ' active or paused investment(s). Cancel or complete them first, or disable the plan instead.',
+                ]);
                 exit;
             }
+
+            $orphansRemoved = admin_plan_cleanup_orphan_investments($pdo, $id);
+
+            $histStmt = $pdo->prepare('SELECT COUNT(*) FROM user_investments WHERE plan_id = ?');
+            $histStmt->execute([$id]);
+            $historicalCount = (int) $histStmt->fetchColumn();
+
             $beforePlan = admin_audit_fetch_plan($pdo, $id);
             $del = $pdo->prepare('DELETE FROM plans WHERE id = ?');
             $del->execute([$id]);
@@ -99,11 +132,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'delete',
                 'plan',
                 $id,
-                'Deleted plan #' . $id . ($beforePlan ? (': ' . ($beforePlan['name'] ?? '')) : ''),
+                'Deleted plan #' . $id . ($beforePlan ? (': ' . ($beforePlan['name'] ?? '')) : '')
+                    . ($historicalCount > 0 ? ' (removed ' . $historicalCount . ' historical investment record(s))' : '')
+                    . ($orphansRemoved > 0 ? ' (cleaned ' . $orphansRemoved . ' orphan row(s))' : ''),
                 $beforePlan,
                 null
             );
-            echo json_encode(['success' => true, 'data' => ['message' => 'Plan deleted']]);
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'message' => 'Plan deleted'
+                        . ($historicalCount > 0 ? ' (' . $historicalCount . ' historical investment record(s) removed)' : ''),
+                ],
+            ]);
             exit;
         } catch (Throwable $e) {
             $config = include dirname(__DIR__, 2) . '/config.php';
@@ -219,12 +260,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($id > 0 && $name === '' && array_key_exists('enabled', $input)) {
         if (!$enabled) {
-            $cnt = $pdo->prepare('SELECT COUNT(*) FROM user_investments WHERE plan_id=? AND status=?');
-            $cnt->execute([$id, 'active']);
-            $activeCount = (int) $cnt->fetchColumn();
+            $activeCount = admin_plan_live_investment_count($pdo, $id);
             if ($activeCount > 0) {
                 http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'Cannot disable: plan has ' . $activeCount . ' active user(s)']);
+                echo json_encode(['success' => false, 'error' => 'Cannot disable: plan has ' . $activeCount . ' active or paused investment(s)']);
                 exit;
             }
         }

@@ -90,15 +90,29 @@ $liquidationFeeAttr = htmlspecialchars(number_format($plan['liquidation_cost'], 
 $autoOpenInvest = isset($_GET['invest']) && $_GET['invest'] === '1';
 $isCrypto = ($instrument['category'] ?? '') === 'crypto';
 $coingeckoId = $instrument['coingecko_id'] ?? '';
-$marketPublicUrl = '/markets/' . rawurlencode($instrument['slug']);
-$signal = get_market_signal($instrument);
+$snapshot = $instrument['snapshot'] ?? [];
+$marketTypeLabel = $snapshot['market_type'] ?? ucfirst($instrument['category'] ?? 'Market');
+$heroIntro = $instrument['intro'] ?? $plan['description'];
+$displayName = $instrument['name'] ?? $plan['name'];
 
-$pageTitle = $siteName . ' | ' . $plan['name'];
-$pageHeading = $plan['name'];
-$pageSubtitle = $instrument['pair_label'] . ' — live market data and AI signals.';
+$pageTitle = $siteName . ' | ' . $displayName;
+$pageHeading = '';
+$pageSubtitle = '';
 $pageExtraStyles = <<<'CSS'
 <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
 <style>
+.plan-market-hero {
+  position: relative;
+  overflow: hidden;
+}
+.plan-market-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255, 195, 92, 0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.plan-market-hero > * { position: relative; z-index: 1; }
 .plan-market-chart-wrap tv-mini-chart {
   display: block;
   width: 100% !important;
@@ -118,28 +132,43 @@ $pageExtraStyles = <<<'CSS'
 CSS;
 
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
-include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 ?>
 
 <div class="dash-page w-full min-w-0 space-y-6 md:space-y-8">
-<a href="/dashboard/user/investment-plans" class="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-primary-container transition-colors">
-<span class="material-symbols-outlined text-base">arrow_back</span>
-Back to all plans
-</a>
-
-<div class="glass-panel rounded-xl p-5 md:p-6">
-<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-<div class="flex items-start gap-4 min-w-0 flex-1">
-<?php echo plan_logo_markup($plan['logo_url'], $plan['name'], 'w-14 h-14', 'text-lg'); ?>
-<div class="min-w-0">
-<div class="flex flex-wrap items-center gap-2 mb-2">
+<!-- Hero: market identity first -->
+<section class="plan-market-hero glass-panel rounded-xl p-6 md:p-8">
+<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+<div class="flex flex-wrap items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-low text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-container text-sm">candlestick_chart</span>
+<?php echo htmlspecialchars($marketTypeLabel); ?>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-bold uppercase tracking-wider text-red-400">
+<span class="w-2 h-2 bg-red-500 rounded-full pulse-live"></span> Live
+</span>
 <span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
 <span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded"><?php echo htmlspecialchars($categoryLabel); ?></span>
-<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded"><?php echo htmlspecialchars($instrument['pair_label']); ?></span>
 </div>
-<h2 class="text-xl md:text-2xl font-bold text-text-primary mb-2"><?php echo htmlspecialchars($plan['name']); ?></h2>
-<p class="text-text-secondary text-sm md:text-base"><?php echo htmlspecialchars($plan['description']); ?></p>
+<a href="/dashboard/user/investment-plans" class="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-primary-container transition-colors shrink-0">
+<span class="material-symbols-outlined text-sm">arrow_back</span> All plans
+</a>
 </div>
+<h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary leading-tight mb-2"><?php echo htmlspecialchars($displayName); ?></h1>
+<p class="text-lg font-semibold text-primary-container mb-3"><?php echo htmlspecialchars($instrument['pair_label']); ?></p>
+<p class="text-sm md:text-base text-text-secondary max-w-3xl"><?php echo htmlspecialchars($heroIntro); ?></p>
+</section>
+
+<?php
+$marketChartCompact = true;
+require __DIR__ . '/../../includes/dashboard/market-live-chart-panel.php';
+?>
+
+<!-- Plan terms + invest -->
+<div class="glass-panel rounded-xl p-5 md:p-6">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+<div class="min-w-0">
+<h2 class="text-lg font-bold text-text-primary mb-1">Investment Plan</h2>
+<p class="text-sm text-text-secondary"><?php echo htmlspecialchars($plan['description']); ?></p>
 </div>
 <button type="button"
   data-plan-id="<?php echo $plan['id']; ?>"
@@ -155,7 +184,7 @@ Back to all plans
 </button>
 </div>
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-low">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pt-6 border-t border-low">
 <div>
 <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Expected Return</p>
 <p class="text-lg font-bold text-primary-container mt-1"><?php echo htmlspecialchars($periodReturn); ?></p>
@@ -172,28 +201,19 @@ Back to all plans
 <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Duration</p>
 <p class="text-lg font-bold text-text-primary mt-1"><?php echo (int) $planDays; ?> Days</p>
 </div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Early Exit Fee</p>
+<p class="text-lg font-bold <?php echo $plan['liquidation_cost'] > 0 ? 'text-amber-500' : 'text-text-primary'; ?> mt-1"><?php echo $plan['liquidation_cost'] > 0 ? 'USD ' . format_usd_amount($plan['liquidation_cost']) : 'None'; ?></p>
 </div>
-<?php if ($plan['liquidation_cost'] > 0): ?>
-<p class="text-xs text-amber-600 dark:text-amber-400 mt-4">Early exit fee: USD <?php echo format_usd_amount($plan['liquidation_cost']); ?></p>
+</div>
+<?php if (!empty($plan['features']) && is_array($plan['features'])): ?>
+<ul class="mt-6 pt-6 border-t border-low grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-text-secondary">
+<?php foreach ($plan['features'] as $feature): ?>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary-container text-base">check_circle</span><?php echo htmlspecialchars((string) $feature); ?></li>
+<?php endforeach; ?>
+</ul>
 <?php endif; ?>
 </div>
-
-<?php require __DIR__ . '/../../includes/dashboard/market-live-chart-panel.php'; ?>
-
-<section class="min-w-0">
-<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
-<div>
-<h3 class="text-lg md:text-xl font-bold text-text-primary">AI Trading Signal</h3>
-<p class="text-sm text-text-secondary mt-1">Current algorithmic trade idea for <?php echo htmlspecialchars($instrument['pair_label']); ?>.</p>
-</div>
-<a href="<?php echo htmlspecialchars($marketPublicUrl); ?>" target="_blank" rel="noopener" class="text-sm text-primary-container font-semibold hover:underline inline-flex items-center gap-1 shrink-0">
-Open public market page <span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-<div class="max-w-md min-w-0">
-<?php require __DIR__ . '/../../includes/market-signal-card.php'; ?>
-</div>
-</section>
 </div>
 
 <?php
@@ -225,13 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
         changeEl.className = 'crypto-change font-data-mono text-sm ' + (p.usd_24h_change >= 0 ? 'text-success' : 'text-critical');
       }
     });
-    var cardLogo = document.querySelector('.market-signal-card .crypto-logo');
-    var cardPrice = document.querySelector('.market-signal-card [data-coin]');
-    if (cardLogo && cardPrice && window.BloombitCryptoConfig) {
-      var id = cardPrice.getAttribute('data-coin');
-      var lg = window.BloombitCryptoConfig.getLogo ? window.BloombitCryptoConfig.getLogo(id) : '';
-      if (lg) { cardLogo.src = lg; }
-    }
   }
 <?php endif; ?>
 });

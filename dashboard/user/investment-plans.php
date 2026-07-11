@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../includes/auth-check.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/plan-types.php';
 require_once __DIR__ . '/../../includes/usd-wallet.php';
+require_once __DIR__ . '/../../includes/market-instruments.php';
 $currentPage = 'investment-plans';
 $siteName = get_site_name();
 $planTypes = get_plan_types();
@@ -103,7 +104,7 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 <div class="flex flex-col items-start md:items-end gap-2">
 <p class="text-xs text-text-secondary flex items-center gap-1">
 <span class="material-symbols-outlined text-sm">info</span>
-Select a plan below to invest from your wallet balance.
+Select a plan below, then open <strong>View Trading</strong> for live charts and full plan details.
 </p>
 <a href="/dashboard/user/wallet" class="inline-flex items-center gap-2 bg-primary-container hover:bg-primary-container/90 text-on-primary px-4 py-2 rounded-lg font-label-sm text-label-sm transition-colors">
 <span class="material-symbols-outlined text-sm">add</span> Add Funds
@@ -137,48 +138,30 @@ Select a plan below to invest from your wallet balance.
 <?php foreach ($typePlans as $plan):
     $planDays = plan_duration_days($plan);
     $riskBadge = plan_investment_risk_badge($plan['investment_risk'] ?? 'mid');
-    $periodReturn = format_plan_period_return($plan['yield_min'] ?? 0, $planDays);
+    $instrument = plan_market_instrument($plan);
+    $pairHint = $instrument ? ($instrument['pair_label'] ?? '') : '';
 ?>
 <div class="plan-asset-card asset-card glass-panel rounded-xl p-5 md:p-6 flex flex-col h-full">
-<div class="flex justify-between items-start gap-3 mb-4">
+<div class="flex justify-between items-start gap-3 mb-3">
 <div class="flex items-center gap-3 min-w-0">
 <?php echo plan_logo_markup($plan['logo_url'] ?? null, $plan['name'], 'w-10 h-10', 'text-sm'); ?>
 <div class="min-w-0">
 <h4 class="text-base md:text-lg font-bold text-text-primary leading-tight truncate"><?php echo htmlspecialchars($plan['name']); ?></h4>
-<p class="text-xs text-text-secondary truncate"><?php echo htmlspecialchars($plan['description'] ?: 'Premium investment plan'); ?></p>
+<?php if ($pairHint): ?>
+<p class="text-xs text-primary-container font-semibold truncate mt-0.5"><?php echo htmlspecialchars($pairHint); ?></p>
+<?php endif; ?>
 </div>
 </div>
 <span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shrink-0"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
 </div>
-<div class="space-y-4 mb-6 flex-grow">
-<div class="grid grid-cols-2 gap-4">
-<div>
-<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Expected Return</p>
-<p class="text-base font-bold text-primary-container mt-1"><?php echo htmlspecialchars($periodReturn); ?></p>
-</div>
-<div>
-<p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Min. Investment</p>
-<p class="text-base font-bold text-text-primary mt-1">USD <?php echo format_usd_amount($plan['min_deposit']); ?></p>
-</div>
-</div>
-<div class="flex justify-between items-center text-sm border-t border-low pt-3">
-<span class="text-text-secondary">Duration</span>
-<span class="text-text-primary font-semibold"><?php echo (int) $planDays; ?> Days</span>
-</div>
-<?php if (!empty($plan['liquidation_cost']) && (float)$plan['liquidation_cost'] > 0): ?>
-<div class="flex justify-between items-center text-sm">
-<span class="text-text-secondary">Early Exit Fee</span>
-<span class="text-amber-600 dark:text-amber-400 font-semibold">USD <?php echo format_usd_amount($plan['liquidation_cost']); ?></span>
-</div>
-<?php endif; ?>
-</div>
+<p class="text-sm text-text-secondary mb-6 flex-grow line-clamp-3"><?php echo htmlspecialchars($plan['description'] ?: 'Premium investment plan'); ?></p>
 <?php if (plan_has_live_markets($plan)): ?>
-<a href="/dashboard/user/investment-plans/<?php echo htmlspecialchars($plan['slug']); ?>" class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
-<span>View Market</span>
+<a href="/dashboard/user/investment-plans/<?php echo htmlspecialchars($plan['slug']); ?>" class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-auto">
+<span>View Trading</span>
 <span class="material-symbols-outlined text-sm">candlestick_chart</span>
 </a>
 <?php else: ?>
-<button type="button" data-plan-id="<?php echo $plan['id']; ?>" data-plan-name="<?php echo htmlspecialchars($plan['name']); ?>" data-plan-min="<?php echo $plan['min_deposit']; ?>" data-plan-max="<?php echo $plan['max_deposit'] ?? 0; ?>" data-plan-days="<?php echo (int) $planDays; ?>" data-plan-liquidation-fee="<?php echo htmlspecialchars(number_format((float)($plan['liquidation_cost'] ?? 0), 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" class="subscribe-plan-btn w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+<button type="button" data-plan-id="<?php echo $plan['id']; ?>" data-plan-name="<?php echo htmlspecialchars($plan['name']); ?>" data-plan-min="<?php echo $plan['min_deposit']; ?>" data-plan-max="<?php echo $plan['max_deposit'] ?? 0; ?>" data-plan-days="<?php echo (int) $planDays; ?>" data-plan-liquidation-fee="<?php echo htmlspecialchars(number_format((float)($plan['liquidation_cost'] ?? 0), 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" class="subscribe-plan-btn w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-auto">
 <span>Invest Now</span>
 <span class="material-symbols-outlined text-sm">trending_up</span>
 </button>
