@@ -1,6 +1,6 @@
 <?php
 /**
- * Bloombit - Email Template Renderer
+ * Stock Wealth - Email Template Renderer
  * Renders an email template with variables and returns HTML string.
  *
  * @param string $template Template filename (without path)
