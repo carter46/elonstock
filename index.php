@@ -3,7 +3,6 @@ require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/market-instruments.php';
 $siteName = get_site_name();
 $pageTitle = $siteName . ' | Institutional Asset Management & Global Liquidity';
-$heroBadge = get_site_setting('hero_badge', 'Global Asset Intelligence V4.0');
 $statsAssets = get_site_setting('stats_assets', '$4.2B+');
 $statsClients = get_site_setting('stats_bots', '120+');
 $statsUptime = get_site_setting('stats_uptime', '99.9%');
@@ -13,14 +12,9 @@ $heroTerminalImg = '/uploads/images/evergren_cmarket.png';
 $execImg = '/uploads/images/evergren_cmarket.png';
 $wealthImg = '/uploads/images/wallet_image3.png';
 $heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg';
-
-$featuredMarkets = [];
-foreach (['crypto', 'stock', 'forex'] as $cat) {
-    foreach (get_markets_by_category($cat) as $item) {
-        $featuredMarkets[] = $item;
-        if (count($featuredMarkets) >= 4) break 2;
-    }
-}
+$eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
+$eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
+$eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTjeBaz-FYpuIcbtXW_-rbo6AcxjJgKfVR2jecI-nQ1lrSn8fWdmLi-t99OUPHZgN_NO7hSRwNbbteLmUbrMvWLAk42D9OO3H2H9QVmQ0JcGGuWnHZ99UJlAYT8_hUbJakBBvwWMCn7Ztlamrd-ccxL-ZB96l17wF8YLv9DLZsAiMDsyzLwfeAWPDNLwrkCdBcboSejRk3gMPOLOeI_1F0zlphMTW8IWVYb6VYvr-a3o2';
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -35,16 +29,11 @@ foreach (['crypto', 'stock', 'forex'] as $cat) {
 <main class="relative pt-20">
 
 <!-- Hero -->
-<section class="relative min-h-screen w-full flex items-center justify-center overflow-hidden refined-gradient">
-<div class="absolute inset-0 hero-bg opacity-30 img-institutional" style="background-image: url('<?php echo htmlspecialchars($heroBgImg); ?>');"></div>
+<section class="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 hero-bg" style="background-image: url('<?php echo htmlspecialchars($heroBgImg); ?>');"></div>
 <div class="absolute inset-0 hero-bg-overlay"></div>
-<div class="absolute inset-0 atmosphere-grid opacity-40 pointer-events-none"></div>
-<div class="absolute inset-0 atmosphere-noise pointer-events-none"></div>
+<div class="absolute inset-0 atmosphere-grid opacity-25 pointer-events-none"></div>
 <div class="relative z-10 text-center max-w-5xl px-margin-mobile py-24 pb-56 md:pb-72">
-<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-unit-lg reveal-up">
-<span class="glow-dot"></span>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest"><?php echo htmlspecialchars($heroBadge); ?></span>
-</div>
 <h1 class="font-display-lg text-display-lg text-white mb-6 tracking-tight leading-[1.05] reveal-up">
 Secure Capital. <br/> <span class="italic font-normal text-on-surface-variant">Intelligent Growth.</span>
 </h1>
@@ -68,21 +57,43 @@ Investor Presentation
 </div>
 </section>
 
-<!-- Live Execution Terminal -->
+<!-- Live Market Performance -->
 <section id="markets" class="section-medium bg-surface-container-lowest/50 border-y border-white/5 relative">
-<div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background/40 to-transparent pointer-events-none"></div>
+<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent pointer-events-none"></div>
 <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
-<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8 reveal-up">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 reveal-up">
 <div>
 <span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Market Monitor</span>
-<h2 class="font-display-sm text-display-sm text-white">Live Execution Terminal</h2>
+<h2 class="font-display-sm text-display-sm text-white">Live Market Performance</h2>
 </div>
-<a href="/trading_signals" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center">View Full Market</a>
+<a href="/trading_signals" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center">View All Markets</a>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<?php foreach ($featuredMarkets as $instrument): ?>
+
+<div class="mb-10">
+<h3 class="font-headline-md text-white mb-6">Cryptocurrency</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 market-cards">
+<?php foreach (get_markets_by_category('crypto') as $instrument): ?>
 <?php require __DIR__ . '/includes/market-home-card.php'; ?>
 <?php endforeach; ?>
+</div>
+</div>
+
+<div class="mb-10">
+<h3 class="font-headline-md text-white mb-6">Stocks</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 market-stocks">
+<?php foreach (get_markets_by_category('stock') as $instrument): ?>
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+<?php endforeach; ?>
+</div>
+</div>
+
+<div>
+<h3 class="font-headline-md text-white mb-6">Forex</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 market-forex">
+<?php foreach (get_markets_by_category('forex') as $instrument): ?>
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+<?php endforeach; ?>
+</div>
 </div>
 </div>
 </section>
@@ -307,6 +318,50 @@ Our Bespoke Wealth Management division specializes in serving Ultra-High-Net-Wor
 </div>
 </section>
 
+<!-- Learn and Earn -->
+<section class="section-large relative">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 reveal-up">
+<div>
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Education</span>
+<h2 class="font-display-sm text-display-sm text-white">Learn and Earn</h2>
+</div>
+<a href="/help_centre" class="text-primary font-label-md uppercase tracking-widest inline-flex items-center gap-2 hover:gap-4 transition-all">
+Explore Modules <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<a href="/help_centre" class="group reveal-up">
+<div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6 institutional-border">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 img-institutional" style="background-image: url('<?php echo htmlspecialchars($eduBeginner); ?>')"></div>
+<div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Beginner</div>
+</div>
+<h3 class="font-headline-md text-white mb-3 group-hover:text-primary transition-colors">Fundamentals of Digital Assets</h3>
+<p class="font-body-md text-on-surface-variant">Master the core concepts of blockchain technology and portfolio diversification.</p>
+</a>
+<a href="/help_centre" class="group reveal-up" style="transition-delay:0.1s">
+<div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6 institutional-border">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 img-institutional" style="background-image: url('<?php echo htmlspecialchars($eduIntermediate); ?>')"></div>
+<div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Intermediate</div>
+</div>
+<h3 class="font-headline-md text-white mb-3 group-hover:text-primary transition-colors">Advanced Technical Analysis</h3>
+<p class="font-body-md text-on-surface-variant">Understand order flow, market depth, and institutional liquidity zones.</p>
+</a>
+<a href="/help_centre" class="group reveal-up" style="transition-delay:0.2s">
+<div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6 institutional-border">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 img-institutional" style="background-image: url('<?php echo htmlspecialchars($eduAdvanced); ?>')"></div>
+<div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Advanced</div>
+</div>
+<h3 class="font-headline-md text-white mb-3 group-hover:text-primary transition-colors">Algorithmic Strategies</h3>
+<p class="font-body-md text-on-surface-variant">Learn to deploy automated trading approaches with institutional risk controls.</p>
+</a>
+</div>
+</div>
+</section>
+
 <!-- Trust & Compliance -->
 <section class="section-small bg-surface-container-lowest/50">
 <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
@@ -335,10 +390,10 @@ Our Bespoke Wealth Management division specializes in serving Ultra-High-Net-Wor
 <section class="section-large relative overflow-hidden bg-background">
 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
 <div class="relative z-10 text-center px-margin-mobile reveal-up">
-<h2 class="font-display-lg text-display-lg text-white mb-unit-xl tracking-tight leading-none">Global Capital <br/><span class="italic font-normal text-on-surface-variant">Simplified.</span></h2>
-<div class="flex flex-col items-center gap-8">
-<a href="/register" class="gradient-button px-20 py-6 rounded-full font-headline-md text-headline-md uppercase tracking-widest inline-flex items-center justify-center text-white">
-Begin Institutional Onboarding
+<h2 class="font-display-lg text-display-lg text-white mb-8 tracking-tight leading-none">Global Capital <br/><span class="italic font-normal text-on-surface-variant">Simplified.</span></h2>
+<div class="flex flex-col items-center gap-6">
+<a href="/register" class="gradient-button px-10 py-4 rounded-full font-label-md text-label-md uppercase tracking-widest inline-flex items-center justify-center text-white">
+Get Started
 </a>
 <p class="font-body-md text-on-surface-variant max-w-xl mx-auto opacity-60">
 Join an elite network of hedge funds, sovereign wealth managers, and private family offices who trust <?php echo htmlspecialchars($siteName); ?> for capital growth.

@@ -243,17 +243,18 @@ body.marketing-page {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: #071321;
 }
 .hero-bg-overlay {
   background:
     linear-gradient(
-      to top,
-      rgba(7, 19, 33, 0.99) 0%,
-      rgba(8, 20, 34, 0.96) 25%,
-      rgba(8, 20, 34, 0.85) 50%,
-      rgba(8, 20, 34, 0.55) 75%,
-      rgba(8, 20, 34, 0.2) 100%
-    );
+      to bottom,
+      rgba(7, 19, 33, 0.88) 0%,
+      rgba(7, 19, 33, 0.78) 35%,
+      rgba(7, 19, 33, 0.92) 70%,
+      rgba(7, 19, 33, 0.98) 100%
+    ),
+    rgba(7, 19, 33, 0.55);
 }
 .img-institutional {
   filter: saturate(0.85) contrast(1.05) brightness(0.92);
@@ -314,7 +315,7 @@ body.marketing-page {
 }
 .stock-market-card,
 .forex-market-card {
-  min-height: 120px;
+  min-height: 168px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -325,11 +326,16 @@ body.marketing-page {
   display: block;
   width: 100% !important;
   max-width: 100%;
-  height: 140px !important;
-  max-height: 140px;
-  margin: 0 auto;
-  border-radius: 0.5rem;
-  overflow: hidden;
+  height: 220px !important;
+  max-height: 220px;
+  margin: 0 auto -20px;
+}
+@media (max-width: 640px) {
+  .stock-market-card tv-mini-chart,
+  .forex-market-card tv-mini-chart {
+    height: 180px !important;
+    max-height: 180px;
+  }
 }
 .section-large { padding-top: 160px; padding-bottom: 160px; }
 .section-medium { padding-top: 128px; padding-bottom: 128px; }
