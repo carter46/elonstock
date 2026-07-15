@@ -11,10 +11,42 @@ $statsLiquidity = get_site_setting('stats_roi', '14+');
 $heroTerminalImg = '/uploads/images/evergren_cmarket.png';
 $execImg = '/uploads/images/evergren_cmarket.png';
 $wealthImg = '/uploads/images/wallet_image3.png';
-$heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg';
+$heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg'; // same asset as Bloomberg hero background
 $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
 $eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
 $eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTjeBaz-FYpuIcbtXW_-rbo6AcxjJgKfVR2jecI-nQ1lrSn8fWdmLi-t99OUPHZgN_NO7hSRwNbbteLmUbrMvWLAk42D9OO3H2H9QVmQ0JcGGuWnHZ99UJlAYT8_hUbJakBBvwWMCn7Ztlamrd-ccxL-ZB96l17wF8YLv9DLZsAiMDsyzLwfeAWPDNLwrkCdBcboSejRk3gMPOLOeI_1F0zlphMTW8IWVYb6VYvr-a3o2';
+
+$orbitCoins = [];
+try {
+    $pdo = require __DIR__ . '/includes/db.php';
+    $stmt = $pdo->query('SELECT symbol, logo FROM coins WHERE enabled = 1 AND logo IS NOT NULL AND logo != "" ORDER BY sort_order, id LIMIT 14');
+    if ($stmt) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $orbitCoins[] = $row;
+        }
+    }
+} catch (Throwable $e) { /* fall through to defaults */ }
+if (empty($orbitCoins)) {
+    $orbitCoins = [
+        ['symbol' => 'BTC', 'logo' => 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png'],
+        ['symbol' => 'ETH', 'logo' => 'https://assets.coingecko.com/coins/images/279/large/ethereum.png'],
+        ['symbol' => 'USDT', 'logo' => 'https://assets.coingecko.com/coins/images/325/large/Tether.png'],
+        ['symbol' => 'BNB', 'logo' => 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png'],
+        ['symbol' => 'SOL', 'logo' => 'https://assets.coingecko.com/coins/images/4128/large/solana.png'],
+        ['symbol' => 'XRP', 'logo' => 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png'],
+        ['symbol' => 'ADA', 'logo' => 'https://assets.coingecko.com/coins/images/975/large/cardano.png'],
+        ['symbol' => 'DOGE', 'logo' => 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png'],
+        ['symbol' => 'DOT', 'logo' => 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png'],
+        ['symbol' => 'AVAX', 'logo' => 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png'],
+        ['symbol' => 'LINK', 'logo' => 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png'],
+        ['symbol' => 'MATIC', 'logo' => 'https://assets.coingecko.com/coins/images/4713/large/polygon.png'],
+        ['symbol' => 'LTC', 'logo' => 'https://assets.coingecko.com/coins/images/2/large/litecoin.png'],
+        ['symbol' => 'UNI', 'logo' => 'https://assets.coingecko.com/coins/images/12504/large/uni.jpg'],
+    ];
+}
+$orbitRing1 = array_slice($orbitCoins, 0, 6);
+$orbitRing2 = array_slice($orbitCoins, 6, 4);
+$orbitRing3 = array_slice($orbitCoins, 10, 4);
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -29,23 +61,22 @@ $eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTj
 <main class="relative pt-20">
 
 <!-- Hero -->
-<section class="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+<section class="relative min-h-[88vh] lg:min-h-screen w-full flex items-center justify-center overflow-hidden hero-section">
 <div class="absolute inset-0 hero-bg" style="background-image: url('<?php echo htmlspecialchars($heroBgImg); ?>');"></div>
 <div class="absolute inset-0 hero-bg-overlay"></div>
-<div class="absolute inset-0 atmosphere-grid opacity-25 pointer-events-none"></div>
-<div class="relative z-10 text-center max-w-5xl px-margin-mobile py-24 pb-56 md:pb-72">
-<h1 class="font-display-lg text-display-lg text-white mb-6 tracking-tight leading-[1.05] reveal-up">
+<div class="relative z-10 text-center max-w-5xl px-margin-mobile py-24 pb-48 md:pb-64">
+<h1 class="hero-headline font-display-lg text-display-lg text-white mb-6 tracking-tight leading-[1.05] reveal-up">
 Secure Capital. <br/> <span class="italic font-normal text-on-surface-variant">Intelligent Growth.</span>
 </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-unit-xl reveal-up">
+<p class="font-body-md md:font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-8 md:mb-unit-xl reveal-up text-base md:text-lg">
 Strategic Wealth Management Limited provides institutional-grade access to global markets. We leverage advanced technical precision and deep liquidity to preserve and grow sovereign and private capital.
 </p>
-<div class="flex flex-col md:flex-row items-center justify-center gap-unit-md reveal-up">
-<a href="/register" class="gradient-button px-10 py-5 rounded-full font-label-md text-label-md uppercase tracking-widest group inline-flex items-center gap-2 text-white">
+<div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-unit-md reveal-up w-full max-w-md sm:max-w-none mx-auto">
+<a href="/register" class="gradient-button w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest group inline-flex items-center justify-center gap-2 text-white">
 Open Institutional Account
 <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
 </a>
-<a href="/plans" class="btn-secondary px-10 py-5 rounded-full font-label-md text-label-md uppercase tracking-widest text-on-surface-variant">
+<a href="/plans" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
 Investor Presentation
 </a>
 </div>
@@ -71,28 +102,40 @@ Investor Presentation
 
 <div class="mb-10">
 <h3 class="font-headline-md text-white mb-6">Cryptocurrency</h3>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 market-cards">
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-cards">
 <?php foreach (get_markets_by_category('crypto') as $instrument): ?>
+<div class="market-slider-slide">
 <?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
 <?php endforeach; ?>
+</div>
 </div>
 </div>
 
 <div class="mb-10">
 <h3 class="font-headline-md text-white mb-6">Stocks</h3>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 market-stocks">
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-stocks">
 <?php foreach (get_markets_by_category('stock') as $instrument): ?>
+<div class="market-slider-slide">
 <?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
 <?php endforeach; ?>
+</div>
 </div>
 </div>
 
 <div>
 <h3 class="font-headline-md text-white mb-6">Forex</h3>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 market-forex">
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-forex">
 <?php foreach (get_markets_by_category('forex') as $instrument): ?>
+<div class="market-slider-slide">
 <?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
 <?php endforeach; ?>
+</div>
 </div>
 </div>
 </div>
@@ -142,6 +185,48 @@ Investor Presentation
 <p class="text-on-surface-variant text-sm">Fixed income strategies focused on capital preservation through high-rated government and corporate debt instruments.</p>
 </div>
 </div>
+</div>
+</section>
+
+<!-- AI Market Intelligence Orbit -->
+<section class="section-large bg-surface border-y border-white/5 overflow-hidden relative">
+<div class="absolute inset-0 refined-gradient pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center relative">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4 reveal-up">Intelligence Layer</span>
+<h2 class="font-display-sm text-display-sm text-white mb-16 md:mb-20 reveal-up">AI Market Intelligence Orbit</h2>
+<div class="relative flex items-center justify-center h-[340px] sm:h-[420px] md:h-[500px] reveal-up">
+<div class="relative flex items-center justify-center scale-[0.68] sm:scale-[0.85] md:scale-100 origin-center">
+<?php
+$renderOrbitRing = function (array $coins, int $sizePx, string $spinClass, string $nodeClass, string $imgClass) {
+    if (empty($coins)) return;
+    $n = count($coins);
+    echo '<div class="absolute border border-primary/20 rounded-full ' . $spinClass . '" style="width:' . $sizePx . 'px;height:' . $sizePx . 'px">';
+    foreach ($coins as $i => $c) {
+        $angle = 2 * M_PI * $i / $n - M_PI / 2;
+        $x = 50 + 50 * cos($angle);
+        $y = 50 + 50 * sin($angle);
+        $logo = htmlspecialchars($c['logo'] ?? '');
+        $sym = htmlspecialchars($c['symbol'] ?? '');
+        echo '<span class="absolute ' . $nodeClass . ' rounded-full overflow-hidden bg-surface-container border-2 border-primary/30 shadow-lg flex items-center justify-center orbit-node" style="left:' . $x . '%;top:' . $y . '%;transform:translate(-50%,-50%)">';
+        echo '<img src="' . $logo . '" alt="' . $sym . '" class="' . $imgClass . ' object-contain"/></span>';
+    }
+    echo '</div>';
+};
+$renderOrbitRing($orbitRing1, 450, 'orbit-spin-slow', 'w-10 h-10', 'w-7 h-7');
+$renderOrbitRing($orbitRing2, 300, 'orbit-spin-mid-reverse', 'w-9 h-9', 'w-6 h-6');
+$renderOrbitRing($orbitRing3, 150, 'orbit-spin-fast', 'w-8 h-8', 'w-5 h-5');
+?>
+<div class="relative z-10 w-32 h-32 sm:w-40 sm:h-40 bg-primary-container rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(75,142,255,0.45)]">
+<div class="text-on-primary-container text-center">
+<div class="font-black leading-tight text-sm tracking-wide">AI CORE</div>
+<div class="text-[10px] font-bold opacity-80 uppercase tracking-tighter mt-1">Intelligence<br/>Engine</div>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-xl mx-auto mt-10 reveal-up">
+Real-time multi-asset signals orbiting a proprietary intelligence core — synthesising liquidity, sentiment, and risk across global markets.
+</p>
 </div>
 </section>
 
@@ -291,29 +376,29 @@ Investor Presentation
 <p class="font-body-md text-on-surface-variant max-w-lg mb-10">
 Our Bespoke Wealth Management division specializes in serving Ultra-High-Net-Worth Individuals and Family Offices, offering a level of discretion and strategic oversight synonymous with top-tier global private banks.
 </p>
-<a href="/live_chat" class="btn-secondary px-12 py-5 rounded-full font-label-md text-label-md uppercase tracking-widest text-white inline-flex items-center justify-center">Schedule Private Consultation</a>
+<a href="/live_chat" class="btn-secondary px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-white inline-flex items-center justify-center">Schedule Private Consultation</a>
 </div>
 </div>
 </section>
 
 <!-- Stats Wall -->
 <section class="section-medium border-y border-white/5 relative">
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-12">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
 <div class="text-center reveal-up">
-<div class="font-display-lg text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsAssets); ?>"><?php echo htmlspecialchars($statsAssets); ?></div>
-<div class="font-label-sm text-on-surface-variant uppercase tracking-[0.2em]">Managed Assets</div>
+<div class="stat-display font-display-lg text-3xl md:text-5xl lg:text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsAssets); ?>"><?php echo htmlspecialchars($statsAssets); ?></div>
+<div class="font-label-sm text-[10px] md:text-label-sm text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Managed Assets</div>
 </div>
 <div class="text-center reveal-up" style="transition-delay:0.1s">
-<div class="font-display-lg text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsClients); ?>"><?php echo htmlspecialchars($statsClients); ?></div>
-<div class="font-label-sm text-on-surface-variant uppercase tracking-[0.2em]">Institutional Clients</div>
+<div class="stat-display font-display-lg text-3xl md:text-5xl lg:text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsClients); ?>"><?php echo htmlspecialchars($statsClients); ?></div>
+<div class="font-label-sm text-[10px] md:text-label-sm text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Institutional Clients</div>
 </div>
 <div class="text-center reveal-up" style="transition-delay:0.2s">
-<div class="font-display-lg text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsUptime); ?>"><?php echo htmlspecialchars($statsUptime); ?></div>
-<div class="font-label-sm text-on-surface-variant uppercase tracking-[0.2em]">Platform Uptime</div>
+<div class="stat-display font-display-lg text-3xl md:text-5xl lg:text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsUptime); ?>"><?php echo htmlspecialchars($statsUptime); ?></div>
+<div class="font-label-sm text-[10px] md:text-label-sm text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Platform Uptime</div>
 </div>
 <div class="text-center reveal-up" style="transition-delay:0.3s">
-<div class="font-display-lg text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsLiquidity); ?>"><?php echo htmlspecialchars($statsLiquidity); ?></div>
-<div class="font-label-sm text-on-surface-variant uppercase tracking-[0.2em]">Liquidity Providers</div>
+<div class="stat-display font-display-lg text-3xl md:text-5xl lg:text-display-lg text-white mb-2 stat-counter" data-stat="<?php echo htmlspecialchars($statsLiquidity); ?>"><?php echo htmlspecialchars($statsLiquidity); ?></div>
+<div class="font-label-sm text-[10px] md:text-label-sm text-on-surface-variant uppercase tracking-[0.15em] md:tracking-[0.2em]">Liquidity Providers</div>
 </div>
 </div>
 </section>
@@ -392,7 +477,7 @@ Explore Modules <span class="material-symbols-outlined">arrow_forward</span>
 <div class="relative z-10 text-center px-margin-mobile reveal-up">
 <h2 class="font-display-lg text-display-lg text-white mb-8 tracking-tight leading-none">Global Capital <br/><span class="italic font-normal text-on-surface-variant">Simplified.</span></h2>
 <div class="flex flex-col items-center gap-6">
-<a href="/register" class="gradient-button px-10 py-4 rounded-full font-label-md text-label-md uppercase tracking-widest inline-flex items-center justify-center text-white">
+<a href="/register" class="gradient-button px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest inline-flex items-center justify-center text-white">
 Get Started
 </a>
 <p class="font-body-md text-on-surface-variant max-w-xl mx-auto opacity-60">
@@ -410,8 +495,92 @@ Join an elite network of hedge funds, sovereign wealth managers, and private fam
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   if (window.BloombitCryptoPrices) {
-    window.BloombitCryptoPrices.init('.crypto-market-card');
+    window.BloombitCryptoPrices.init(['bitcoin', 'ethereum', 'binancecoin', 'solana'], {
+      marketCardsSelector: '.market-cards',
+      refreshInterval: 120000
+    });
   }
+
+  // Mobile market carousels: peek next slide + auto-advance when in view
+  (function initMarketSliders() {
+    var mq = window.matchMedia('(max-width: 639px)');
+    var sliders = Array.prototype.slice.call(document.querySelectorAll('[data-market-slider]'));
+    if (!sliders.length) return;
+
+    function setupSlider(root) {
+      var track = root.querySelector('.market-slider-track');
+      if (!track || root._marketSliderReady) return;
+      root._marketSliderReady = true;
+      var slides = Array.prototype.slice.call(track.querySelectorAll('.market-slider-slide'));
+      if (slides.length < 2) return;
+      var index = 0;
+      var timer = null;
+      var userPausedUntil = 0;
+
+      function goTo(i) {
+        if (!mq.matches) return;
+        index = ((i % slides.length) + slides.length) % slides.length;
+        var left = slides[index].offsetLeft;
+        track.scrollTo({ left: left, behavior: 'smooth' });
+      }
+
+      function start() {
+        stop();
+        if (!mq.matches) return;
+        timer = setInterval(function () {
+          if (Date.now() < userPausedUntil) return;
+          goTo(index + 1);
+        }, 3200);
+      }
+
+      function stop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      track.addEventListener('pointerdown', function () {
+        userPausedUntil = Date.now() + 5000;
+      }, { passive: true });
+      track.addEventListener('scroll', function () {
+        if (!mq.matches) return;
+        var nearest = 0;
+        var best = Infinity;
+        var scrollLeft = track.scrollLeft;
+        slides.forEach(function (slide, i) {
+          var d = Math.abs(slide.offsetLeft - scrollLeft);
+          if (d < best) { best = d; nearest = i; }
+        });
+        index = nearest;
+      }, { passive: true });
+
+      root._marketSliderStart = start;
+      root._marketSliderStop = stop;
+      root._marketSliderGo = goTo;
+    }
+
+    sliders.forEach(setupSlider);
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var root = entry.target;
+        if (entry.isIntersecting && mq.matches) {
+          if (root._marketSliderStart) root._marketSliderStart();
+        } else if (root._marketSliderStop) {
+          root._marketSliderStop();
+        }
+      });
+    }, { threshold: 0.35 });
+
+    sliders.forEach(function (s) { io.observe(s); });
+    mq.addEventListener('change', function () {
+      sliders.forEach(function (s) {
+        if (s._marketSliderStop) s._marketSliderStop();
+        if (mq.matches && s._marketSliderStart) s._marketSliderStart();
+      });
+    });
+  })();
 
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
