@@ -3,6 +3,7 @@ $pageTitle = $pageTitle ?? (get_site_name() . ' | Admin');
 ?>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="theme-color" content="#081422"/>
 <title><?php echo htmlspecialchars($pageTitle); ?></title>
 <?php if (function_exists('output_favicon_tags')) { output_favicon_tags(); } ?>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -16,28 +17,31 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        "surface-dim": "#111417",
-        "primary-container": "#ffc35c",
-        "on-surface": "#e1e2e7",
-        "text-secondary": "#A0A7B4",
+        "on-background": "#d7e3f7",
+        "surface-dim": "#081422",
+        "primary-container": "#4b8eff",
+        "on-surface": "#d7e3f7",
+        "text-secondary": "#c1c6d7",
         "text-primary": "#FFFFFF",
-        "on-surface-variant": "#d4c4b0",
-        "surface-container-low": "#191c1f",
-        "surface-container-high": "#272a2e",
-        "surface-container": "#1d2023",
-        "surface-container-highest": "#323538",
-        "surface-container-lowest": "#0b0e11",
+        "on-surface-variant": "#c1c6d7",
+        "surface-container-low": "#111c2b",
+        "surface-container-high": "#1f2b3a",
+        "surface-container": "#15202f",
+        "surface-container-highest": "#2a3645",
+        "surface-container-lowest": "#040f1d",
         "border-low": "rgba(255, 255, 255, 0.08)",
-        "primary": "#ffe6c3",
-        "on-primary": "#432c00",
-        "on-primary-container": "#755000",
+        "primary": "#adc6ff",
+        "on-primary": "#002e69",
+        "on-primary-container": "#00285c",
         "success": "#20B26C",
         "critical": "#EF454A",
-        "bg-subtle": "#161B22",
-        "surface": "#111417",
-        "surface-bright": "#37393d",
+        "bg-subtle": "#111c2b",
+        "surface": "#081422",
+        "surface-bright": "#2f3a49",
         "error-container": "#93000a",
-        "on-error": "#690005"
+        "on-error": "#690005",
+        "error": "#ffb4ab",
+        "outline": "#8b90a0"
       },
       borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
       spacing: {
@@ -73,14 +77,16 @@ tailwind.config = {
 </script>
 <style>
 body.admin-dashboard {
-  background-color: #111417;
-  color: #e1e2e7;
+  background-color: #071321;
+  color: #d7e3f7;
   font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 .glass-panel {
-  background: rgba(30, 35, 41, 0.8);
+  background: rgba(16, 27, 51, 0.4);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
@@ -150,21 +156,21 @@ body.admin-dashboard {
   height: calc(4rem + env(safe-area-inset-top, 0px));
 }
 .admin-scrollbar::-webkit-scrollbar { width: 4px; }
-.admin-scrollbar::-webkit-scrollbar-track { background: #111417; }
-.admin-scrollbar::-webkit-scrollbar-thumb { background: #323538; border-radius: 10px; }
+.admin-scrollbar::-webkit-scrollbar-track { background: #081422; }
+.admin-scrollbar::-webkit-scrollbar-thumb { background: #2a3645; border-radius: 10px; }
 .admin-dashboard input:not([type=checkbox]):not([type=radio]):not([type=file]),
 .admin-dashboard select,
 .admin-dashboard textarea {
-  background-color: #161B22;
+  background-color: #111c2b;
   border-color: rgba(255, 255, 255, 0.08);
-  color: #e1e2e7;
+  color: #d7e3f7;
 }
 .admin-dashboard input::placeholder,
-.admin-dashboard textarea::placeholder { color: rgba(212, 196, 176, 0.45); }
+.admin-dashboard textarea::placeholder { color: rgba(193, 198, 215, 0.45); }
 .admin-dashboard .bg-white,
 .admin-dashboard .dark\:bg-zinc-900,
 .admin-dashboard .bg-white.dark\:bg-white\/5 {
-  background: rgba(30, 35, 41, 0.8) !important;
+  background: rgba(16, 27, 51, 0.4) !important;
   backdrop-filter: blur(12px);
 }
 .admin-dashboard .border-slate-200,
@@ -175,18 +181,25 @@ body.admin-dashboard {
 }
 .admin-dashboard .text-slate-500,
 .admin-dashboard .dark\:text-zinc-400,
-.admin-dashboard .text-slate-400 { color: #A0A7B4 !important; }
+.admin-dashboard .text-slate-400 { color: #c1c6d7 !important; }
 .admin-dashboard .text-slate-900,
 .admin-dashboard .dark\:text-slate-100,
 .admin-dashboard .text-slate-700,
-.admin-dashboard .dark\:text-zinc-300 { color: #e1e2e7 !important; }
+.admin-dashboard .dark\:text-zinc-300 { color: #d7e3f7 !important; }
 .admin-dashboard .bg-slate-50,
 .admin-dashboard .dark\:bg-zinc-800,
 .admin-dashboard .bg-background-light,
-.admin-dashboard .dark\:bg-white\/5 { background-color: #161B22 !important; }
+.admin-dashboard .dark\:bg-white\/5 { background-color: #111c2b !important; }
 .admin-dashboard .bg-primary:not(.admin-sidebar-active) {
-  background-color: #ffc35c !important;
-  color: #432c00 !important;
+  background-color: #4b8eff !important;
+  color: #002e69 !important;
 }
+.admin-dashboard .text-amber-500,
+.admin-dashboard .text-amber-400,
+.admin-dashboard .text-yellow-500 { color: #adc6ff !important; }
+.admin-dashboard .bg-amber-500,
+.admin-dashboard .bg-yellow-500 { background-color: #4b8eff !important; }
+.admin-dashboard .border-amber-500\/30,
+.admin-dashboard .border-yellow-500\/30 { border-color: rgba(75, 142, 255, 0.3) !important; }
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

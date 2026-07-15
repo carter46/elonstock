@@ -115,51 +115,52 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 }
 </style>
 <div class="wallet-page w-full min-w-0 space-y-6 md:space-y-8">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 min-w-0">
-<div class="md:col-span-2 dash-card-balance-hero glass-panel p-5 md:p-6 flex flex-col justify-between rounded-xl min-w-0">
-<div>
-<p class="font-label-xs text-label-xs dash-card-label uppercase tracking-wider mb-2">Available Balance</p>
+<div class="grid grid-cols-2 lg:grid-cols-6 gap-4 min-w-0">
+<div class="metric-balance-card glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group col-span-2 flex flex-col justify-between min-w-0">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+<span class="material-symbols-outlined text-5xl">payments</span>
+</div>
+<div class="relative">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Available Balance</p>
 <div class="flex items-baseline gap-2 flex-wrap">
-<h3 class="font-display text-3xl sm:text-4xl md:text-5xl dash-card-value">$<?php echo format_usd_amount($walletTotalUsd); ?></h3>
-<span class="font-body-md text-body-md dash-card-muted">USD</span>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($walletTotalUsd); ?></h3>
+<span class="text-sm text-on-surface-variant">USD</span>
 </div>
 </div>
-<div class="flex gap-2 sm:gap-3 mt-5 flex-wrap">
-<button type="button" id="deposit-btn" class="flex-1 min-w-[120px] py-2.5 dash-btn-solid font-bold rounded-lg text-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1.5">
+<div class="relative flex gap-2 sm:gap-3 mt-5 flex-wrap">
+<button type="button" id="deposit-btn" class="flex-1 min-w-[110px] py-2.5 premium-gradient-btn font-bold rounded-lg text-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-1.5">
 <span class="material-symbols-outlined text-[18px]">add_circle</span> Deposit
 </button>
-<button type="button" id="withdraw-btn" class="flex-1 min-w-[120px] py-2.5 dash-btn-outline border font-bold rounded-lg text-sm hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center gap-1.5">
+<button type="button" id="withdraw-btn" class="flex-1 min-w-[110px] py-2.5 border border-white/20 text-white font-bold rounded-lg text-sm hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center gap-1.5">
 <span class="material-symbols-outlined text-[18px]">logout</span> Withdraw
 </button>
-<a href="/dashboard/user/transactions" class="w-12 py-2.5 bg-white/15 text-white rounded-lg flex items-center justify-center hover:bg-white/25 transition-colors shrink-0" title="Transaction history">
+<a href="/dashboard/user/transactions" class="w-11 py-2.5 bg-white/15 text-white rounded-lg flex items-center justify-center hover:bg-white/25 transition-colors shrink-0" title="Transaction history">
 <span class="material-symbols-outlined">history</span>
 </a>
 </div>
 </div>
-<div class="dash-card-glass glass-panel p-5 md:p-6 rounded-xl min-w-0">
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider mb-2">Total Profit</p>
-<h3 class="font-headline-md text-2xl md:text-3xl font-bold text-on-surface mb-2">$<?php echo format_usd_amount($totalProfit); ?></h3>
-<p class="text-xs text-on-surface-variant">Settled plans only</p>
+<div class="glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group min-w-0">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+<span class="material-symbols-outlined text-5xl">trending_up</span>
 </div>
-<div class="dash-card-glass glass-panel p-5 md:p-6 rounded-xl min-w-0">
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider mb-2">Active Capital</p>
-<h3 class="font-headline-md text-2xl md:text-3xl font-bold text-on-surface mb-2">$<?php echo format_usd_amount($activeCapital); ?></h3>
-<p class="text-xs text-on-surface-variant italic"><?php echo $activeCapital > 0 ? 'Active plans running' : 'No active plans'; ?></p>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Profit</p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-primary">+$<?php echo format_usd_amount($totalProfit); ?></h3>
+<p class="text-[11px] md:text-[12px] text-primary/80 mt-2 font-medium">Settled plans only</p>
 </div>
-<div class="glass-panel p-5 md:p-6 rounded-xl min-w-0">
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider mb-2">Daily Earning</p>
-<h3 class="font-headline-md text-2xl md:text-3xl font-bold text-on-surface mb-2">$<?php echo format_usd_amount($dailyEarning); ?></h3>
-<p class="text-xs text-on-surface-variant">Last 24h update</p>
+<div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Active Capital</p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($activeCapital); ?></h3>
+<p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2"><?php echo $activeCapital > 0 ? 'Active plans running' : 'No active plans'; ?></p>
 </div>
-<div class="md:col-span-2 glass-panel p-5 md:p-6 border border-primary-container/20 flex items-center justify-between rounded-xl min-w-0 gap-4">
-<div>
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider mb-2">Referral Bonus Earned</p>
-<h3 class="font-headline-md text-2xl md:text-3xl font-bold text-primary-container">$<?php echo format_usd_amount($referralBonus); ?></h3>
+<div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Daily Earning</p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($dailyEarning); ?></h3>
+<p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2 font-mono">Last 24h update</p>
 </div>
-<div class="text-right shrink-0">
-<p class="font-label-xs text-label-xs text-on-surface-variant mb-1">Last 24h</p>
-<span class="font-headline-md text-lg font-bold text-on-surface-variant opacity-70">$<?php echo format_usd_amount($referralBonusLast24h); ?></span>
-</div>
+<div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Referral Bonus</p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($referralBonus); ?></h3>
+<p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2">Last 24h: +$<?php echo format_usd_amount($referralBonusLast24h); ?></p>
 </div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 min-w-0">

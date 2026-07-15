@@ -64,7 +64,11 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 ?>
 
 <style>
-.plan-type-tab.is-active { color: #ffc35c; border-bottom-color: #ffc35c; font-weight: 700; }
+.plan-type-tab.is-active {
+  color: #adc6ff;
+  border-bottom-color: #4b8eff;
+  font-weight: 700;
+}
 .plan-type-panel { display: none; }
 .plan-type-panel.is-active { display: grid; }
 .plan-asset-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -76,17 +80,6 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
   overscroll-behavior-x: contain;
 }
 .plan-type-tabs-nav::-webkit-scrollbar { display: none; }
-.plan-type-tabs-track {
-  display: inline-flex;
-  gap: 1.5rem;
-  min-width: 100%;
-  width: max-content;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 0;
-}
-@media (min-width: 768px) {
-  .plan-type-tabs-track { width: 100%; }
-}
 </style>
 
 <div class="dash-page w-full min-w-0">
@@ -119,15 +112,13 @@ Select a plan below, then open <strong>View Trading</strong> for live charts and
 </div>
 <?php else: ?>
 <?php if ($showPlanTabs): ?>
-<nav class="plan-type-tabs-nav mb-8 -mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto" aria-label="Investment plan categories">
-<div class="plan-type-tabs-track">
+<nav class="plan-type-tabs-nav flex gap-1 mb-6 md:mb-8 border-b border-white/10 overflow-x-auto" aria-label="Investment plan categories">
 <?php foreach ($activePlanTypes as $typeKey => $typeLabel): ?>
-<button type="button" class="plan-type-tab shrink-0 pb-3 text-sm font-label-sm text-label-sm text-on-surface-variant hover:text-primary-container transition-colors border-b-2 border-transparent whitespace-nowrap<?php echo $typeKey === $defaultTab ? ' is-active' : ''; ?>" data-plan-tab="<?php echo htmlspecialchars($typeKey); ?>">
+<button type="button" class="plan-type-tab shrink-0 px-4 py-2.5 md:py-3 text-sm md:text-base font-semibold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap<?php echo $typeKey === $defaultTab ? ' is-active border-primary text-primary' : ''; ?>" data-plan-tab="<?php echo htmlspecialchars($typeKey); ?>">
 <?php echo htmlspecialchars($typeLabel); ?>
-<span class="ml-1 text-[10px] opacity-60">(<?php echo count($plansByType[$typeKey]); ?>)</span>
+<span class="ml-1 text-on-surface-variant font-normal">(<?php echo count($plansByType[$typeKey]); ?>)</span>
 </button>
 <?php endforeach; ?>
-</div>
 </nav>
 <?php endif; ?>
 
@@ -184,11 +175,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.plan-type-tab').forEach(function(tab) {
         tab.addEventListener('click', function () {
             var type = tab.getAttribute('data-plan-tab');
-            document.querySelectorAll('.plan-type-tab').forEach(function (t) { t.classList.remove('is-active'); });
+            document.querySelectorAll('.plan-type-tab').forEach(function (t) {
+                t.classList.remove('is-active', 'border-primary', 'text-primary');
+                t.classList.add('border-transparent', 'text-on-surface-variant');
+            });
             document.querySelectorAll('.plan-type-panel').forEach(function (p) { p.classList.remove('is-active'); });
-            tab.classList.add('is-active');
-            var panel = document.querySelector('.plan-type-panel[data-plan-panel="' + type + '"]');
-            if (panel) panel.classList.add('is-active');
+            tab.classList.add('is-active', 'border-primary', 'text-primary');
+            tab.classList.remove('border-transparent', 'text-on-surface-variant');
+            var panel = document.querySelector('.plan-type-panel[data-plan-panel="' + type + '"]');            if (panel) panel.classList.add('is-active');
         });
     });
 });

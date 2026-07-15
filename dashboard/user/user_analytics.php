@@ -363,11 +363,11 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
     to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in { animation: fadeIn 0.5s ease forwards; }
-.analytics-filter-btn.is-active { background: #fff; color: #f9bd0b; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
-.dark .analytics-filter-btn.is-active { background: rgb(39 39 42); color: #f9bd0b; }
-.analytics-filter-btn.is-active:hover { background: #fff; }
-.dark .analytics-filter-btn.is-active:hover { background: rgb(39 39 42); }
-.portfolio-tab.is-active { color: #f9bd0b; border-bottom-color: #f9bd0b; }
+.analytics-filter-btn.is-active { background: rgba(75, 142, 255, 0.15); color: #adc6ff; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.dark .analytics-filter-btn.is-active { background: rgba(75, 142, 255, 0.18); color: #adc6ff; }
+.analytics-filter-btn.is-active:hover { background: rgba(75, 142, 255, 0.22); }
+.dark .analytics-filter-btn.is-active:hover { background: rgba(75, 142, 255, 0.22); }
+.portfolio-tab.is-active { color: #adc6ff; border-bottom-color: #4b8eff; }
 </style>
 <div class="dash-page w-full min-w-0">
 <!-- Top Stats Grid -->
@@ -453,10 +453,10 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 </h2>
 <a href="/dashboard/user/investment-plans" class="text-sm text-primary font-semibold hover:underline">Browse plans →</a>
 </div>
-<div class="flex gap-1 mb-4 border-b border-slate-200 dark:border-zinc-700 overflow-x-auto">
-<button type="button" class="portfolio-tab is-active px-4 py-2 text-sm font-semibold border-b-2 border-primary text-primary whitespace-nowrap" data-tab="active">Active <span class="text-slate-400 font-normal">(<?= count($activePlans) ?>)</span></button>
-<button type="button" class="portfolio-tab px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white whitespace-nowrap" data-tab="matured">Matured <span class="text-slate-400 font-normal">(<?= count($maturedPlans) ?>)</span></button>
-<button type="button" class="portfolio-tab px-4 py-2 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white whitespace-nowrap" data-tab="liquidated">Liquidated <span class="text-slate-400 font-normal">(<?= count($liquidatedPlans) ?>)</span></button>
+<div class="flex gap-1 mb-4 border-b border-white/10 overflow-x-auto">
+<button type="button" class="portfolio-tab is-active px-4 py-2.5 md:py-3 text-sm md:text-base font-semibold border-b-2 border-primary text-primary whitespace-nowrap" data-tab="active">Active <span class="text-on-surface-variant font-normal">(<?= count($activePlans) ?>)</span></button>
+<button type="button" class="portfolio-tab px-4 py-2.5 md:py-3 text-sm md:text-base font-semibold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface whitespace-nowrap" data-tab="matured">Matured <span class="text-on-surface-variant font-normal">(<?= count($maturedPlans) ?>)</span></button>
+<button type="button" class="portfolio-tab px-4 py-2.5 md:py-3 text-sm md:text-base font-semibold border-b-2 border-transparent text-on-surface-variant hover:text-on-surface whitespace-nowrap" data-tab="liquidated">Liquidated <span class="text-on-surface-variant font-normal">(<?= count($liquidatedPlans) ?>)</span></button>
 </div>
 <div id="portfolio-panel-active" class="portfolio-panel">
 <?php if (!empty($activePlans)): ?>
