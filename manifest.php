@@ -18,8 +18,8 @@ $manifest = [
     'scope' => '/',
     'display' => 'standalone',
     'orientation' => 'portrait-primary',
-    'theme_color' => '#ffc35c',
-    'background_color' => '#0b0e11',
+    'theme_color' => '#081422',
+    'background_color' => '#081422',
     'icons' => [
         [
             'src' => get_pwa_icon_url(180),

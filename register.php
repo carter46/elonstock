@@ -84,7 +84,7 @@ Join thousands of professionals managing their digital assets with precision and
 </div>
 </div>
 <div id="register-step1-message" class="text-sm text-red-400 hidden"></div>
-<button type="button" id="register-step1-next" class="w-full bg-primary-container text-on-primary font-bold py-3 rounded-lg hover:bg-primary transition-all shadow-lg shadow-primary-container/10 active:scale-95 flex items-center justify-center gap-2 group">
+<button type="button" id="register-step1-next" class="w-full bg-primary-container text-on-primary font-bold py-3 rounded-lg hover:bg-primary-container/90 transition-all shadow-lg shadow-primary-container/10 active:scale-95 flex items-center justify-center gap-2 group">
 <span>Continue</span>
 <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </button>
@@ -130,7 +130,7 @@ I agree to the <a class="text-primary-container hover:underline underline-offset
 <button type="button" id="register-step2-back" class="flex-1 py-4 rounded-lg border border-border-low text-on-surface-variant font-bold hover:border-primary-container/50 transition-colors">
 Back
 </button>
-<button type="submit" class="flex-[2] bg-primary-container text-on-primary font-bold py-3 rounded-lg hover:bg-primary transition-all shadow-lg shadow-primary-container/10 active:scale-95 flex items-center justify-center gap-2 group">
+<button type="submit" class="flex-[2] bg-primary-container text-on-primary font-bold py-3 rounded-lg hover:bg-primary-container/90 transition-all shadow-lg shadow-primary-container/10 active:scale-95 flex items-center justify-center gap-2 group">
 <span>Create My Account</span>
 <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </button>
@@ -143,7 +143,7 @@ Back
 <p class="text-sm text-on-secondary-container">Enter the 6-digit code we sent to your email.</p>
 <div class="flex gap-2 justify-center my-6" id="register-otp-inputs">
 <?php for ($i = 1; $i <= 6; $i++): ?>
-<input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="<?php echo $i === 1 ? 'one-time-code' : 'off'; ?>" class="w-11 h-12 text-center text-lg font-bold rounded-lg border border-outline-variant/30 bg-white text-[#111417] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" data-otp-digit aria-label="Digit <?php echo $i; ?>"/>
+<input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="<?php echo $i === 1 ? 'one-time-code' : 'off'; ?>" class="auth-otp-input w-11 h-12 text-center text-lg font-bold rounded-lg border border-outline-variant/30 focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" data-otp-digit aria-label="Digit <?php echo $i; ?>"/>
 <?php endfor; ?>
 </div>
 <div id="register-otp-message" class="text-sm hidden"></div>

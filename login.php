@@ -54,7 +54,7 @@ $authBgStyle = 'login';
 </div>
 <div class="flex items-center justify-between gap-2">
 <label class="flex items-center gap-2 cursor-pointer">
-<input class="w-4 h-4 rounded border-outline-variant bg-white text-primary-container focus:ring-primary-container/30" type="checkbox" name="remember"/>
+<input class="w-4 h-4 rounded border-outline-variant bg-surface-container text-primary-container focus:ring-primary-container/30" type="checkbox" name="remember"/>
 <span class="font-label-sm text-label-sm text-on-surface-variant">Remember me</span>
 </label>
 <a class="font-label-sm text-label-sm text-primary-fixed-dim hover:text-primary-container transition-colors shrink-0" href="/forgot-password">Forgot password?</a>
@@ -74,7 +74,7 @@ $authBgStyle = 'login';
 <p class="text-sm text-on-secondary-container">Enter the 6-digit code we sent to your email.</p>
 <div class="flex gap-2 justify-center my-4" id="login-otp-inputs">
 <?php for ($i = 1; $i <= 6; $i++): ?>
-<input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="<?php echo $i === 1 ? 'one-time-code' : 'off'; ?>" class="w-11 h-12 text-center text-lg font-bold rounded-lg border border-outline-variant/30 bg-white text-[#111417] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" data-otp-digit aria-label="Digit <?php echo $i; ?>"/>
+<input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="<?php echo $i === 1 ? 'one-time-code' : 'off'; ?>" class="auth-otp-input w-11 h-12 text-center text-lg font-bold rounded-lg border border-outline-variant/30 focus:border-primary-container focus:ring-2 focus:ring-primary-container/20" data-otp-digit aria-label="Digit <?php echo $i; ?>"/>
 <?php endfor; ?>
 </div>
 <div id="login-otp-message" class="text-sm hidden"></div>

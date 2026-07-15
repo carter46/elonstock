@@ -1,16 +1,20 @@
 <?php
 /**
- * Bloombit - Minimal Auth Header
+ * Minimal Auth Header — Stock Wealth brand chrome
  * Use on login, register, forgot-password, reset-password
- * Optional: $authHeaderVariant = 'on-primary' for use on yellow/primary background (e.g. register left panel)
+ * Optional: $authHeaderVariant = 'on-primary' for high-contrast on solid primary panels
  */
 require_once __DIR__ . '/helpers.php';
 $siteName = $siteName ?? get_site_name();
 [$brandBase, $brandAccent] = get_site_brand_parts($siteName);
 $onPrimary = isset($authHeaderVariant) && $authHeaderVariant === 'on-primary';
-$linkClass = $onPrimary ? 'flex items-center gap-2 text-black hover:opacity-90 transition-opacity' : 'flex items-center gap-2 text-[#1d180c] dark:text-primary hover:opacity-90 transition-opacity';
-$iconClass = $onPrimary ? 'size-8 text-black' : 'size-8 text-primary';
-$textClass = $onPrimary ? 'text-xl font-bold tracking-tight text-black' : 'text-xl font-bold tracking-tight dark:text-white';
+$linkClass = $onPrimary
+  ? 'flex items-center gap-2 text-white hover:opacity-90 transition-opacity'
+  : 'flex items-center gap-2 text-primary hover:opacity-90 transition-opacity';
+$iconClass = $onPrimary ? 'size-8 text-white' : 'size-8 text-primary-container';
+$textClass = $onPrimary
+  ? 'text-xl font-bold tracking-tight text-white'
+  : 'text-xl font-bold tracking-tight text-white';
 ?>
 <a class="<?php echo $linkClass; ?> min-h-[44px] py-2" href="/">
 <div class="<?php echo $iconClass; ?>">

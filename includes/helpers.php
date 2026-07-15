@@ -642,7 +642,7 @@ function output_pwa_head_tags(): void {
     $shortName = htmlspecialchars(get_pwa_short_name());
     $icon180 = htmlspecialchars(get_pwa_icon_url(180));
     echo '<link rel="manifest" href="/manifest.webmanifest"/>' . "\n";
-    echo '<meta name="theme-color" content="#ffc35c"/>' . "\n";
+    echo '<meta name="theme-color" content="#081422"/>' . "\n";
     echo '<meta name="mobile-web-app-capable" content="yes"/>' . "\n";
     echo '<meta name="apple-mobile-web-app-capable" content="yes"/>' . "\n";
     echo '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>' . "\n";
