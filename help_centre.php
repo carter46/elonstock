@@ -14,37 +14,37 @@ $pageTitle = 'Help Center | ' . $siteName;
 <?php require_once __DIR__ . '/includes/marketing-head.php'; ?>
 <style>
 .help-hero-mesh {
-  background-color: #0b0e11;
-  background-image: radial-gradient(at 0% 0%, rgba(255, 195, 92, 0.08) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 195, 92, 0.05) 0px, transparent 50%);
+  background-color: #081422;
+  background-image: radial-gradient(at 0% 0%, rgba(173, 198, 255, 0.08) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(75, 142, 255, 0.05) 0px, transparent 50%);
 }
 .help-card {
-  background: #1d2023;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(21, 32, 47, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
 }
 .help-input {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #15202f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
-  color: #111417;
+  color: #d7e3f7;
   font-size: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .help-input:focus {
   outline: none;
-  border-color: #ffc35c;
-  box-shadow: 0 0 0 2px rgba(255, 195, 92, 0.25);
+  border-color: #4b8eff;
+  box-shadow: 0 0 0 2px rgba(75, 142, 255, 0.25);
 }
-.help-input::placeholder { color: #9ca3af; }
+.help-input::placeholder { color: #8b90a0; }
 .help-faq-btn[aria-expanded="true"] .help-faq-chevron { transform: rotate(180deg); }
 .help-faq-panel { display: none; }
 .help-faq-panel.is-open { display: block; }
 .help-cat-btn.is-active {
-  background: rgba(255, 195, 92, 0.12);
-  border-color: rgba(255, 195, 92, 0.35);
-  color: #ffc35c;
+  background: rgba(75, 142, 255, 0.12);
+  border-color: rgba(75, 142, 255, 0.35);
+  color: #adc6ff;
 }
 </style>
 </head>
@@ -59,10 +59,10 @@ $pageTitle = 'Help Center | ' . $siteName;
 Our team is here around the clock for account, investment, and technical questions about <?php echo htmlspecialchars($siteName); ?>.
 </p>
 <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-<a href="/live_chat" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-container text-on-primary text-sm font-bold rounded-lg hover:opacity-90 transition-all">
+<a href="/live_chat" class="gradient-button inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold">
 <span class="material-symbols-outlined text-lg">forum</span>Start Live Chat
 </a>
-<a href="mailto:<?php echo htmlspecialchars($contactEmail); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 border border-border-low text-on-surface text-sm font-bold rounded-lg hover:bg-surface-container-high transition-colors">
+<a href="mailto:<?php echo htmlspecialchars($contactEmail); ?>" class="btn-secondary inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold">
 <span class="material-symbols-outlined text-lg">mail</span><?php echo htmlspecialchars($contactEmail); ?>
 </a>
 </div>
@@ -102,7 +102,7 @@ Our team is here around the clock for account, investment, and technical questio
 <textarea class="help-input resize-none min-h-[140px]" id="contact-message" name="message" placeholder="How can we help you?" rows="5" required></textarea>
 </div>
 <div id="contact-form-message" class="text-sm hidden"></div>
-<button type="submit" class="w-full py-3.5 bg-primary-container text-on-primary font-bold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+<button type="submit" class="w-full py-3.5 gradient-button font-bold flex items-center justify-center gap-2">
 <span>Send Message</span>
 <span class="material-symbols-outlined text-lg">send</span>
 </button>
@@ -218,10 +218,10 @@ foreach ($faqs as $i => $faq):
 <p class="text-on-secondary-container text-body-lg">Our support team can walk you through deposits, plans, withdrawals, and account security.</p>
 </div>
 <div class="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
-<a href="/live_chat" class="px-6 py-3.5 bg-primary-container text-on-primary font-bold rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+<a href="/live_chat" class="gradient-button px-6 py-3.5 font-bold flex items-center justify-center gap-2">
 <span class="material-symbols-outlined">forum</span>Start Live Chat
 </a>
-<a href="/register" class="px-6 py-3.5 border border-border-low text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-colors text-center">Create Account</a>
+<a href="/register" class="btn-secondary px-6 py-3.5 font-bold text-center">Create Account</a>
 </div>
 </div>
 </div>

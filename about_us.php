@@ -24,7 +24,7 @@ $infraBg = 'https://lh3.googleusercontent.com/aida/AP1WRLsKriSbY6BJi-Xp2Gkc7D7CV
 }
 </style>
 </head>
-<body class="marketing-page font-body-md bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<body class="marketing-page font-body-md bg-background text-on-surface selection:bg-primary selection:text-on-primary overflow-x-hidden">
 <?php $currentPage = 'about_us'; require_once __DIR__ . '/includes/marketing-header.php'; ?>
 
 <main class="pt-20">
@@ -41,10 +41,10 @@ Democratizing Wealth Creation <span class="text-primary-container">Through AI.</
 <?php echo htmlspecialchars($siteName); ?> is more than a trading platform. We are a collective of financial engineers and AI researchers dedicated to leveling the playing field in global crypto markets.
 </p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-<a href="#infrastructure" class="bg-primary-container text-on-primary px-8 py-4 font-label-sm text-label-sm rounded-lg inline-flex items-center justify-center gap-2 hover:brightness-110 transition-all">
+<a href="#infrastructure" class="gradient-button px-8 py-4 font-label-sm text-label-sm inline-flex items-center justify-center gap-2">
 VIEW OUR INFRASTRUCTURE <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
 </a>
-<a href="/legal_centre" class="border border-low text-text-primary px-8 py-4 font-label-sm text-label-sm rounded-lg hover:bg-white/5 transition-all inline-flex items-center justify-center">
+<a href="/legal_centre" class="btn-secondary px-8 py-4 font-label-sm text-label-sm inline-flex items-center justify-center">
 OUR WHITE PAPER
 </a>
 </div>
@@ -117,28 +117,28 @@ By integrating deep learning with high-frequency execution, we eliminate the emo
 <div class="w-24 h-1 bg-primary-container mx-auto"></div>
 </div>
 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-<div class="p-8 border border-low hover:border-primary-container/30 transition-all group rounded-xl">
+<div class="trading-card p-8 hover:border-primary-container/30 transition-all group">
 <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary-container/20 transition-colors">
 <span class="material-symbols-outlined text-primary-container text-[28px]">visibility</span>
 </div>
 <h3 class="font-headline-md text-headline-md text-text-primary mb-4">Transparency</h3>
 <p class="font-body-md text-body-md text-text-secondary">Open-source validation of our execution logic and 1:1 asset backing on all custodial wallets.</p>
 </div>
-<div class="p-8 border border-low hover:border-primary-container/30 transition-all group rounded-xl">
+<div class="trading-card p-8 hover:border-primary-container/30 transition-all group">
 <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary-container/20 transition-colors">
 <span class="material-symbols-outlined text-primary-container text-[28px]">rocket_launch</span>
 </div>
 <h3 class="font-headline-md text-headline-md text-text-primary mb-4">Innovation</h3>
 <p class="font-body-md text-body-md text-text-secondary">Proprietary neural networks optimized for volatile crypto-asset liquidity management.</p>
 </div>
-<div class="p-8 border border-low hover:border-primary-container/30 transition-all group rounded-xl">
+<div class="trading-card p-8 hover:border-primary-container/30 transition-all group">
 <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary-container/20 transition-colors">
 <span class="material-symbols-outlined text-primary-container text-[28px]">verified_user</span>
 </div>
 <h3 class="font-headline-md text-headline-md text-text-primary mb-4">Security</h3>
 <p class="font-body-md text-body-md text-text-secondary">Multi-sig authorization and cold-storage protocols designed by former intelligence engineers.</p>
 </div>
-<div class="p-8 border border-low hover:border-primary-container/30 transition-all group rounded-xl">
+<div class="trading-card p-8 hover:border-primary-container/30 transition-all group">
 <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary-container/20 transition-colors">
 <span class="material-symbols-outlined text-primary-container text-[28px]">speed</span>
 </div>
@@ -276,8 +276,8 @@ By integrating deep learning with high-frequency execution, we eliminate the emo
 <h2 class="font-display text-headline-lg text-text-primary mb-6 relative z-10">Ready to trade at the speed of light?</h2>
 <p class="font-body-lg text-body-lg text-text-secondary mb-10 max-w-xl mx-auto relative z-10">Join <?php echo htmlspecialchars($siteName); ?> and experience the precision of institutional-grade AI trading signals.</p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-<a href="/register" class="bg-primary-container text-on-primary px-10 py-5 font-label-sm text-label-sm rounded-lg hover:brightness-110 active:scale-95 transition-all inline-flex items-center justify-center">CREATE YOUR ACCOUNT</a>
-<a href="/live_chat" class="border border-low text-text-primary px-10 py-5 font-label-sm text-label-sm rounded-lg hover:bg-white/5 transition-all inline-flex items-center justify-center">CONTACT INSTITUTIONAL DESK</a>
+<a href="/register" class="gradient-button px-10 py-5 font-label-sm text-label-sm inline-flex items-center justify-center">CREATE YOUR ACCOUNT</a>
+<a href="/live_chat" class="btn-secondary px-10 py-5 font-label-sm text-label-sm inline-flex items-center justify-center">CONTACT INSTITUTIONAL DESK</a>
 </div>
 </div>
 </section>

@@ -10,27 +10,27 @@ require_once __DIR__ . '/includes/marketing-head.php';
 ?>
 <style>
 .legal-hero-mesh {
-  background-color: #0b0e11;
-  background-image: radial-gradient(at 0% 0%, rgba(255, 195, 92, 0.08) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(255, 195, 92, 0.05) 0px, transparent 50%);
+  background-color: #081422;
+  background-image: radial-gradient(at 0% 0%, rgba(173, 198, 255, 0.08) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(75, 142, 255, 0.05) 0px, transparent 50%);
 }
 .legal-sidebar-link {
   border-left: 2px solid transparent;
   padding-left: 0.75rem;
-  color: #b1b5bd;
+  color: #c1c6d7;
   font-size: 0.875rem;
   font-weight: 500;
   transition: color 0.2s, border-color 0.2s;
 }
 .legal-sidebar-link:hover {
-  color: #ffc35c;
-  border-color: #ffc35c;
+  color: #adc6ff;
+  border-color: #4b8eff;
 }
 .legal-anchor {
   scroll-margin-top: 6.5rem;
 }
 .legal-card {
-  background: #1d2023;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(21, 32, 47, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
 }
 @media print {
@@ -54,9 +54,9 @@ require_once __DIR__ . '/includes/marketing-head.php';
 <span>Effective Date: January 1, 2024</span>
 </div>
 <div class="mt-8 flex justify-center gap-3">
-<button type="button" class="hidden md:inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-on-secondary-container hover:text-primary-container border border-border-low rounded-lg transition-colors" onclick="window.print()">
+<button type="button" class="hidden md:inline-flex btn-secondary items-center gap-2 px-4 py-2 text-sm font-medium" onclick="window.print()">
 <span class="material-symbols-outlined text-lg">print</span>Print</button>
-<button type="button" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-container text-surface-container-lowest text-sm font-bold rounded-lg hover:opacity-90 transition-all" onclick="window.print()">
+<button type="button" class="gradient-button inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold" onclick="window.print()">
 <span class="material-symbols-outlined text-lg">download</span>Download PDF</button>
 </div>
 </div>
@@ -211,8 +211,8 @@ We use essential cookies to maintain user sessions and security. Analytical cook
 <p class="text-on-secondary-container text-sm">Our support team can help you understand your rights and obligations.</p>
 </div>
 <div class="flex gap-4">
-<a href="/help_centre" class="px-6 py-2.5 border border-border-low text-sm font-semibold rounded-lg text-on-surface hover:bg-surface-container-high transition-colors">Help Center</a>
-<a href="/live_chat" class="btn-get-started px-6 py-2.5 text-sm font-bold rounded-lg">Contact Support</a>
+<a href="/help_centre" class="btn-secondary px-6 py-2.5 text-sm font-semibold">Help Center</a>
+<a href="/live_chat" class="gradient-button px-6 py-2.5 text-sm font-bold">Contact Support</a>
 </div>
 </div>
 </div>

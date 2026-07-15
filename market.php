@@ -23,7 +23,7 @@ if (!$instrument) {
 <div class="max-w-xl mx-auto px-4">
 <h1 class="font-display text-4xl mb-4 text-on-surface">Market Not Found</h1>
 <p class="text-on-secondary-container mb-8">The market you are looking for does not exist or may have been moved.</p>
-<a href="/#markets" class="btn-get-started inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-label-sm">Browse Markets</a>
+<a href="/#markets" class="gradient-button inline-flex items-center gap-2 px-8 py-4 font-bold text-label-sm">Browse Markets</a>
 </div>
 </section>
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
@@ -72,7 +72,7 @@ output_market_seo_tags($instrument);
 </span>
 <h1 class="font-display text-4xl sm:text-5xl lg:text-display mb-6 text-on-surface leading-tight"><?php echo htmlspecialchars($h1Title); ?></h1>
 <p class="font-body-lg text-body-lg text-on-secondary-container mb-10 max-w-2xl"><?php echo htmlspecialchars($instrument['intro']); ?></p>
-<a href="/dashboard" class="btn-get-started inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-label-sm hover:scale-105 transition-transform">
+<a href="/dashboard" class="gradient-button inline-flex items-center gap-2 px-8 py-4 font-bold text-label-sm hover:scale-105 transition-transform">
 Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </a>
 </div>
@@ -80,36 +80,36 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </section>
 
 <!-- Market Snapshot -->
-<section class="py-10 md:py-12 bg-[#F7F8FA] border-b border-gray-200">
+<section class="py-10 md:py-12 bg-surface border-b border-white/5">
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
 <h2 class="sr-only">Market Snapshot</h2>
-<div class="market-snapshot-card bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
+<div class="market-snapshot-card trading-card p-6 md:p-8">
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
 <div>
-<div class="text-xs font-bold text-gray-400 uppercase mb-1">Market Type</div>
-<div class="font-semibold text-surface-container-lowest"><?php echo htmlspecialchars($snapshot['market_type'] ?? '—'); ?></div>
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1">Market Type</div>
+<div class="font-semibold text-on-surface"><?php echo htmlspecialchars($snapshot['market_type'] ?? '—'); ?></div>
 </div>
 <?php if (!empty($snapshot['sector'])): ?>
 <div>
-<div class="text-xs font-bold text-gray-400 uppercase mb-1">Sector</div>
-<div class="font-semibold text-surface-container-lowest"><?php echo htmlspecialchars($snapshot['sector']); ?></div>
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1">Sector</div>
+<div class="font-semibold text-on-surface"><?php echo htmlspecialchars($snapshot['sector']); ?></div>
 </div>
 <?php endif; ?>
 <div>
-<div class="text-xs font-bold text-gray-400 uppercase mb-1">Exchange</div>
-<div class="font-semibold text-surface-container-lowest"><?php echo htmlspecialchars($snapshot['exchange'] ?? '—'); ?></div>
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1">Exchange</div>
+<div class="font-semibold text-on-surface"><?php echo htmlspecialchars($snapshot['exchange'] ?? '—'); ?></div>
 </div>
 <div>
-<div class="text-xs font-bold text-gray-400 uppercase mb-1">Trading Hours</div>
-<div class="font-semibold text-surface-container-lowest"><?php echo htmlspecialchars($snapshot['hours'] ?? '—'); ?></div>
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1">Trading Hours</div>
+<div class="font-semibold text-on-surface"><?php echo htmlspecialchars($snapshot['hours'] ?? '—'); ?></div>
 </div>
 <div>
-<div class="text-xs font-bold text-gray-400 uppercase mb-1">Volatility</div>
-<div class="font-semibold text-surface-container-lowest"><?php echo htmlspecialchars($snapshot['volatility'] ?? '—'); ?></div>
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1">Volatility</div>
+<div class="font-semibold text-on-surface"><?php echo htmlspecialchars($snapshot['volatility'] ?? '—'); ?></div>
 </div>
 <div>
-<div class="text-xs font-bold text-gray-400 uppercase mb-1">Suitable For</div>
-<div class="font-semibold text-surface-container-lowest text-sm leading-snug"><?php echo htmlspecialchars($snapshot['suitable_for'] ?? '—'); ?></div>
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1">Suitable For</div>
+<div class="font-semibold text-on-surface text-sm leading-snug"><?php echo htmlspecialchars($snapshot['suitable_for'] ?? '—'); ?></div>
 </div>
 </div>
 </div>
@@ -117,22 +117,22 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </section>
 
 <!-- Live Chart -->
-<section class="py-12 md:py-16 bg-white">
+<section class="py-12 md:py-16 bg-surface-container-lowest">
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
-<h2 class="font-headline-md text-headline-md text-surface-container-lowest mb-6">Live Price Chart</h2>
-<div class="market-detail-chart-wrap bg-[#F7F8FA] rounded-2xl border border-gray-100 p-4 md:p-6">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Live Price Chart</h2>
+<div class="market-detail-chart-wrap rounded-2xl bg-surface-container border border-white/5 p-4 md:p-6">
 <?php if ($isCrypto && $coingeckoId): ?>
 <div class="crypto-detail-header mb-4 flex flex-wrap items-center justify-between gap-4" data-coin="<?php echo htmlspecialchars($coingeckoId); ?>">
 <div class="flex items-center gap-3">
 <img class="crypto-logo w-10 h-10 rounded-full" src="" alt=""/>
 <div>
-<div class="font-bold text-surface-container-lowest crypto-symbol"><?php echo htmlspecialchars($instrument['pair_label']); ?></div>
-<div class="text-sm text-gray-500 crypto-name"><?php echo htmlspecialchars($instrument['name']); ?></div>
+<div class="font-bold text-on-surface crypto-symbol"><?php echo htmlspecialchars($instrument['pair_label']); ?></div>
+<div class="text-sm text-on-surface-variant crypto-name"><?php echo htmlspecialchars($instrument['name']); ?></div>
 </div>
 </div>
 <div class="text-right">
-<div class="text-2xl font-bold font-data-mono text-surface-container-lowest crypto-price">--</div>
-<div class="crypto-change font-data-mono text-sm text-gray-400">--</div>
+<div class="text-2xl font-bold font-data-mono text-on-surface crypto-price">--</div>
+<div class="crypto-change font-data-mono text-sm text-on-surface-variant">--</div>
 </div>
 </div>
 <?php endif; ?>
@@ -160,19 +160,19 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </section>
 
 <!-- Why Investors Watch (image left) -->
-<section class="py-16 md:py-20 bg-[#F7F8FA] border-y border-gray-200">
+<section class="py-16 md:py-20 bg-surface border-y border-white/5">
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 <div class="flex justify-center order-1">
-<img src="<?php echo htmlspecialchars($illustration); ?>" alt="" class="market-illustration market-illustration-alt rounded-2xl shadow-lg max-w-sm w-full object-cover opacity-90" loading="lazy" aria-hidden="true"/>
+<img src="<?php echo htmlspecialchars($illustration); ?>" alt="" class="market-illustration market-illustration-alt rounded-2xl shadow-lg max-w-sm w-full object-cover opacity-90 img-institutional" loading="lazy" aria-hidden="true"/>
 </div>
 <div class="order-2">
-<h2 class="font-headline-md text-headline-md text-surface-container-lowest mb-4">Why Investors Watch This Market</h2>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Why Investors Watch This Market</h2>
 <?php if (!empty($instrument['why_watch_intro'])): ?>
-<p class="text-gray-600 mb-6"><?php echo htmlspecialchars($instrument['why_watch_intro']); ?></p>
+<p class="text-on-surface-variant mb-6"><?php echo htmlspecialchars($instrument['why_watch_intro']); ?></p>
 <?php endif; ?>
 <ul class="space-y-4">
 <?php foreach ($instrument['why_watch'] as $bullet): ?>
-<li class="flex gap-3 text-surface-container-lowest">
+<li class="flex gap-3 text-on-surface">
 <span class="material-symbols-outlined text-primary-container shrink-0 text-xl">check_circle</span>
 <span><?php echo htmlspecialchars($bullet); ?></span>
 </li>
@@ -230,7 +230,7 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 <!-- Highlight banner -->
 <section class="py-10 bg-primary-container/10 border-y border-primary-container/20">
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop text-center">
-<p class="text-surface-container-lowest font-semibold text-lg md:text-xl">
+<p class="text-on-surface font-semibold text-lg md:text-xl">
 <span class="material-symbols-outlined align-middle text-primary-container mr-2">insights</span>
 AI-powered monitoring for <?php echo htmlspecialchars($instrument['name']); ?> — available 24/7 on <?php echo htmlspecialchars($siteName); ?>.
 </p>
@@ -241,15 +241,15 @@ AI-powered monitoring for <?php echo htmlspecialchars($instrument['name']); ?> �
 
 <!-- Related Markets -->
 <?php if (!empty($related)): ?>
-<section class="py-16 md:py-20 bg-[#F7F8FA]">
+<section class="py-16 md:py-20 bg-surface-container">
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
-<h2 class="font-headline-md text-headline-md text-surface-container-lowest mb-8">Related Markets</h2>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8">Related Markets</h2>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
 <?php foreach ($related as $rel): ?>
-<a href="/markets/<?php echo htmlspecialchars($rel['slug']); ?>" class="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow group block">
-<div class="text-xs font-bold text-gray-400 uppercase mb-1"><?php echo htmlspecialchars($rel['snapshot']['market_type'] ?? ucfirst($rel['category'])); ?></div>
-<div class="font-bold text-surface-container-lowest group-hover:text-primary-container transition-colors"><?php echo htmlspecialchars($rel['name']); ?></div>
-<div class="text-sm text-gray-500 mt-1"><?php echo htmlspecialchars($rel['pair_label']); ?></div>
+<a href="/markets/<?php echo htmlspecialchars($rel['slug']); ?>" class="trading-card p-5 group block">
+<div class="text-xs font-bold text-on-surface-variant uppercase mb-1"><?php echo htmlspecialchars($rel['snapshot']['market_type'] ?? ucfirst($rel['category'])); ?></div>
+<div class="font-bold text-on-surface group-hover:text-primary-container transition-colors"><?php echo htmlspecialchars($rel['name']); ?></div>
+<div class="text-sm text-on-surface-variant mt-1"><?php echo htmlspecialchars($rel['pair_label']); ?></div>
 </a>
 <?php endforeach; ?>
 </div>
@@ -263,7 +263,7 @@ AI-powered monitoring for <?php echo htmlspecialchars($instrument['name']); ?> �
 <div class="relative z-10 max-w-3xl mx-auto px-4 text-center">
 <h2 class="font-display text-3xl sm:text-4xl md:text-5xl text-on-surface mb-6"><?php echo htmlspecialchars($instrument['cta_headline'] ?? 'Ready to Explore Smarter Investing?'); ?></h2>
 <p class="text-on-secondary-container text-body-lg mb-10 max-w-2xl mx-auto"><?php echo htmlspecialchars($instrument['cta_body'] ?? ''); ?></p>
-<a href="/dashboard" class="btn-get-started inline-flex items-center gap-2 px-10 py-4 rounded-xl font-bold text-label-sm text-lg hover:scale-105 transition-transform">
+<a href="/dashboard" class="gradient-button inline-flex items-center gap-2 px-10 py-4 font-bold text-label-sm text-lg hover:scale-105 transition-transform">
 Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </a>
 </div>
