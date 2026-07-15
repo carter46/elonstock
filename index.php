@@ -8,10 +8,9 @@ $statsClients = get_site_setting('stats_bots', '120+');
 $statsUptime = get_site_setting('stats_uptime', '99.9%');
 $statsLiquidity = get_site_setting('stats_roi', '14+');
 
-$heroTerminalImg = '/uploads/images/evergren_cmarket.png';
 $execImg = '/uploads/images/evergren_cmarket.png';
 $wealthImg = '/uploads/images/wallet_image3.png';
-$heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg'; // same asset as Bloomberg hero background
+$heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg';
 $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
 $eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
 $eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTjeBaz-FYpuIcbtXW_-rbo6AcxjJgKfVR2jecI-nQ1lrSn8fWdmLi-t99OUPHZgN_NO7hSRwNbbteLmUbrMvWLAk42D9OO3H2H9QVmQ0JcGGuWnHZ99UJlAYT8_hUbJakBBvwWMCn7Ztlamrd-ccxL-ZB96l17wF8YLv9DLZsAiMDsyzLwfeAWPDNLwrkCdBcboSejRk3gMPOLOeI_1F0zlphMTW8IWVYb6VYvr-a3o2';
@@ -64,7 +63,7 @@ $orbitRing3 = array_slice($orbitCoins, 10, 4);
 <section class="relative min-h-[88vh] lg:min-h-screen w-full flex items-center justify-center overflow-hidden hero-section">
 <div class="absolute inset-0 hero-bg" style="background-image: url('<?php echo htmlspecialchars($heroBgImg); ?>');"></div>
 <div class="absolute inset-0 hero-bg-overlay"></div>
-<div class="relative z-10 text-center max-w-5xl px-margin-mobile py-24 pb-48 md:pb-64">
+<div class="relative z-10 text-center max-w-5xl px-margin-mobile py-24 md:py-32">
 <h1 class="hero-headline font-display-lg text-display-lg text-white mb-6 tracking-tight leading-[1.05] reveal-up">
 Secure Capital. <br/> <span class="italic font-normal text-on-surface-variant">Intelligent Growth.</span>
 </h1>
@@ -79,11 +78,6 @@ Open Institutional Account
 <a href="/plans" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
 Investor Presentation
 </a>
-</div>
-</div>
-<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-6xl px-margin-mobile md:px-margin-desktop opacity-60 z-10">
-<div class="rounded-t-3xl border-t border-x border-white/10 overflow-hidden shadow-2xl">
-<img alt="Institutional Terminal" class="w-full img-institutional" src="<?php echo htmlspecialchars($heroTerminalImg); ?>"/>
 </div>
 </div>
 </section>

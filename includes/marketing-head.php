@@ -232,15 +232,12 @@ body.marketing-page {
   background: #4b8eff;
   box-shadow: 0 0 10px #4b8eff;
 }
-.hero-section {
-  background-color: #081422;
-}
 .hero-gradient {
   background: radial-gradient(circle at top right, rgba(173, 198, 255, 0.08), transparent 50%),
               radial-gradient(circle at bottom left, rgba(8, 20, 34, 1), transparent 80%);
 }
 .hero-section {
-  background-color: #071321;
+  background-color: #0b0e11;
 }
 .hero-bg {
   background-size: cover;
@@ -263,7 +260,25 @@ body.marketing-page {
       rgba(11, 14, 17, 0.20) 98%,
       rgba(11, 14, 17, 0) 100%
     ),
-    rgba(4, 6, 12, 0.45);
+    rgba(4, 6, 12, 0.35);
+}
+.hero-image-animate {
+  opacity: 0;
+  animation: heroFadeInMobile 0.9s ease-out forwards;
+  animation-delay: 0.2s;
+}
+@media (min-width: 1024px) {
+  .hero-image-animate {
+    animation-name: heroFadeInDesktop;
+  }
+}
+@keyframes heroFadeInMobile {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroFadeInDesktop {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 .img-institutional {
   filter: saturate(0.85) contrast(1.05) brightness(0.92);
