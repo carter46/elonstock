@@ -46,6 +46,23 @@ if (empty($orbitCoins)) {
 $orbitRing1 = array_slice($orbitCoins, 0, 6);
 $orbitRing2 = array_slice($orbitCoins, 6, 4);
 $orbitRing3 = array_slice($orbitCoins, 10, 4);
+
+$partnerImages = [];
+$partnerDir = __DIR__ . '/uploads/images/partner';
+if (is_dir($partnerDir)) {
+    $allowed = ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'];
+    $entries = scandir($partnerDir);
+    if ($entries !== false) {
+        foreach ($entries as $name) {
+            if ($name === '.' || $name === '..') continue;
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed, true)) continue;
+            $partnerImages[] = '/uploads/images/partner/' . $name;
+        }
+        natcasesort($partnerImages);
+        $partnerImages = array_values($partnerImages);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -96,32 +113,32 @@ View Live Market
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <div class="trading-card p-8 reveal-up">
-<span class="material-symbols-outlined text-primary mb-4 text-3xl">apartment</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#34d399">apartment</span>
 <h3 class="font-headline-md text-white mb-2">Real Estate Brokerage</h3>
 <p class="text-on-surface-variant text-sm">Direct access to prime commercial real estate and high-yield residential developments across European and Asian markets.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.05s">
-<span class="material-symbols-outlined text-primary mb-4 text-3xl">oil_barrel</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#fbbf24">oil_barrel</span>
 <h3 class="font-headline-md text-white mb-2">Oil &amp; Gas</h3>
 <p class="text-on-surface-variant text-sm">Strategic investments in energy infrastructure and production, focusing on supply chain stability and long-term energy security.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.1s">
-<span class="material-symbols-outlined text-primary mb-4 text-3xl">currency_bitcoin</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#f7931a">currency_bitcoin</span>
 <h3 class="font-headline-md text-white mb-2">Cryptocurrency</h3>
 <p class="text-on-surface-variant text-sm">Institutional-grade digital asset custody and algorithmic trading in major liquid tokens and emerging blockchain protocols.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.15s">
-<span class="material-symbols-outlined text-primary mb-4 text-3xl">trending_up</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#60a5fa">trending_up</span>
 <h3 class="font-headline-md text-white mb-2">Commercial Stocks</h3>
 <p class="text-on-surface-variant text-sm">Active management of blue-chip equities and mid-cap growth stocks leveraging proprietary fundamental analysis.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.2s">
-<span class="material-symbols-outlined text-primary mb-4 text-3xl">account_balance</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#a78bfa">account_balance</span>
 <h3 class="font-headline-md text-white mb-2">Alternative Assets</h3>
 <p class="text-on-surface-variant text-sm">Venture capital, private credit, and specialized commodities providing non-correlated returns for sophisticated portfolios.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.25s">
-<span class="material-symbols-outlined text-primary mb-4 text-3xl">public</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#2dd4bf">public</span>
 <h3 class="font-headline-md text-white mb-2">Sovereign Bonds</h3>
 <p class="text-on-surface-variant text-sm">Fixed income strategies focused on capital preservation through high-rated government and corporate debt instruments.</p>
 </div>
@@ -230,6 +247,32 @@ Start Investing
 </div>
 </div>
 </section>
+
+<?php if (!empty($partnerImages)): ?>
+<!-- Our Partners -->
+<section class="section-medium bg-surface-container-lowest/40 border-y border-white/5 overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-10 md:mb-12 reveal-up">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Trusted Network</span>
+<h2 class="font-display-sm text-display-sm text-white">Our Partners</h2>
+<p class="mt-4 font-body-md text-on-surface-variant max-w-2xl mx-auto">
+We work alongside leading payment, custody, and market infrastructure partners to deliver secure, reliable access for <?php echo htmlspecialchars($siteName); ?> clients.
+</p>
+</div>
+<div class="partner-slider reveal-up" data-partner-slider>
+<div class="partner-slider-track">
+<?php foreach ($partnerImages as $partnerSrc): ?>
+<div class="partner-slider-slide">
+<div class="partner-logo-wrap">
+<img src="<?php echo htmlspecialchars($partnerSrc); ?>" alt="Partner" loading="lazy"/>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+</section>
+<?php endif; ?>
 
 <!-- Authoritative Execution -->
 <section class="section-large relative overflow-hidden">
@@ -622,6 +665,85 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     requestAnimationFrame(frame);
   }
+  // Partner logo slider: 3 visible mobile / 5 desktop, auto-advance
+  (function initPartnerSlider() {
+    var root = document.querySelector('[data-partner-slider]');
+    if (!root) return;
+    var track = root.querySelector('.partner-slider-track');
+    if (!track) return;
+    var slides = Array.prototype.slice.call(track.querySelectorAll('.partner-slider-slide'));
+    if (slides.length < 2) return;
+
+    // Duplicate slides for seamless looping
+    slides.forEach(function (slide) {
+      track.appendChild(slide.cloneNode(true));
+    });
+
+    var index = 0;
+    var timer = null;
+    var animating = false;
+
+    function visibleCount() {
+      return window.matchMedia('(min-width: 768px)').matches ? 5 : 3;
+    }
+
+    function gapPx() {
+      var styles = window.getComputedStyle(track);
+      return parseFloat(styles.gap || styles.columnGap || '0') || 0;
+    }
+
+    function slideStep() {
+      var first = track.querySelector('.partner-slider-slide');
+      if (!first) return 0;
+      return first.getBoundingClientRect().width + gapPx();
+    }
+
+    function goNext() {
+      if (animating) return;
+      animating = true;
+      index += 1;
+      track.style.transition = 'transform 0.55s ease';
+      track.style.transform = 'translateX(' + (-index * slideStep()) + 'px)';
+    }
+
+    track.addEventListener('transitionend', function () {
+      if (index >= slides.length) {
+        track.style.transition = 'none';
+        index = 0;
+        track.style.transform = 'translateX(0)';
+        track.offsetHeight; // reflow
+      }
+      animating = false;
+    });
+
+    function start() {
+      stop();
+      if (slides.length <= visibleCount()) return;
+      timer = setInterval(goNext, 2800);
+    }
+
+    function stop() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    window.addEventListener('resize', function () {
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(' + (-index * slideStep()) + 'px)';
+      start();
+    });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('pointerdown', function () {
+      stop();
+      setTimeout(start, 4000);
+    }, { passive: true });
+
+    start();
+  })();
 });
 </script>
 </body>

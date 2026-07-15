@@ -428,6 +428,54 @@ body.marketing-page {
 .orbit-spin-fast {
   animation: orbit-spin 10s linear infinite;
 }
+.partner-slider {
+  overflow: hidden;
+  width: 100%;
+}
+.partner-slider-track {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  will-change: transform;
+}
+.partner-slider-slide {
+  flex: 0 0 calc((100% - 24px) / 3);
+  max-width: calc((100% - 24px) / 3);
+}
+@media (min-width: 768px) {
+  .partner-slider-track {
+    gap: 16px;
+  }
+  .partner-slider-slide {
+    flex: 0 0 calc((100% - 64px) / 5);
+    max-width: calc((100% - 64px) / 5);
+  }
+}
+.partner-logo-wrap {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+@media (min-width: 768px) {
+  .partner-logo-wrap {
+    height: 88px;
+    padding: 1rem 1.25rem;
+  }
+}
+.partner-logo-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(0.15) brightness(1.05);
+  opacity: 0.92;
+}
 @media (max-width: 768px) {
   .section-large { padding-top: 96px; padding-bottom: 96px; }
   .section-medium { padding-top: 80px; padding-bottom: 80px; }
