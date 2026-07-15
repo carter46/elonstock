@@ -100,9 +100,34 @@ View Live Market
 </section>
 
 <!-- TradingView Ticker Tape -->
-<section class="tv-ticker-strip w-full max-w-none border-y border-white/5 bg-[#0b0e11] overflow-hidden">
-<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
-<tv-ticker-tape class="block w-full" symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,CBOE:MAGS,NASDAQ:NVDA,NASDAQ:TSLA,NASDAQ:META,NASDAQ:NFLX"></tv-ticker-tape>
+<section class="tv-ticker-strip w-full max-w-none border-y border-white/5 bg-surface-container-lowest/50 relative overflow-hidden">
+<div class="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-background/40 to-transparent pointer-events-none z-[1]"></div>
+<div class="tradingview-widget-container relative z-0 w-full">
+<div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+  "symbols": [
+    { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
+    { "proName": "FOREXCOM:NSXUSD", "title": "US 100" },
+    { "proName": "FOREXCOM:DJI", "title": "Dow 30" },
+    { "proName": "FX:EURUSD", "title": "EUR/USD" },
+    { "proName": "BITSTAMP:BTCUSD", "title": "BTC/USD" },
+    { "proName": "BITSTAMP:ETHUSD", "title": "ETH/USD" },
+    { "proName": "CMCMARKETS:GOLD", "title": "Gold" },
+    { "proName": "CBOE:MAGS", "title": "MAGS" },
+    { "proName": "NASDAQ:NVDA", "title": "NVDA" },
+    { "proName": "NASDAQ:TSLA", "title": "TSLA" },
+    { "proName": "NASDAQ:META", "title": "META" },
+    { "proName": "NASDAQ:NFLX", "title": "NFLX" }
+  ],
+  "showSymbolLogo": true,
+  "colorTheme": "dark",
+  "isTransparent": true,
+  "displayMode": "adaptive",
+  "locale": "en"
+}
+</script>
+</div>
 </section>
 
 <!-- Multi-Asset Global Exposure -->

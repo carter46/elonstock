@@ -477,16 +477,28 @@ body.marketing-page {
   opacity: 0.92;
 }
 .tv-ticker-strip {
-  width: 100vw;
+  width: 100%;
   max-width: 100%;
   margin-left: 0;
   margin-right: 0;
+  color-scheme: dark;
 }
-.tv-ticker-strip tv-ticker-tape,
-.tv-ticker-strip > * {
-  display: block;
+.tv-ticker-strip .tradingview-widget-container,
+.tv-ticker-strip .tradingview-widget-container__widget {
   width: 100% !important;
   max-width: none !important;
+}
+.tv-ticker-strip .tradingview-widget-container__widget iframe {
+  width: 100% !important;
+}
+/* Hide "Ticker tape by TradingView" attribution */
+.tv-ticker-strip .tradingview-widget-copyright {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
 }
 .section-photo-bg {
   position: absolute;
