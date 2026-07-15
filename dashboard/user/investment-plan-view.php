@@ -24,7 +24,9 @@ try {
     $userBalance = get_user_spendable_usd_balance($pdo, $userId);
 
     $stmt = $pdo->prepare(
-        'SELECT id, name, slug, plan_type, description, logo_url, investment_risk, tv_symbol, tv_embed, chart_title, chart_pair_label, min_deposit, max_deposit,
+        'SELECT id, name, slug, plan_type, description, logo_url, investment_risk, tv_embed, chart_pair_label,
+                chart_market_type, chart_exchange, chart_hours, chart_volatility, chart_suitable_for,
+                min_deposit, max_deposit,
                 yield_min, yield_max, duration_days, min_duration_days, max_duration_days,
                 min_duration_months, max_duration_months, withdrawal_days, liquidation_cost, features_json
          FROM plans WHERE slug = ? AND enabled = 1 LIMIT 1'
@@ -40,10 +42,13 @@ try {
             'description' => $row['description'] ?? '',
             'logo_url' => $row['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($row['investment_risk'] ?? 'mid'),
-            'tv_symbol' => normalize_plan_tv_symbol($row['tv_symbol'] ?? null),
             'tv_embed' => normalize_plan_tv_embed($row['tv_embed'] ?? null),
-            'chart_title' => trim((string) ($row['chart_title'] ?? '')) ?: null,
             'chart_pair_label' => trim((string) ($row['chart_pair_label'] ?? '')) ?: null,
+            'chart_market_type' => trim((string) ($row['chart_market_type'] ?? '')) ?: null,
+            'chart_exchange' => trim((string) ($row['chart_exchange'] ?? '')) ?: null,
+            'chart_hours' => trim((string) ($row['chart_hours'] ?? '')) ?: null,
+            'chart_volatility' => trim((string) ($row['chart_volatility'] ?? '')) ?: null,
+            'chart_suitable_for' => trim((string) ($row['chart_suitable_for'] ?? '')) ?: null,
             'min_deposit' => (float) $row['min_deposit'],
             'max_deposit' => $row['max_deposit'] !== null ? (float) $row['max_deposit'] : null,
             'yield_min' => (float) $row['yield_min'],
@@ -81,11 +86,6 @@ if (!$plan) {
 }
 
 $instrument = plan_market_instrument($plan);
-if ($instrument === null) {
-    header('Location: /dashboard/user/investment-plans');
-    exit;
-}
-
 $planDays = plan_duration_days($plan);
 $riskBadge = plan_investment_risk_badge($plan['investment_risk']);
 $periodReturn = format_plan_period_return($plan['yield_min'], $planDays);
@@ -96,8 +96,9 @@ $isCrypto = ($instrument['category'] ?? '') === 'crypto';
 $coingeckoId = $instrument['coingecko_id'] ?? '';
 $snapshot = $instrument['snapshot'] ?? [];
 $marketTypeLabel = $snapshot['market_type'] ?? plan_type_label($plan['plan_type']);
-$heroIntro = $plan['description'] ?: ($instrument['intro'] ?? '');
-$displayName = !empty($plan['chart_title']) ? $plan['chart_title'] : ($instrument['name'] ?? $plan['name']);
+$heroIntro = $plan['description'] ?: '';
+$displayName = plan_chart_display_name($plan);
+$displayFeatures = plan_display_features($plan);
 
 $pageTitle = $siteName . ' | ' . $displayName;
 $pageHeading = '';
@@ -131,7 +132,7 @@ require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
 <?php
 $marketChartLead = true;
 $marketChartLeadTitle = $displayName;
-$marketChartLeadPair = $instrument['pair_label'];
+$marketChartLeadPair = $instrument['pair_label'] ?? '';
 $marketChartLeadType = $marketTypeLabel;
 $marketChartBackUrl = '/dashboard/user/investment-plans';
 require __DIR__ . '/../../includes/dashboard/market-live-chart-panel.php';
@@ -187,13 +188,11 @@ require __DIR__ . '/../../includes/dashboard/market-live-chart-panel.php';
 <p class="text-lg font-bold <?php echo $plan['liquidation_cost'] > 0 ? 'text-amber-500' : 'text-text-primary'; ?> mt-1"><?php echo $plan['liquidation_cost'] > 0 ? 'USD ' . format_usd_amount($plan['liquidation_cost']) : 'None'; ?></p>
 </div>
 </div>
-<?php if (!empty($plan['features']) && is_array($plan['features'])): ?>
 <ul class="mt-6 pt-6 border-t border-low grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-text-secondary">
-<?php foreach ($plan['features'] as $feature): ?>
+<?php foreach ($displayFeatures as $feature): ?>
 <li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary-container text-base">check_circle</span><?php echo htmlspecialchars((string) $feature); ?></li>
 <?php endforeach; ?>
 </ul>
-<?php endif; ?>
 </div>
 </div>
 

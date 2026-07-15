@@ -28,7 +28,11 @@ $backUrl = htmlspecialchars((string) ($marketChartBackUrl ?? '/dashboard/user/in
 </a>
 <div class="min-w-0 flex-1">
 <h1 class="text-xl sm:text-2xl font-bold text-text-primary leading-tight truncate"><?php echo $leadTitle; ?></h1>
-<p class="text-sm text-primary-container font-semibold truncate"><?php echo $leadPair; ?><span class="text-text-secondary font-normal"> · <?php echo $leadType; ?></span></p>
+<p class="text-sm text-primary-container font-semibold truncate">
+<?php if ($leadPair !== ''): ?><?php echo $leadPair; ?><span class="text-text-secondary font-normal"> · <?php echo $leadType; ?></span>
+<?php else: ?><span class="text-text-secondary font-normal"><?php echo $leadType; ?></span>
+<?php endif; ?>
+</p>
 </div>
 <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-bold uppercase tracking-wider text-red-400 shrink-0">
 <span class="w-1.5 h-1.5 bg-red-500 rounded-full pulse-live"></span> Live
@@ -72,32 +76,25 @@ $backUrl = htmlspecialchars((string) ($marketChartBackUrl ?? '/dashboard/user/in
 
 <?php
 $embedHtml = trim((string) ($instrument['embed_html'] ?? ''));
-if ($embedHtml !== ''):
+$hasChart = $embedHtml !== '' || $chartSymbol !== '';
+if ($hasChart):
+  if ($embedHtml !== ''):
 ?>
 <div class="plan-tv-embed w-full min-w-0 overflow-hidden rounded-lg [&_iframe]:w-full [&_iframe]:min-h-[360px]">
 <?php echo $embedHtml; ?>
 </div>
-<?php elseif ($chartSymbol !== ''): ?>
-<tv-mini-chart symbol="<?php echo $chartSymbol; ?>" style="width: 100%; height: 360px; max-width: 100%;"></tv-mini-chart>
 <?php else: ?>
-<p class="text-sm text-text-secondary text-center py-12">Chart unavailable for this market.</p>
+<tv-mini-chart symbol="<?php echo $chartSymbol; ?>" style="width: 100%; height: 360px; max-width: 100%;"></tv-mini-chart>
 <?php endif; ?>
-
 <?php require __DIR__ . '/../market-chart-disclaimer.php'; ?>
+<?php endif; ?>
 </div>
 
-<?php if (!empty($snapshot)): ?>
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6 pt-6 border-t border-low">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6 pt-6 border-t border-low">
 <div>
 <div class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Market Type</div>
 <div class="text-sm font-semibold text-text-primary"><?php echo htmlspecialchars($snapshot['market_type'] ?? '—'); ?></div>
 </div>
-<?php if (!empty($snapshot['sector'])): ?>
-<div>
-<div class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Sector</div>
-<div class="text-sm font-semibold text-text-primary"><?php echo htmlspecialchars($snapshot['sector']); ?></div>
-</div>
-<?php endif; ?>
 <div>
 <div class="text-[10px] font-bold text-on-surface-variant uppercase mb-1">Exchange</div>
 <div class="text-sm font-semibold text-text-primary"><?php echo htmlspecialchars($snapshot['exchange'] ?? '—'); ?></div>
@@ -115,6 +112,5 @@ if ($embedHtml !== ''):
 <div class="text-sm font-semibold text-text-primary leading-snug"><?php echo htmlspecialchars($snapshot['suitable_for'] ?? '—'); ?></div>
 </div>
 </div>
-<?php endif; ?>
 </div>
 </div>

@@ -241,28 +241,39 @@ foreach ($adminPlans as $idx => $p):
 </div>
 </div>
 </div>
-<!-- View Trading / Live Chart (hero on plan view) -->
+<!-- View Trading (optional chart + optional market detail) -->
 <div class="space-y-4">
-<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">View Trading Chart</p>
-<p class="text-xs text-slate-500">Shown in the hero of the user “View Trading” page. Does <strong>not</strong> require the public Markets list — any TradingView symbol/embed works.</p>
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">View Trading Page</p>
+<p class="text-xs text-slate-500">All fields below are optional. Plan name is used for the hero title. Features auto-include “Live {Name} chart”.</p>
 <div class="grid grid-cols-2 gap-4">
 <div class="col-span-2">
-<label class="block text-sm font-medium mb-1.5">Chart Title</label>
-<input name="chart_title" id="plan-form-chart-title" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="Defaults to plan name (e.g. Bitcoin)"/>
+<label class="block text-sm font-medium mb-1.5">Chart Widget Code <span class="text-slate-400 font-normal">(optional)</span></label>
+<textarea name="tv_embed" id="plan-form-tv-embed" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" rows="5" placeholder="Paste TradingView widget / embed HTML…"></textarea>
+<p class="text-[10px] text-slate-400 mt-1">Shown in the hero chart area. Leave empty to hide the chart (page still opens).</p>
 </div>
 <div class="col-span-2">
-<label class="block text-sm font-medium mb-1.5">Pair Label</label>
-<input name="chart_pair_label" id="plan-form-chart-pair" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="e.g. BTC / USD · shown under the title"/>
+<label class="block text-sm font-medium mb-1.5">Pair Label <span class="text-slate-400 font-normal">(optional)</span></label>
+<input name="chart_pair_label" id="plan-form-chart-pair" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="e.g. BTC / USD"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">Market Type <span class="text-slate-400 font-normal">(optional)</span></label>
+<input name="chart_market_type" id="plan-form-chart-market-type" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="Defaults to plan type"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">Exchange <span class="text-slate-400 font-normal">(optional)</span></label>
+<input name="chart_exchange" id="plan-form-chart-exchange" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="e.g. Binance"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">Trading Hours <span class="text-slate-400 font-normal">(optional)</span></label>
+<input name="chart_hours" id="plan-form-chart-hours" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="e.g. 24/7"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">Volatility <span class="text-slate-400 font-normal">(optional)</span></label>
+<input name="chart_volatility" id="plan-form-chart-volatility" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="e.g. High"/>
 </div>
 <div class="col-span-2">
-<label class="block text-sm font-medium mb-1.5">TradingView Symbol <span class="text-slate-400 font-normal">(mini chart)</span></label>
-<input name="tv_symbol" id="plan-form-tv-symbol" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" type="text" placeholder="e.g. BINANCE:BTCUSDT, NASDAQ:TSLA, OANDA:USDJPY"/>
-<p class="text-[10px] text-slate-400 mt-1">Loads TradingView’s mini chart automatically. Find symbols on tradingview.com.</p>
-</div>
-<div class="col-span-2">
-<label class="block text-sm font-medium mb-1.5">Custom Widget Embed <span class="text-slate-400 font-normal">(optional — overrides symbol)</span></label>
-<textarea name="tv_embed" id="plan-form-tv-embed" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" rows="5" placeholder="Paste TradingView embed HTML here if you prefer a custom widget…"></textarea>
-<p class="text-[10px] text-slate-400 mt-1">If filled, this embed is shown instead of the symbol mini-chart. Leave empty to use the symbol above. Without symbol or embed, “View Trading” stays hidden.</p>
+<label class="block text-sm font-medium mb-1.5">Suitable For <span class="text-slate-400 font-normal">(optional)</span></label>
+<input name="chart_suitable_for" id="plan-form-chart-suitable" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="e.g. Growth-focused investors"/>
 </div>
 </div>
 </div>
@@ -390,14 +401,10 @@ function resetPlanForm() {
   document.getElementById('plan-form-id').value = '';
   document.getElementById('plan-form-name').value = '';
   document.getElementById('plan-form-description').value = '';
-  var tvEl = document.getElementById('plan-form-tv-symbol');
-  if (tvEl) tvEl.value = '';
-  var embEl = document.getElementById('plan-form-tv-embed');
-  if (embEl) embEl.value = '';
-  var ctEl = document.getElementById('plan-form-chart-title');
-  if (ctEl) ctEl.value = '';
-  var cpEl = document.getElementById('plan-form-chart-pair');
-  if (cpEl) cpEl.value = '';
+  ['plan-form-tv-embed','plan-form-chart-pair','plan-form-chart-market-type','plan-form-chart-exchange','plan-form-chart-hours','plan-form-chart-volatility','plan-form-chart-suitable'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   if (document.getElementById('plan-form-type')) document.getElementById('plan-form-type').value = 'crypto';
   setLogoUrl('');
   if (logoFileInput) logoFileInput.value = '';
@@ -438,14 +445,14 @@ if (drawer) {
             document.getElementById('plan-form-id').value = p.id;
             document.getElementById('plan-form-name').value = p.name;
             document.getElementById('plan-form-description').value = p.description || '';
-            var tvInput = document.getElementById('plan-form-tv-symbol');
-            if (tvInput) tvInput.value = p.tv_symbol || '';
-            var embInput = document.getElementById('plan-form-tv-embed');
-            if (embInput) embInput.value = p.tv_embed || '';
-            var ctInput = document.getElementById('plan-form-chart-title');
-            if (ctInput) ctInput.value = p.chart_title || '';
-            var cpInput = document.getElementById('plan-form-chart-pair');
-            if (cpInput) cpInput.value = p.chart_pair_label || '';
+            var setVal = function (id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
+            setVal('plan-form-tv-embed', p.tv_embed);
+            setVal('plan-form-chart-pair', p.chart_pair_label);
+            setVal('plan-form-chart-market-type', p.chart_market_type);
+            setVal('plan-form-chart-exchange', p.chart_exchange);
+            setVal('plan-form-chart-hours', p.chart_hours);
+            setVal('plan-form-chart-volatility', p.chart_volatility);
+            setVal('plan-form-chart-suitable', p.chart_suitable_for);
             if (document.getElementById('plan-form-type')) document.getElementById('plan-form-type').value = p.plan_type || 'crypto';
             setLogoUrl(p.logo_url || '');
             if (logoFileInput) logoFileInput.value = '';
@@ -510,19 +517,19 @@ if (drawer) {
     var minDays = parseInt(document.getElementById('plan-form-min-days').value, 10);
     var riskEl = document.querySelector('.plan-form-risk:checked');
     var liqCost = parseFloat((document.getElementById('plan-form-liquidation-cost') || {}).value) || 0;
-    var tvSymbolEl = document.getElementById('plan-form-tv-symbol');
-    var tvEmbedEl = document.getElementById('plan-form-tv-embed');
-    var chartTitleEl = document.getElementById('plan-form-chart-title');
-    var chartPairEl = document.getElementById('plan-form-chart-pair');
+    var valOf = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
     var data = {
       id: id ? parseInt(id) : 0,
       name: document.getElementById('plan-form-name').value,
       plan_type: document.getElementById('plan-form-type').value,
       description: document.getElementById('plan-form-description').value.trim(),
-      chart_title: chartTitleEl ? chartTitleEl.value.trim() : '',
-      chart_pair_label: chartPairEl ? chartPairEl.value.trim() : '',
-      tv_symbol: tvSymbolEl ? tvSymbolEl.value.trim() : '',
-      tv_embed: tvEmbedEl ? tvEmbedEl.value : '',
+      tv_embed: valOf('plan-form-tv-embed'),
+      chart_pair_label: valOf('plan-form-chart-pair').trim(),
+      chart_market_type: valOf('plan-form-chart-market-type').trim(),
+      chart_exchange: valOf('plan-form-chart-exchange').trim(),
+      chart_hours: valOf('plan-form-chart-hours').trim(),
+      chart_volatility: valOf('plan-form-chart-volatility').trim(),
+      chart_suitable_for: valOf('plan-form-chart-suitable').trim(),
       logo_url: document.getElementById('plan-form-logo-url').value.trim(),
       investment_risk: riskEl ? riskEl.value : 'mid',
       min_deposit: parseFloat(document.getElementById('plan-form-min').value) || 0,

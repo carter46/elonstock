@@ -31,7 +31,8 @@ try {
         'SELECT ui.id, ui.amount, ui.start_date, ui.created_at, ui.status,
                 ui.duration_days AS investment_duration_days,
                 p.id AS plan_id, p.name, p.slug, p.plan_type, p.description, p.logo_url,
-                p.investment_risk, p.tv_symbol, p.tv_embed, p.chart_title, p.chart_pair_label,
+                p.investment_risk, p.tv_embed, p.chart_pair_label,
+                p.chart_market_type, p.chart_exchange, p.chart_hours, p.chart_volatility, p.chart_suitable_for,
                 p.yield_min, p.yield_max, p.duration_days,
                 p.min_duration_days, p.max_duration_days, p.min_duration_months, p.max_duration_months,
                 p.withdrawal_days, p.liquidation_cost, p.features_json
@@ -52,10 +53,13 @@ try {
             'description' => $row['description'] ?? '',
             'logo_url' => $row['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($row['investment_risk'] ?? 'mid'),
-            'tv_symbol' => normalize_plan_tv_symbol($row['tv_symbol'] ?? null),
             'tv_embed' => normalize_plan_tv_embed($row['tv_embed'] ?? null),
-            'chart_title' => trim((string) ($row['chart_title'] ?? '')) ?: null,
             'chart_pair_label' => trim((string) ($row['chart_pair_label'] ?? '')) ?: null,
+            'chart_market_type' => trim((string) ($row['chart_market_type'] ?? '')) ?: null,
+            'chart_exchange' => trim((string) ($row['chart_exchange'] ?? '')) ?: null,
+            'chart_hours' => trim((string) ($row['chart_hours'] ?? '')) ?: null,
+            'chart_volatility' => trim((string) ($row['chart_volatility'] ?? '')) ?: null,
+            'chart_suitable_for' => trim((string) ($row['chart_suitable_for'] ?? '')) ?: null,
             'yield_min' => (float) $row['yield_min'],
             'yield_max' => (float) $row['yield_max'],
             'duration_days' => (int) $row['duration_days'],
@@ -101,10 +105,6 @@ if (!$investment || !$plan) {
 }
 
 $instrument = plan_market_instrument($plan);
-if ($instrument === null) {
-    header('Location: /dashboard/user/analytics');
-    exit;
-}
 
 $durationDays = (int) $investment['investment_duration_days'];
 $startDate = $investment['start_date'] ?? $investment['created_at'] ?? null;
