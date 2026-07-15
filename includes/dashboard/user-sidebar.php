@@ -1,25 +1,25 @@
 <?php
 /**
- * User dashboard sidebar — shared across all user dashboard pages.
+ * User dashboard sidebar — Stock Wealth institutional terminal.
  */
 $current = $currentPage ?? '';
 $siteName = $siteName ?? get_site_name();
 $impersonating = isset($_SESSION['impersonate_admin_id']);
 $navActive = function ($page) use ($current) {
     if ($current === $page) {
-        return 'flex items-center gap-3 px-6 py-3 text-primary-container font-bold border-r-2 border-primary-container bg-surface-container-high transition-transform active:scale-[0.98]';
+        return 'flex items-center gap-3 px-6 py-3 text-primary font-bold border-r-4 border-primary bg-primary/5 transition-all duration-200';
     }
-    return 'flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200';
+    return 'flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-all duration-200';
 };
 $iconFill = function ($page) use ($current) {
     return $current === $page ? " style=\"font-variation-settings: 'FILL' 1;\"" : '';
 };
 ?>
 <div id="user-sidebar-overlay" class="fixed inset-0 bg-black/60 z-[55] lg:hidden hidden" aria-hidden="true"></div>
-<aside id="user-sidebar" class="fixed inset-y-0 left-0 w-64 border-r border-low bg-surface-dim flex flex-col z-[60] transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out">
-<div class="px-6 py-6 mb-2 shrink-0">
-<h1 class="font-headline-md text-headline-md font-bold text-primary-container leading-tight"><?php echo htmlspecialchars($siteName); ?></h1>
-<p class="font-label-sm text-label-sm text-on-surface-variant opacity-60 mt-0.5">Institutional Account</p>
+<aside id="user-sidebar" class="h-full w-64 fixed left-0 top-0 bg-surface-container-lowest flex flex-col py-unit-lg h-screen z-[60] border-r border-white/5 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out">
+<div class="px-6 mb-10 shrink-0">
+<h1 class="font-headline-md text-headline-md text-primary tracking-tighter"><?php echo htmlspecialchars($siteName); ?></h1>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1 opacity-60">Institutional Terminal</p>
 </div>
 <?php if ($impersonating): ?>
 <a href="/api/admin/stop-impersonate.php" class="mx-4 mb-3 flex items-center gap-2 px-3 py-2 bg-primary-container/15 text-primary-container rounded-lg hover:bg-primary-container/25 transition-colors text-sm font-semibold shrink-0">
@@ -27,50 +27,52 @@ $iconFill = function ($page) use ($current) {
 Switch back to Admin
 </a>
 <?php endif; ?>
-<nav class="flex-1 min-h-0 space-y-0.5 overflow-y-auto dash-scrollbar overscroll-contain">
+<nav class="flex-grow min-h-0 space-y-1 overflow-y-auto dash-scrollbar overscroll-contain">
+<div class="px-4 py-2 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">Main Console</div>
 <a class="<?php echo $navActive('dashboard'); ?>" href="/dashboard/user/dashboard">
-<span class="material-symbols-outlined"<?php echo $iconFill('dashboard'); ?>>dashboard</span>
-<span class="font-label-sm text-label-sm">Dashboard</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('dashboard'); ?>>dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
 </a>
 <a class="<?php echo $navActive('wallet'); ?>" href="/dashboard/user/wallet">
-<span class="material-symbols-outlined"<?php echo $iconFill('wallet'); ?>>account_balance_wallet</span>
-<span class="font-label-sm text-label-sm">Wallet</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('wallet'); ?>>account_balance_wallet</span>
+<span class="font-label-md text-label-md">Wallet</span>
 </a>
 <a class="<?php echo $navActive('analytics'); ?>" href="/dashboard/user/analytics">
-<span class="material-symbols-outlined"<?php echo $iconFill('analytics'); ?>>monitoring</span>
-<span class="font-label-sm text-label-sm">My Portfolio</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('analytics'); ?>>pie_chart</span>
+<span class="font-label-md text-label-md">My Portfolio</span>
 </a>
 <a class="<?php echo $navActive('investment-plans'); ?>" href="/dashboard/user/investment-plans">
-<span class="material-symbols-outlined"<?php echo $iconFill('investment-plans'); ?>>account_tree</span>
-<span class="font-label-sm text-label-sm">Investment Plans</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('investment-plans'); ?>>auto_awesome</span>
+<span class="font-label-md text-label-md">Investment Plans</span>
 </a>
 <a class="<?php echo $navActive('referrals'); ?>" href="/dashboard/user/referrals">
-<span class="material-symbols-outlined"<?php echo $iconFill('referrals'); ?>>group_add</span>
-<span class="font-label-sm text-label-sm">Referrals</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('referrals'); ?>>group</span>
+<span class="font-label-md text-label-md">Referrals</span>
 </a>
 <a class="<?php echo $navActive('history'); ?>" href="/dashboard/user/transactions">
-<span class="material-symbols-outlined"<?php echo $iconFill('history'); ?>>history</span>
-<span class="font-label-sm text-label-sm">Trade History</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('history'); ?>>history</span>
+<span class="font-label-md text-label-md">Trade History</span>
 </a>
-<div class="pt-8 pb-3 px-6 text-[10px] uppercase tracking-widest text-on-surface-variant opacity-40 font-bold">System</div>
+<div class="px-4 py-6 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">System</div>
 <a class="<?php echo $navActive('profile'); ?>" href="/dashboard/user/profile">
-<span class="material-symbols-outlined"<?php echo $iconFill('profile'); ?>>settings</span>
-<span class="font-label-sm text-label-sm">Settings</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('profile'); ?>>settings</span>
+<span class="font-label-md text-label-md">Settings</span>
 </a>
 <a class="<?php echo $navActive('kyc'); ?>" href="/dashboard/user/kyc">
-<span class="material-symbols-outlined"<?php echo $iconFill('kyc'); ?>>verified_user</span>
-<span class="font-label-sm text-label-sm">KYC</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('kyc'); ?>>verified_user</span>
+<span class="font-label-md text-label-md">KYC</span>
 </a>
 <a class="<?php echo $navActive('support'); ?>" href="/live_chat">
-<span class="material-symbols-outlined"<?php echo $iconFill('support'); ?>>support_agent</span>
-<span class="font-label-sm text-label-sm">Support</span>
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('support'); ?>>contact_support</span>
+<span class="font-label-md text-label-md">Support</span>
 </a>
 </nav>
-<div class="px-6 py-6 mt-auto shrink-0 space-y-3">
-<a href="/dashboard/user/wallet?action=deposit" class="block w-full py-3 bg-primary-container text-on-primary font-bold rounded-lg shadow-lg shadow-primary-container/10 hover:opacity-90 transition-all text-center text-label-sm">
+<div class="px-4 mt-auto space-y-3 shrink-0">
+<a href="/dashboard/user/wallet?action=deposit" class="w-full premium-gradient-btn text-white font-label-md text-label-md py-3 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
 Deposit Funds
 </a>
-<button type="button" data-logout class="w-full flex items-center justify-center gap-2 py-2.5 text-critical hover:bg-critical/10 rounded-lg transition-colors text-sm font-semibold">
+<button type="button" data-logout class="w-full text-on-surface-variant hover:text-error font-label-md text-label-md py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
 <span class="material-symbols-outlined text-[18px]">logout</span>
 Sign Out
 </button>
@@ -99,14 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
     overlay.classList.add('hidden');
     document.body.style.overflow = '';
   }
+  if (toggleBtn) toggleBtn.addEventListener('click', open);
   if (overlay) overlay.addEventListener('click', close);
-  if (toggleBtn) toggleBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    sidebar.classList.contains('-translate-x-full') ? open() : close();
-  });
-  document.querySelectorAll('#user-sidebar a, #user-sidebar button[data-logout]').forEach(function (el) {
-    el.addEventListener('click', function () { if (window.innerWidth < 1024) close(); });
-  });
 });
 </script>

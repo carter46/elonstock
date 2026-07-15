@@ -72,8 +72,6 @@ try {
     }
     $referralBonus = get_user_total_referral_bonus($pdo, (int) $userId);
     $referralBonusLast24h = get_user_total_referral_bonus($pdo, (int) $userId, null, 24);
-    // activeInvestments and dailyEarning already populated above
-    // Fetch transaction data for chart based on selected period
     $stmt = $pdo->prepare("SELECT DATE(created_at) as date, type, SUM(amount) as total FROM transactions WHERE user_id = ? AND type IN ('deposit', 'withdrawal') AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY DATE(created_at), type ORDER BY date ASC");
     $stmt->execute([$userId, $days]);
     $dailyData = [];
@@ -82,7 +80,6 @@ try {
         if (!isset($dailyData[$date])) $dailyData[$date] = ['deposit' => 0, 'withdrawal' => 0];
         $dailyData[$date][$row['type']] = (float)$row['total'];
     }
-    // Build cumulative chart data
     $cumulative = 0;
     foreach ($dailyData as $date => $amounts) {
         $cumulative += $amounts['deposit'] - $amounts['withdrawal'];
@@ -91,91 +88,122 @@ try {
 } catch (Throwable $e) { }
 $profileUser = get_current_user_data() ?? [];
 $dashboardUserName = $profileUser['name'] ?? 'User';
+$isVerified = !empty($profileUser['verified']) || (($profileUser['kyc_status'] ?? '') === 'approved');
 $pageTitle = $siteName . ' | Dashboard';
 $hour = (int) date('G');
 $greeting = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good evening');
 $growthPct = $userBalance > 0 ? min(99.9, ($totalProfit / max(1, $userBalance)) * 100) : 0;
-$activePlanCount = count($activeInvestments);
+$capitalRatio = ($userBalance + $activeCapital) > 0 ? min(100, ($activeCapital / max(0.01, $userBalance + $activeCapital)) * 100) : 0;
+$scaleCtaBg = '/uploads/images/banner_bg.jpg';
 require_once __DIR__ . '/../../includes/dashboard/user-layout-start.php';
+require_once __DIR__ . '/../../includes/dashboard/user-social-proof-data.php';
+$socialProofMessages = user_dashboard_social_proof_messages();
+$chartBtnActive = 'px-4 py-1.5 text-label-sm rounded-md bg-primary text-on-primary-container shadow-lg';
+$chartBtnIdle = 'px-4 py-1.5 text-label-sm rounded-md hover:bg-surface-bright transition-colors';
+$axisMax = !empty($chartData) ? max(array_column($chartData, 'value')) : max($userBalance, 100);
+$axisMin = !empty($chartData) ? min(array_column($chartData, 'value')) : 0;
+if ($axisMax <= $axisMin) { $axisMax = $axisMin + 100; }
+$axisMidHigh = $axisMin + ($axisMax - $axisMin) * 0.66;
+$axisMidLow = $axisMin + ($axisMax - $axisMin) * 0.33;
 ?>
-<style>
-.dash-trade-tab.is-active { color: #ffc35c; border-bottom-color: #ffc35c; font-weight: 700; }
-</style>
-<?php
-$chartBtnActive = 'px-3 py-1 text-label-xs bg-surface-dim text-primary-container font-bold shadow-sm rounded';
-$chartBtnIdle = 'px-3 py-1 text-label-xs text-on-surface-variant hover:bg-white/5 rounded transition-colors';
-?>
-<section class="mb-8">
-<h2 class="font-headline-lg dash-greeting text-primary-container"><?php echo $greeting; ?>, <?php echo htmlspecialchars($dashboardUserName); ?>.</h2>
-<p class="text-sm sm:text-body-lg text-text-secondary mt-1">Welcome back to your institutional trading hub.</p>
+<div class="dash-page w-full min-w-0 space-y-8">
+
+<!-- Welcome Header -->
+<section class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4">
+<div>
+<h2 class="font-display-sm text-[28px] leading-9 md:text-display-sm text-on-surface tracking-tight mb-1 flex flex-wrap items-center gap-3">
+<?php echo htmlspecialchars($greeting); ?>, <?php echo htmlspecialchars($dashboardUserName); ?>.
+<?php if ($isVerified): ?>
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+<?php endif; ?>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant opacity-80">Welcome back to your institutional trading hub.</p>
+</div>
+<div class="glass-card px-6 py-3 rounded-xl flex items-center gap-4 max-w-md w-full lg:w-auto animate-fade-in" id="live-notification">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-sm">bolt</span>
+</div>
+<p id="user-social-proof-text" class="text-label-md text-on-surface-variant"></p>
+</div>
+<script type="application/json" id="user-social-proof-data"><?php echo json_encode($socialProofMessages, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
 </section>
-<div class="dash-page w-full min-w-0">
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-gutter">
-<div class="dash-card-balance-hero glass-panel p-6 md:p-8 flex flex-col justify-between rounded-xl">
-<div>
-<span class="font-label-xs text-label-xs dash-card-label uppercase tracking-wider">Total USD Balance</span>
-<h3 class="font-display text-3xl md:text-4xl dash-card-value mt-3">$<?php echo number_format((float) $userBalance, 0, '.', ','); ?></h3>
+
+<!-- Key Metrics Row -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl">payments</span>
 </div>
-<hr class="dash-card-divider border-t my-5">
-<div>
-<span class="font-label-xs text-label-xs dash-card-label uppercase tracking-wider">Total Profit</span>
-<h3 class="font-display text-2xl md:text-3xl dash-card-profit-value mt-3">+$<?php echo format_usd_amount($totalProfit); ?></h3>
-<p class="font-label-xs text-[11px] dash-card-label opacity-80 mt-1">Settled plans only</p>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Balance</p>
+<h3 class="text-3xl font-display-sm text-white">$<?php echo number_format((float) $userBalance, 2, '.', ','); ?></h3>
+<div class="mt-4 flex items-center gap-2">
 <?php if ($growthPct > 0): ?>
-<div class="flex items-center gap-2 mt-3 text-success bg-white/10 p-2 rounded w-fit">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">trending_up</span>
-<span class="font-label-xs text-[11px] font-bold">+<?php echo number_format($growthPct, 1); ?>% Realized Growth</span>
-</div>
+<span class="status-pill-green text-[10px] px-2 py-0.5 rounded-full">+<?php echo number_format($growthPct, 1); ?>% realized</span>
+<?php else: ?>
+<span class="status-pill-green text-[10px] px-2 py-0.5 rounded-full">Spendable USD</span>
 <?php endif; ?>
 </div>
-<div class="flex gap-3 mt-5">
-<button type="button" id="deposit-btn-dash" class="flex-1 dash-btn-solid text-label-sm font-bold py-2.5 rounded-lg transition-transform active:scale-95">Deposit</button>
-<a href="/dashboard/user/transactions" class="flex-1 dash-btn-outline border text-label-sm font-bold py-2.5 rounded-lg transition-colors text-center">Transactions</a>
+</div>
+<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl">trending_up</span>
+</div>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Profit</p>
+<h3 class="text-3xl font-display-sm text-primary">+$<?php echo format_usd_amount($totalProfit); ?></h3>
+<p class="text-[12px] text-primary/80 mt-2 font-medium"><?php echo $growthPct > 0 ? '+' . number_format($growthPct, 1) . '% Realized Growth' : 'Settled plans only'; ?></p>
+</div>
+<div class="glass-card p-6 rounded-2xl">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Active Capital</p>
+<h3 class="text-3xl font-display-sm text-white">$<?php echo format_usd_amount($activeCapital); ?></h3>
+<div class="w-full bg-white/5 h-1 rounded-full mt-6 overflow-hidden">
+<div class="bg-primary h-full" style="width:<?php echo number_format($capitalRatio, 1); ?>%"></div>
 </div>
 </div>
-<div class="dash-card-glass p-6 md:p-8 flex flex-col justify-between rounded-xl">
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 h-full">
-<div class="space-y-6 sm:pr-6">
-<div>
-<span class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Active Capital</span>
-<p class="font-headline-md text-[20px] md:text-2xl font-bold mt-2 <?php echo $activeCapital > 0 ? 'text-on-surface' : 'opacity-40'; ?>">$<?php echo format_usd_amount($activeCapital); ?></p>
+<div class="glass-card p-6 rounded-2xl">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Daily Earning</p>
+<h3 class="text-3xl font-display-sm text-white">$<?php echo format_usd_amount($dailyEarning); ?></h3>
+<p class="text-[12px] text-on-surface-variant mt-2 font-mono">EST. NEXT PAYOUT: 08:00 UTC</p>
 </div>
-<div class="pt-4 border-t border-low">
-<span class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Daily Earning</span>
-<p class="font-headline-md text-[20px] md:text-2xl font-bold mt-2 <?php echo $dailyEarning > 0 ? 'text-on-surface' : 'opacity-40'; ?>">$<?php echo format_usd_amount($dailyEarning); ?></p>
-</div>
-</div>
-<div class="flex flex-col justify-between sm:pl-6 sm:border-l border-low pt-6 sm:pt-0 border-t sm:border-t-0">
-<div>
-<span class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Referral Bonus</span>
-<h3 class="font-display text-2xl md:text-3xl text-on-surface font-extrabold mt-3">$<?php echo format_usd_amount($referralBonus); ?></h3>
-<p class="font-label-xs text-[11px] text-on-surface-variant mt-1">Last 24h: <span class="text-success font-bold">+$<?php echo format_usd_amount($referralBonusLast24h); ?></span></p>
-</div>
-<a class="inline-flex items-center gap-1 font-label-sm text-primary-container font-bold mt-4 hover:underline" href="/dashboard/user/referrals">
-View Network Details
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-</div>
-</div>
+<div class="glass-card p-6 rounded-2xl">
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Referral Bonus</p>
+<h3 class="text-3xl font-display-sm text-white">$<?php echo format_usd_amount($referralBonus); ?></h3>
+<p class="text-[12px] text-on-surface-variant mt-2">Last 24h: +$<?php echo format_usd_amount($referralBonusLast24h); ?></p>
 </div>
 </section>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
-<div class="lg:col-span-2 space-y-gutter">
-<div class="glass-panel border border-low p-6 md:p-8 relative overflow-hidden h-[450px] flex flex-col rounded-xl">
-<div class="flex justify-between items-center mb-6 relative z-10 flex-wrap gap-3">
+
+<!-- Main Data & Sidebar Grid -->
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-12 lg:col-span-8 space-y-8">
+<!-- Portfolio Growth -->
+<div class="glass-card rounded-2xl p-6 md:p-8 relative min-h-[450px] flex flex-col">
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
 <div>
 <h4 class="font-headline-md text-headline-md text-on-surface">Portfolio Growth</h4>
-<p class="text-label-sm text-on-surface-variant">AI Engine Yield Analysis</p>
+<p class="text-label-md text-on-surface-variant opacity-60">AI Engine Yield Analysis</p>
 </div>
-<div class="flex bg-surface-container-high p-1 rounded-lg gap-1">
+<div class="flex bg-surface-container p-1 rounded-lg border border-white/5 w-fit">
 <button type="button" data-period="1D" class="chart-filter-btn <?php echo $period === '1D' ? $chartBtnActive : $chartBtnIdle; ?>">1D</button>
 <button type="button" data-period="1W" class="chart-filter-btn <?php echo $period === '1W' ? $chartBtnActive : $chartBtnIdle; ?>">1W</button>
 <button type="button" data-period="1M" class="chart-filter-btn <?php echo $period === '1M' ? $chartBtnActive : $chartBtnIdle; ?>">1M</button>
 <button type="button" data-period="1Y" class="chart-filter-btn <?php echo $period === '1Y' ? $chartBtnActive : $chartBtnIdle; ?>">1Y</button>
 </div>
 </div>
-<div class="flex-1 relative flex flex-col min-h-0" id="performance-chart-wrapper">
-<div class="flex-1 relative min-h-0" id="performance-chart">
+<div class="flex-grow relative mt-4 min-h-[260px]" id="performance-chart-wrap">
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none border-l border-b border-white/5 pb-6" id="chart-axis">
+<div class="flex justify-between w-full text-[10px] text-on-surface-variant font-mono">
+<span>$<?php echo number_format($axisMax, 0); ?></span><div class="h-px bg-white/5 flex-grow mx-4 self-center"></div>
+</div>
+<div class="flex justify-between w-full text-[10px] text-on-surface-variant font-mono">
+<span>$<?php echo number_format($axisMidHigh, 0); ?></span><div class="h-px bg-white/5 flex-grow mx-4 self-center"></div>
+</div>
+<div class="flex justify-between w-full text-[10px] text-on-surface-variant font-mono">
+<span>$<?php echo number_format($axisMidLow, 0); ?></span><div class="h-px bg-white/5 flex-grow mx-4 self-center"></div>
+</div>
+<div class="flex justify-between w-full text-[10px] text-on-surface-variant font-mono">
+<span>$<?php echo number_format($axisMin, 0); ?></span><div class="h-px bg-white/5 flex-grow mx-4 self-center"></div>
+</div>
+</div>
+<div class="absolute inset-0" id="performance-chart">
 <?php
 $dates = [];
 if (!empty($chartData)) {
@@ -183,141 +211,170 @@ if (!empty($chartData)) {
     $minVal = min(array_column($chartData, 'value'));
     $range = $maxVal - $minVal;
     if ($range == 0) $range = 1;
-    $points = [];
+    $svgPts = [];
     $count = count($chartData);
     foreach ($chartData as $i => $point) {
-        $x = $count > 1 ? ($i / ($count - 1)) * 100 : 50;
-        $y = 100 - (($point['value'] - $minVal) / $range) * 80;
-        $points[] = $x . ',' . $y;
+        $x = $count > 1 ? ($i / ($count - 1)) * 1000 : 500;
+        $y = 250 - (($point['value'] - $minVal) / $range) * 200;
+        $svgPts[] = round($x, 1) . ',' . round($y, 1);
         if ($i === 0 || $i === floor($count / 4) || $i === floor($count / 2) || $i === floor($count * 3 / 4) || $i === $count - 1) {
             $dates[] = date('M j', strtotime($point['date']));
         }
     }
-    $pathD = 'M' . implode(' L', $points);
-    $areaD = $pathD . ' L' . ($count > 1 ? 100 : 50) . ',100 L0,100 Z';
+    $pathD = 'M' . implode(' L', $svgPts);
 ?>
-<div class="absolute inset-0 trading-graph-bg rounded-lg"></div>
-<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-<defs>
-<linearGradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-<stop offset="0%" style="stop-color:#ffc35c;stop-opacity:0.2"></stop>
-<stop offset="100%" style="stop-color:#ffc35c;stop-opacity:0"></stop>
-</linearGradient>
-</defs>
-<path d="<?php echo htmlspecialchars($areaD); ?>" fill="url(#chartGradient)"></path>
-<path d="<?php echo htmlspecialchars($pathD); ?>" fill="none" stroke="#ffc35c" stroke-width="2"></path>
+<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
+<path class="glow-line" d="<?php echo htmlspecialchars($pathD); ?>" fill="none" stroke="#adc6ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
 </svg>
 <?php } else { ?>
 <div class="absolute inset-0 flex items-center justify-center text-on-surface-variant text-sm">No data available</div>
 <?php } ?>
 </div>
-<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest px-1" id="chart-dates">
-<?php if (!empty($chartData) && isset($dates)) { foreach ($dates as $d): ?><span><?php echo htmlspecialchars($d); ?></span><?php endforeach; } ?>
 </div>
 </div>
-<div class="absolute inset-0 opacity-[0.04] pointer-events-none rounded-xl" style="background-image: radial-gradient(#ffc35c 1px, transparent 1px); background-size: 20px 20px;"></div>
-</div>
-<div class="grid grid-cols-2 gap-gutter">
-<div class="dash-card-glass border border-low p-4 rounded-xl dash-insight-tile">
-<div class="w-12 h-12 bg-primary-container/15 rounded-lg flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary-container">query_stats</span>
-</div>
-<div>
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Market Volatility Index</p>
-<p class="font-headline-md text-[16px] font-bold text-on-surface">Low Risk Profile</p>
-</div>
-</div>
-<div class="dash-card-glass border border-low p-4 rounded-xl dash-insight-tile">
-<div class="w-12 h-12 bg-primary-container/15 rounded-lg flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary-container">security</span>
-</div>
-<div>
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">Cold Wallet Status</p>
-<p class="font-headline-md text-[16px] font-bold text-on-surface">99.8% Segregated</p>
-</div>
-</div>
-</div>
-</div>
-<div class="space-y-gutter">
-<div class="glass-panel border border-low p-5 md:p-6 rounded-xl">
-<div class="flex justify-between items-center mb-4">
-<h4 class="font-headline-md text-[18px] text-on-surface">Live AI Trades</h4>
-<span class="w-2 h-2 bg-primary-container rounded-full animate-ping"></span>
+
+<!-- Live AI Trades -->
+<div class="glass-card rounded-2xl overflow-hidden">
+<div class="px-8 py-6 border-b border-white/5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">dynamic_feed</span>
+Live AI Execution Logs
+</h4>
+<span class="text-label-sm text-on-surface-variant animate-pulse">Scanning Global Markets...</span>
 </div>
 <?php if (!empty($showTradeTabs)): ?>
-<nav class="flex gap-3 overflow-x-auto dash-trade-tabs mb-3" aria-label="Plan categories">
+<nav class="flex gap-3 overflow-x-auto px-8 pt-4 dash-trade-tabs" aria-label="Plan categories">
 <?php foreach ($activePlanTypesForTrades as $typeKey => $typeLabel): ?>
-<button type="button" class="dash-trade-tab shrink-0 pb-2 text-[11px] font-bold uppercase tracking-wide text-on-surface-variant border-b-2 border-transparent whitespace-nowrap<?php echo $typeKey === $defaultTradeTab ? ' is-active' : ''; ?>" data-trade-tab="<?php echo htmlspecialchars($typeKey); ?>"><?php echo htmlspecialchars($typeLabel); ?></button>
+<button type="button" class="dash-trade-tab shrink-0 pb-3 text-[11px] font-bold uppercase tracking-wide text-on-surface-variant border-b-2 border-transparent whitespace-nowrap<?php echo $typeKey === $defaultTradeTab ? ' is-active' : ''; ?>" data-trade-tab="<?php echo htmlspecialchars($typeKey); ?>"><?php echo htmlspecialchars($typeLabel); ?></button>
 <?php endforeach; ?>
 </nav>
 <?php endif; ?>
-<div class="space-y-2" id="live-trades-panel">
+<div class="divide-y divide-white/5" id="live-trades-panel">
 <?php
-$initialTradePlans = $plansByTypeForTrades[$defaultTradeTab] ?? ['Basic', 'Standard', 'Premium'];
+$initialTradePlans = $plansByTypeForTrades[$defaultTradeTab] ?? ['Growth Plan', 'Premium Plan', 'Core Plan'];
 $tradeSamples = array_slice($initialTradePlans, 0, 3);
+$execLabels = ['Execution: Grid Algorithm V4.2', 'Execution: Sentiment Analysis', 'Awaiting Liquidity Re-entry'];
 foreach ($tradeSamples as $ti => $planName):
-    $isLong = ($ti % 2 === 0);
-    $tradeMins = max(1, ($ti + 1) * 3 + ($ti * 2));
-    $tradeAmountVal = max(0, (($ti + 1) * 47.5) + fmod(crc32($planName . (string) $ti), 200));
-    $tradeAmountStr = ($isLong ? '+' : '-') . '$' . number_format($tradeAmountVal, 2);
+    $isLong = ($ti < 2);
+    $tradeMins = max(1, ($ti + 1) * 7 + ($ti * 3));
+    $tradeAmountVal = $isLong ? max(0, (($ti + 1) * 57.5) + fmod(crc32($planName . (string) $ti), 120)) : 0;
+    $tradeAmountStr = ($isLong ? '+' : '+') . '$' . number_format($tradeAmountVal, 2);
+    $pairCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $planName) ?: 'PLAN', 0, 4));
+    $pairLabel = $pairCode . '/USDT';
 ?>
-<div class="live-trade-card flex items-center justify-between p-3 border-b border-low/50 hover:bg-white/[0.02] transition-colors group">
-<div class="flex items-center gap-3 min-w-0">
-<div class="trade-icon-container w-8 h-8 rounded-full <?php echo $isLong ? 'bg-success/10' : 'bg-critical/10'; ?> flex items-center justify-center shrink-0">
-<span class="trade-icon material-symbols-outlined <?php echo $isLong ? 'text-success' : 'text-critical'; ?> text-[14px]"><?php echo $isLong ? 'trending_up' : 'trending_down'; ?></span>
+<div class="live-trade-card px-8 py-4 flex justify-between items-center hover:bg-white/[0.02] transition-colors group">
+<div class="flex items-center gap-4 min-w-0">
+<div class="trade-icon-container w-10 h-10 rounded-lg <?php echo $isLong ? 'bg-emerald-500/10 text-emerald-400' : 'bg-primary/10 text-primary'; ?> flex items-center justify-center shrink-0">
+<span class="trade-icon material-symbols-outlined"><?php echo $isLong ? 'north_east' : 'drag_handle'; ?></span>
 </div>
 <div class="min-w-0">
-<p class="trade-pair font-label-sm text-[12px] font-bold text-on-surface truncate"><?php echo htmlspecialchars($planName); ?></p>
-<span class="trade-time text-[10px] <?php echo $isLong ? 'text-success' : 'text-critical'; ?> font-medium uppercase tracking-tight"><?php echo $isLong ? 'Long Position' : 'Short Position'; ?> &middot; <?php echo (int) $tradeMins; ?>m ago</span>
+<p class="trade-pair font-bold text-on-surface truncate"><?php echo htmlspecialchars($planName); ?> Long <span class="trade-side text-[11px] font-normal opacity-50 ml-2"><?php echo htmlspecialchars($pairLabel); ?></span></p>
+<p class="trade-time text-[12px] text-on-surface-variant"><?php echo $execLabels[$ti] ?? 'Execution: Signal Engine'; ?></p>
 </div>
 </div>
-<p class="live-trade-amount font-data-mono font-bold <?php echo $isLong ? 'text-success' : 'text-on-surface-variant'; ?> text-body-md shrink-0"><?php echo $tradeAmountStr; ?></p>
+<div class="text-right shrink-0">
+<p class="live-trade-amount font-mono <?php echo $isLong ? 'text-emerald-400' : 'text-white'; ?> font-bold"><?php echo $tradeAmountStr; ?></p>
+<p class="text-[11px] text-on-surface-variant trade-meta"><?php echo $isLong ? ('Closed ' . (int) $tradeMins . 'm ago') : 'Pending Closure'; ?></p>
+</div>
 </div>
 <?php endforeach; ?>
 </div>
-<a href="/dashboard/user/transactions" class="block w-full mt-4 text-center font-label-sm text-on-surface-variant hover:text-primary-container transition-colors py-2 border border-dashed border-low rounded-lg">
-View Historical Nodes
-</a>
 </div>
-<div class="glass-panel border border-low p-5 md:p-6 min-h-[250px] flex flex-col rounded-xl">
-<h4 class="font-headline-md text-[18px] text-on-surface mb-4">My Active Plans</h4>
+</div>
+
+<!-- Sidebar Widgets -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<div class="glass-card p-6 rounded-2xl border-l-4 border-primary">
+<h5 class="text-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-6">Market Health</h5>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-md text-on-surface">Volatility Index</span>
+<span class="text-[12px] font-bold text-emerald-400">Low Risk Profile</span>
+</div>
+<div class="w-full bg-white/5 h-1.5 rounded-full">
+<div class="bg-emerald-400 h-full w-[15%] shadow-[0_0_8px_rgba(52,211,153,0.4)]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-md text-on-surface">Cold Wallet Status</span>
+<span class="text-[12px] font-bold text-primary">99.8% Segregated</span>
+</div>
+<div class="w-full bg-white/5 h-1.5 rounded-full">
+<div class="bg-primary h-full w-[99.8%] shadow-[0_0_8px_rgba(173,198,255,0.4)]"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="glass-card p-6 rounded-2xl">
+<h5 class="text-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Current Exposure</h5>
 <?php if (empty($activeInvestments)): ?>
-<div class="flex-1 flex flex-col items-center justify-center text-center p-4">
-<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-on-surface-variant opacity-40 text-4xl">inventory_2</span>
+<div class="p-4 bg-white/5 rounded-xl border border-white/5 text-center">
+<div class="w-10 h-10 mx-auto mb-3 rounded-full bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-dim text-[20px]">inventory_2</span>
 </div>
-<p class="text-body-md text-on-surface-variant">No active investments found on AI Core.</p>
+<p class="text-sm text-on-surface-variant">No active investments yet.</p>
 </div>
-<a href="/dashboard/user/investment-plans" class="w-full mt-4 bg-primary-container text-on-primary font-bold py-3 rounded-lg shadow-md hover:translate-y-[-2px] transition-all duration-200 text-center block text-label-sm">
-Subscribe to New Investment Plan
-</a>
 <?php else: ?>
-<div class="flex-1 space-y-3 overflow-y-auto dash-scrollbar">
-<?php foreach ($activeInvestments as $inv):
-    $startDate = new DateTime($inv['start_date']);
-    $now = new DateTime();
-    $daysElapsed = $now->diff($startDate)->days;
-    $durationDays = (int)($inv['investment_duration_days'] ?? $inv['plan_duration_days'] ?? 30);
-    $progress = min(100, ($daysElapsed / max(1, $durationDays)) * 100);
-    $avgYield = (($inv['yield_min'] ?? 0) + ($inv['yield_max'] ?? 0)) / 2;
+<?php
+$featured = $activeInvestments[0];
+$startDate = new DateTime($featured['start_date']);
+$now = new DateTime();
+$daysElapsed = $now->diff($startDate)->days;
+$durationDays = (int)($featured['investment_duration_days'] ?? $featured['plan_duration_days'] ?? 30);
+$daysLeft = max(0, $durationDays - $daysElapsed);
+$avgYield = (($featured['yield_min'] ?? 0) + ($featured['yield_max'] ?? 0)) / 2;
+$accrued = (float)$featured['amount'] * ($avgYield / 100) * min($daysElapsed, $durationDays);
+$planInitial = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $featured['plan_name']) ?: 'P', 0, 1));
 ?>
-<div class="p-3 rounded-lg border border-low hover:border-primary-container/30 transition-all">
-<p class="font-bold text-on-surface text-sm truncate"><?php echo htmlspecialchars($inv['plan_name']); ?></p>
-<p class="text-xs text-on-surface-variant mb-2">$<?php echo format_usd_amount($inv['amount']); ?> &middot; +<?php echo number_format($avgYield, 1); ?>% ROI</p>
-<div class="w-full bg-surface-container-high h-1 rounded-full overflow-hidden">
-<div class="bg-primary-container h-full rounded-full" style="width:<?php echo min(100, $progress); ?>%"></div>
+<div class="p-4 bg-white/5 rounded-xl border border-white/5">
+<div class="flex justify-between items-start mb-4 gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
+<span class="text-surface-dim font-bold text-sm"><?php echo htmlspecialchars($planInitial); ?></span>
+</div>
+<div class="min-w-0">
+<p class="font-bold text-on-surface truncate"><?php echo htmlspecialchars($featured['plan_name']); ?></p>
+<p class="text-[12px] text-on-surface-variant">$<?php echo format_usd_amount($featured['amount']); ?> Capital</p>
 </div>
 </div>
-<?php endforeach; ?>
+<span class="status-pill-green text-[10px] px-2 py-0.5 rounded-full shrink-0">+<?php echo number_format($avgYield, 1); ?>% ROI</span>
 </div>
-<a href="/dashboard/user/investment-plans" class="w-full mt-4 bg-primary-container text-on-primary font-bold py-3 rounded-lg text-center block hover:opacity-90 transition-opacity text-label-sm">
-Subscribe to New Investment Plan
-</a>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px]">
+<span class="text-on-surface-variant">Accrued Yield</span>
+<span class="text-primary font-bold">+$<?php echo format_usd_amount($accrued); ?></span>
+</div>
+<div class="flex justify-between text-[11px]">
+<span class="text-on-surface-variant">Duration Remaining</span>
+<span class="text-white"><?php echo (int) $daysLeft; ?> Days</span>
+</div>
+</div>
+</div>
 <?php endif; ?>
+<a href="/dashboard/user/investment-plans" class="w-full mt-4 border border-primary/30 hover:border-primary text-primary font-label-md text-label-md py-3 rounded-lg transition-all active:scale-[0.98] text-center block">
+Manage Plan
+</a>
+</div>
+
+<a href="/dashboard/user/investment-plans" class="relative rounded-2xl overflow-hidden h-64 group cursor-pointer block">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('<?php echo htmlspecialchars($scaleCtaBg); ?>');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-surface-dim/40 to-transparent"></div>
+<div class="absolute inset-0 p-8 flex flex-col justify-end">
+<h4 class="font-headline-md text-headline-md text-white mb-2">Ready to Scale?</h4>
+<p class="text-label-md text-on-surface-variant mb-6">Unlock higher yield tiers and exclusive institutional pools.</p>
+<span class="premium-gradient-btn text-white font-bold py-3 px-6 rounded-lg shadow-2xl flex items-center justify-center gap-2">
+Subscribe to New Investment Plan
+<span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</span>
+</div>
+</a>
 </div>
 </div>
 </div>
-</div>
+
 <?php require_once __DIR__ . '/../../includes/dashboard/user-layout-end.php'; ?>
 <?php require_once __DIR__ . '/../../includes/app-script.php'; ?>
 <script>window.BLOOMBIT_API_BASE = '';</script>
@@ -326,21 +383,15 @@ Subscribe to New Investment Plan
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     if (window.BloombitCryptoPrices) {
-        window.BloombitCryptoPrices.init(['bitcoin'], {
-            refreshInterval: 300000
-        });
+        window.BloombitCryptoPrices.init(['bitcoin'], { refreshInterval: 300000 });
     }
-    
-    // Live AI Trades — plan names by category
+
     var tradePlansByType = <?php echo json_encode($plansByTypeForTrades, JSON_UNESCAPED_UNICODE); ?>;
-    var tradeTypeLabels = <?php echo json_encode($activePlanTypesForTrades, JSON_UNESCAPED_UNICODE); ?>;
     var activeTradeTab = <?php echo json_encode($defaultTradeTab); ?>;
 
     function getTradePlanNames() {
         var names = tradePlansByType[activeTradeTab] || [];
-        if (!names.length) {
-            names = ['Basic Plan', 'Growth Plan', 'Premium Plan'];
-        }
+        if (!names.length) names = ['Basic Plan', 'Growth Plan', 'Premium Plan'];
         return names;
     }
 
@@ -353,62 +404,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    var tradeElements = document.querySelectorAll('.live-trade-amount');
-    var directions = ['Long', 'Short'];
-    
     function animateTradeAmount(el) {
         var current = parseFloat(el.textContent.replace(/[^0-9.-]/g, '')) || 0;
-        var isPositive = (el.textContent || '').indexOf('+') !== -1;
         var change = (Math.random() * 200 - 100);
         var newVal = Math.max(0, current + change);
         var absVal = Math.abs(newVal);
-        
-        var colorClass = '';
-        if (absVal < 50) colorClass = 'text-critical';
-        else if (absVal >= 100) colorClass = 'text-success';
-        else colorClass = isPositive ? 'text-success' : 'text-critical';
-        
-        el.className = 'live-trade-amount font-data-mono font-bold shrink-0 text-body-md ' + colorClass;
+        el.className = 'live-trade-amount font-mono font-bold ' + (absVal >= 50 ? 'text-emerald-400' : 'text-white');
         el.textContent = (newVal >= 0 ? '+' : '-') + '$' + absVal.toFixed(2);
     }
-    
+
     function updateTrade(el) {
         if (!el) return;
         var pairEl = el.querySelector('.trade-pair');
         var timeEl = el.querySelector('.trade-time');
+        var metaEl = el.querySelector('.trade-meta');
         var iconEl = el.querySelector('.trade-icon');
         var amountEl = el.querySelector('.live-trade-amount');
         var iconContainer = el.querySelector('.trade-icon-container');
         if (!pairEl || !timeEl || !iconEl || !iconContainer) return;
-        
         var planNames = getTradePlanNames();
         var planName = planNames[Math.floor(Math.random() * planNames.length)];
-        var direction = directions[Math.floor(Math.random() * directions.length)];
-        var isLong = direction === 'Long';
+        var isLong = Math.random() > 0.35;
         var mins = Math.floor(Math.random() * 30) + 1;
-        
-        pairEl.textContent = planName;
-        timeEl.textContent = (isLong ? 'Long Position' : 'Short Position') + ' · ' + mins + 'm ago';
-        
+        var pairCode = String(planName).replace(/[^A-Za-z0-9]/g, '').slice(0, 4).toUpperCase() || 'PLAN';
+        pairEl.innerHTML = planName + ' Long <span class="trade-side text-[11px] font-normal opacity-50 ml-2">' + pairCode + '/USDT</span>';
+        timeEl.textContent = isLong ? 'Execution: Grid Algorithm V4.2' : 'Awaiting Liquidity Re-entry';
+        if (metaEl) metaEl.textContent = isLong ? ('Closed ' + mins + 'm ago') : 'Pending Closure';
         if (isLong) {
-            iconContainer.className = 'trade-icon-container w-8 h-8 rounded-full bg-success/10 flex items-center justify-center shrink-0';
-            iconEl.className = 'trade-icon material-symbols-outlined text-success text-[14px]';
-            iconEl.textContent = 'trending_up';
+            iconContainer.className = 'trade-icon-container w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0';
+            iconEl.textContent = 'north_east';
         } else {
-            iconContainer.className = 'trade-icon-container w-8 h-8 rounded-full bg-critical/10 flex items-center justify-center shrink-0';
-            iconEl.className = 'trade-icon material-symbols-outlined text-critical text-[14px]';
-            iconEl.textContent = 'trending_down';
+            iconContainer.className = 'trade-icon-container w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0';
+            iconEl.textContent = 'drag_handle';
         }
-        
         if (amountEl) {
-            timeEl.className = 'trade-time text-[10px] ' + (isLong ? 'text-success' : 'text-critical') + ' font-medium uppercase tracking-tight';
-            animateTradeAmount(amountEl);
+            if (isLong) animateTradeAmount(amountEl);
+            else {
+                amountEl.className = 'live-trade-amount font-mono font-bold text-white';
+                amountEl.textContent = '+$0.00';
+            }
         }
     }
-    
-    var tradeCards = document.querySelectorAll('.live-trade-card');
-    tradeCards.forEach(function(card, i) {
-        // GTranslate can rewrite DOM nodes; re-query by index each tick to avoid stale references.
+
+    document.querySelectorAll('.live-trade-card').forEach(function(card, i) {
         setInterval(function () {
             var cards = document.querySelectorAll('.live-trade-card');
             var c = cards && cards.length > i ? cards[i] : null;
@@ -416,59 +454,53 @@ document.addEventListener('DOMContentLoaded', function() {
             var amountEl = c.querySelector('.live-trade-amount');
             if (amountEl) animateTradeAmount(amountEl);
         }, 3000 + (i * 500));
-
         setInterval(function () {
             var cards = document.querySelectorAll('.live-trade-card');
             var c = cards && cards.length > i ? cards[i] : null;
-            if (!c) return;
-            updateTrade(c);
+            if (c) updateTrade(c);
         }, 8000 + (i * 1000));
     });
-    
-    // Chart filter buttons - AJAX
+
     var chartContainer = document.getElementById('performance-chart');
-    var chartDates = document.getElementById('chart-dates');
+    var chartAxis = document.getElementById('chart-axis');
     var currentPeriod = '<?php echo htmlspecialchars($period); ?>';
-    
+
     function updateChart(data) {
         if (!chartContainer) return;
         if (!data || data.length === 0) {
-            chartContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm">No data available</div>';
-            if (chartDates) chartDates.innerHTML = '';
+            chartContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant text-sm">No data available</div>';
             return;
         }
         var maxVal = Math.max.apply(null, data.map(function(d){ return d.value; }));
         var minVal = Math.min.apply(null, data.map(function(d){ return d.value; }));
+        if (maxVal <= minVal) maxVal = minVal + 100;
+        var midHigh = minVal + (maxVal - minVal) * 0.66;
+        var midLow = minVal + (maxVal - minVal) * 0.33;
+        if (chartAxis) {
+            var labels = chartAxis.querySelectorAll('span');
+            if (labels[0]) labels[0].textContent = '$' + Math.round(maxVal).toLocaleString();
+            if (labels[1]) labels[1].textContent = '$' + Math.round(midHigh).toLocaleString();
+            if (labels[2]) labels[2].textContent = '$' + Math.round(midLow).toLocaleString();
+            if (labels[3]) labels[3].textContent = '$' + Math.round(minVal).toLocaleString();
+        }
         var range = maxVal - minVal;
-        if (range === 0) range = 1;
         var count = data.length;
         var points = [];
-        var dates = [];
         data.forEach(function(point, i) {
-            var x = count > 1 ? (i / (count - 1)) * 100 : 50;
-            var y = 100 - ((point.value - minVal) / range) * 80;
-            points.push(x + ',' + y);
-            if (i === 0 || i === Math.floor(count / 4) || i === Math.floor(count / 2) || i === Math.floor(count * 3 / 4) || i === count - 1) {
-                dates.push(new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-            }
+            var x = count > 1 ? (i / (count - 1)) * 1000 : 500;
+            var y = 250 - ((point.value - minVal) / range) * 200;
+            points.push(x.toFixed(1) + ',' + y.toFixed(1));
         });
-        var pathD = 'M' + points.join(' L');
-        var areaD = pathD + ' L' + (count > 1 ? 100 : 50) + ',100 L0,100 Z';
-        chartContainer.innerHTML = '<div class="absolute inset-0 trading-graph-bg rounded-lg"></div><svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100"><defs><linearGradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" style="stop-color:#ffc35c;stop-opacity:0.2"></stop><stop offset="100%" style="stop-color:#ffc35c;stop-opacity:0"></stop></linearGradient></defs><path d="' + areaD + '" fill="url(#chartGradient)"></path><path d="' + pathD + '" fill="none" stroke="#ffc35c" stroke-width="2"></path></svg>';
-        if (chartDates) chartDates.innerHTML = dates.map(function(d){ return '<span>' + d + '</span>'; }).join('');
+        chartContainer.innerHTML = '<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300"><path class="glow-line" d="M' + points.join(' L') + '" fill="none" stroke="#adc6ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>';
     }
-    
-    var chartActive = ['bg-surface-dim', 'text-primary-container', 'font-bold', 'shadow-sm'];
-    var chartIdle = ['text-on-surface-variant', 'hover:bg-white/5'];
+
     function setChartBtnActive(btn) {
         document.querySelectorAll('.chart-filter-btn').forEach(function (b) {
-            b.classList.remove('bg-surface-dim', 'text-primary-container', 'font-bold', 'shadow-sm', 'text-on-surface-variant', 'hover:bg-white/5');
-            b.classList.add('text-on-surface-variant', 'hover:bg-white/5');
+            b.className = 'chart-filter-btn px-4 py-1.5 text-label-sm rounded-md hover:bg-surface-bright transition-colors';
         });
-        btn.classList.remove('text-on-surface-variant', 'hover:bg-white/5');
-        chartActive.forEach(function (c) { btn.classList.add(c); });
+        btn.className = 'chart-filter-btn px-4 py-1.5 text-label-sm rounded-md bg-primary text-on-primary-container shadow-lg';
     }
-    
+
     document.querySelectorAll('.chart-filter-btn').forEach(function(btn) {
         var p = btn.getAttribute('data-period');
         if (p === currentPeriod) setChartBtnActive(btn);
@@ -481,14 +513,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }).catch(function(){ if (chartContainer) chartContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-on-surface-variant text-sm">Failed to load chart</div>'; });
         });
     });
-    
-    // Deposit button - redirect to wallet
-    var depositBtnDash = document.getElementById('deposit-btn-dash');
-    if (depositBtnDash) {
-        depositBtnDash.addEventListener('click', function() {
-            window.location.href = '/dashboard/user/wallet?action=deposit';
-        });
-    }
 });
 </script>
 </body></html>

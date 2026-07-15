@@ -1,46 +1,42 @@
 <?php
 /**
- * Fixed top bar for user dashboard.
+ * Sticky top bar — matches institutional terminal sample.
  */
 $u = get_current_user_data() ?? [];
 $userName = $u['name'] ?? 'User';
 $avatarUrl = $u['avatar_url'] ?? null;
 $initials = strtoupper(substr($userName ?: 'U', 0, 2));
 $isVerified = !empty($u['verified']) || (($u['kyc_status'] ?? '') === 'approved');
+$tierLabel = $isVerified ? 'Verified Institutional' : 'Member';
 ?>
-<header class="user-topbar fixed top-0 right-0 left-0 lg:left-64 border-b border-low bg-surface-dim/80 backdrop-blur-xl flex items-center justify-between px-4 md:px-margin-desktop z-50 gap-2 md:gap-3">
-<div class="flex items-center shrink-0 w-10 lg:w-0 lg:overflow-hidden relative z-10">
+<header class="user-topbar h-20 w-full flex justify-between items-center px-4 md:px-8 border-b border-white/10 bg-surface/10 backdrop-blur-xl z-40 sticky top-0 shrink-0 gap-3">
+<div class="flex items-center gap-3 md:gap-4">
 <button type="button" id="user-sidebar-toggle" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high transition-colors" aria-label="Toggle menu">
 <span class="material-symbols-outlined text-on-surface">menu</span>
 </button>
+<div class="flex items-center gap-2 bg-surface-container rounded-full px-4 py-1.5 border border-white/5">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-[12px] font-medium text-on-surface-variant">Systems Operational</span>
 </div>
-<?php require __DIR__ . '/user-social-proof.php'; ?>
-<div class="flex items-center gap-2 md:gap-5 shrink-0 relative z-10">
-<div class="hidden sm:flex items-center gap-3 text-on-surface-variant">
-<button type="button" class="hover:text-primary-container transition-colors p-1" aria-label="Live feed"><span class="material-symbols-outlined text-[22px]">sensors</span></button>
-<button type="button" class="hover:text-primary-container transition-colors relative p-1" aria-label="Notifications">
-<span class="material-symbols-outlined text-[22px]">notifications</span>
-<span class="absolute top-0.5 right-0.5 w-2 h-2 bg-primary-container rounded-full border border-surface-dim"></span>
-</button>
 </div>
-<div class="hidden md:block h-8 w-px bg-border-low"></div>
-<div class="flex items-center gap-2 md:gap-3">
+<div class="flex items-center gap-4 md:gap-6">
+<div class="relative group">
+<button type="button" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" aria-label="Notifications">notifications</button>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+</div>
+<div class="hidden sm:block h-6 w-px bg-white/10"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
 <div class="text-right hidden sm:block">
-<p class="font-label-sm text-label-sm text-on-surface font-bold truncate max-w-[140px]"><?php echo htmlspecialchars($userName); ?></p>
-<?php if ($isVerified): ?>
-<div class="flex items-center justify-end gap-1 text-[10px] text-success font-bold tracking-tight">
-<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">verified</span>
-Verified
+<p class="text-label-md font-bold text-on-surface leading-none truncate max-w-[140px]"><?php echo htmlspecialchars($userName); ?></p>
+<p class="text-[11px] text-on-surface-variant mt-1"><?php echo htmlspecialchars($tierLabel); ?></p>
 </div>
-<?php else: ?>
-<p class="text-[10px] text-text-secondary">Member</p>
-<?php endif; ?>
-</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5 overflow-hidden group-hover:border-primary transition-colors shrink-0">
 <?php if ($avatarUrl): ?>
-<img alt="" class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary-container object-cover shrink-0" src="<?php echo htmlspecialchars($avatarUrl); ?>"/>
+<img alt="" class="w-full h-full object-cover rounded-full" src="<?php echo htmlspecialchars($avatarUrl); ?>"/>
 <?php else: ?>
-<div class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary-container bg-surface-container-highest flex items-center justify-center text-primary-container font-bold text-sm shrink-0"><?php echo htmlspecialchars($initials); ?></div>
+<div class="w-full h-full rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold text-sm"><?php echo htmlspecialchars($initials); ?></div>
 <?php endif; ?>
+</div>
 </div>
 </div>
 </header>
