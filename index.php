@@ -68,69 +68,16 @@ $orbitRing3 = array_slice($orbitCoins, 10, 4);
 Secure Capital. <br/> <span class="italic font-normal text-on-surface-variant">Intelligent Growth.</span>
 </h1>
 <p class="font-body-md md:font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-8 md:mb-unit-xl reveal-up text-base md:text-lg">
-Strategic Wealth Management Limited provides institutional-grade access to global markets. We leverage advanced technical precision and deep liquidity to preserve and grow sovereign and private capital.
+<?php echo htmlspecialchars($siteName); ?> provides institutional-grade access to global markets. We leverage advanced technical precision and deep liquidity to preserve and grow sovereign and private capital.
 </p>
 <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-unit-md reveal-up w-full max-w-md sm:max-w-none mx-auto">
 <a href="/register" class="gradient-button w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest group inline-flex items-center justify-center gap-2 text-white">
-Open Institutional Account
+Open an Account
 <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
 </a>
-<a href="/plans" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
-Investor Presentation
+<a href="/trading_signals" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
+View Live Market
 </a>
-</div>
-</div>
-</section>
-
-<!-- Live Market Performance -->
-<section id="markets" class="section-medium bg-surface-container-lowest/50 border-y border-white/5 relative">
-<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent pointer-events-none"></div>
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
-<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 reveal-up">
-<div>
-<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Market Monitor</span>
-<h2 class="font-display-sm text-display-sm text-white">Live Market Performance</h2>
-</div>
-<a href="/trading_signals" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center">View All Markets</a>
-</div>
-
-<div class="mb-10">
-<h3 class="font-headline-md text-white mb-6">Cryptocurrency</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-cards">
-<?php foreach (get_markets_by_category('crypto') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
-</div>
-
-<div class="mb-10">
-<h3 class="font-headline-md text-white mb-6">Stocks</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-stocks">
-<?php foreach (get_markets_by_category('stock') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
-</div>
-
-<div>
-<h3 class="font-headline-md text-white mb-6">Forex</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-forex">
-<?php foreach (get_markets_by_category('forex') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
 </div>
 </div>
 </section>
@@ -182,6 +129,60 @@ Investor Presentation
 </div>
 </section>
 
+<!-- Live Market Performance -->
+<section id="markets" class="section-medium bg-surface-container-lowest/50 border-y border-white/5 relative">
+<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
+<div class="mb-12 reveal-up text-center md:text-left">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Market Monitor</span>
+<h2 class="font-display-sm text-display-sm text-white">Live Market Performance</h2>
+</div>
+
+<div class="mb-10">
+<h3 class="font-headline-md text-white mb-6">Cryptocurrency</h3>
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-cards">
+<?php foreach (get_markets_by_category('crypto') as $instrument): ?>
+<div class="market-slider-slide">
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+
+<div class="mb-10">
+<h3 class="font-headline-md text-white mb-6">Stocks</h3>
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-stocks">
+<?php foreach (get_markets_by_category('stock') as $instrument): ?>
+<div class="market-slider-slide">
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+
+<div class="mb-12">
+<h3 class="font-headline-md text-white mb-6">Forex</h3>
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-forex">
+<?php foreach (get_markets_by_category('forex') as $instrument): ?>
+<div class="market-slider-slide">
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+
+<div class="flex justify-center reveal-up">
+<a href="/trading_signals" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center">View All Markets</a>
+</div>
+</div>
+</section>
+
 <!-- AI Market Intelligence Orbit -->
 <section class="section-large bg-surface border-y border-white/5 overflow-hidden relative">
 <div class="absolute inset-0 refined-gradient pointer-events-none"></div>
@@ -219,8 +220,14 @@ $renderOrbitRing($orbitRing3, 150, 'orbit-spin-fast', 'w-8 h-8', 'w-5 h-5');
 </div>
 </div>
 <p class="font-body-md text-on-surface-variant max-w-xl mx-auto mt-10 reveal-up">
-Real-time multi-asset signals orbiting a proprietary intelligence core — synthesising liquidity, sentiment, and risk across global markets.
+<?php echo htmlspecialchars($siteName); ?> continuously monitors crypto, equities, and forex so your portfolio stays aligned with live market conditions — then turns those insights into clear next steps for your capital.
 </p>
+<div class="mt-8 reveal-up">
+<a href="/register" class="gradient-button inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest text-white">
+Start Investing
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
 </div>
 </section>
 
