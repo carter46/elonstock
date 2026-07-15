@@ -772,6 +772,45 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+-- TradingView chart symbol per plan (dynamic live widget on plan/position views)
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'plans' AND COLUMN_NAME = 'tv_symbol');
+SET @sql = IF(@col_exists = 0,
+    'ALTER TABLE plans ADD COLUMN tv_symbol VARCHAR(80) NULL AFTER investment_risk',
+    'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Optional pasted TradingView embed HTML (overrides mini-chart when set)
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'plans' AND COLUMN_NAME = 'tv_embed');
+SET @sql = IF(@col_exists = 0,
+    'ALTER TABLE plans ADD COLUMN tv_embed LONGTEXT NULL AFTER tv_symbol',
+    'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Hero title / pair label on View Trading (independent of market registry)
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'plans' AND COLUMN_NAME = 'chart_title');
+SET @sql = IF(@col_exists = 0,
+    'ALTER TABLE plans ADD COLUMN chart_title VARCHAR(120) NULL AFTER tv_embed',
+    'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @col_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'plans' AND COLUMN_NAME = 'chart_pair_label');
+SET @sql = IF(@col_exists = 0,
+    'ALTER TABLE plans ADD COLUMN chart_pair_label VARCHAR(64) NULL AFTER chart_title',
+    'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
 -- user_investments: liquidated status for early user exit
 SET @col = (SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'user_investments' AND COLUMN_NAME = 'status');
 SET @has_liquidated = IF(@col LIKE '%liquidated%', 1, 0);

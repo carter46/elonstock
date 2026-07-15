@@ -41,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             'icon' => $r['icon'] ?? null,
             'logo_url' => $r['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($r['investment_risk'] ?? 'mid'),
+            'tv_symbol' => normalize_plan_tv_symbol($r['tv_symbol'] ?? null),
+            'tv_embed' => isset($r['tv_embed']) && trim((string) $r['tv_embed']) !== '' ? (string) $r['tv_embed'] : null,
+            'chart_title' => isset($r['chart_title']) && trim((string) $r['chart_title']) !== '' ? trim((string) $r['chart_title']) : null,
+            'chart_pair_label' => isset($r['chart_pair_label']) && trim((string) $r['chart_pair_label']) !== '' ? trim((string) $r['chart_pair_label']) : null,
             'min_deposit' => (float) $r['min_deposit'],
             'max_deposit' => $r['max_deposit'] !== null ? (float) $r['max_deposit'] : null,
             'yield_min' => (float) $r['yield_min'],
@@ -240,6 +244,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($logoUrl === '') {
         $logoUrl = null;
     }
+    $rawTv = trim((string) ($input['tv_symbol'] ?? ''));
+    $tvSymbol = $rawTv === '' ? null : normalize_plan_tv_symbol($rawTv);
+    if ($rawTv !== '' && $tvSymbol === null) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid TradingView symbol. Use formats like BINANCE:BTCUSDT or NASDAQ:TSLA.']);
+        exit;
+    }
+    $rawEmbed = (string) ($input['tv_embed'] ?? '');
+    $tvEmbed = normalize_plan_tv_embed($rawEmbed);
+    if (trim($rawEmbed) !== '' && $tvEmbed === null) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Widget embed HTML is too large or invalid. Paste a TradingView embed under 100KB.']);
+        exit;
+    }
+    $chartTitle = trim((string) ($input['chart_title'] ?? ''));
+    $chartTitle = $chartTitle !== '' ? mb_substr($chartTitle, 0, 120) : null;
+    $chartPairLabel = trim((string) ($input['chart_pair_label'] ?? ''));
+    $chartPairLabel = $chartPairLabel !== '' ? mb_substr($chartPairLabel, 0, 64) : null;
     $allowedIcons = ['trending_up', 'rocket_launch', 'diamond', 'currency_bitcoin', 'token'];
     if (array_key_exists('icon', $input)) {
         $icon = trim($input['icon'] ?? '') ?: null;
@@ -322,17 +344,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id > 0) {
             $beforePlan = admin_audit_fetch_plan($pdo, $id);
             if ($featuresJson !== null) {
-                $stmt = $pdo->prepare('UPDATE plans SET name=?, slug=?, plan_type=?, description=?, icon=?, logo_url=?, investment_risk=?, min_deposit=?, max_deposit=?, yield_min=?, yield_max=?, duration_days=?, withdrawal_days=?, liquidation_cost=?, min_duration_days=?, max_duration_days=?, features_json=?, enabled=?, sort_order=? WHERE id=?');
-                $stmt->execute([$name, $slug, $planType, $description, $icon, $logoUrl, $investmentRisk, $minDeposit, $maxDeposit, $yieldMin, $yieldMax, $durationDays, $withdrawalDays, $liquidationCost, $minDurationDays, $maxDurationDays, $featuresJson, $enabled ? 1 : 0, $sortOrder, $id]);
+                $stmt = $pdo->prepare('UPDATE plans SET name=?, slug=?, plan_type=?, description=?, icon=?, logo_url=?, investment_risk=?, tv_symbol=?, tv_embed=?, chart_title=?, chart_pair_label=?, min_deposit=?, max_deposit=?, yield_min=?, yield_max=?, duration_days=?, withdrawal_days=?, liquidation_cost=?, min_duration_days=?, max_duration_days=?, features_json=?, enabled=?, sort_order=? WHERE id=?');
+                $stmt->execute([$name, $slug, $planType, $description, $icon, $logoUrl, $investmentRisk, $tvSymbol, $tvEmbed, $chartTitle, $chartPairLabel, $minDeposit, $maxDeposit, $yieldMin, $yieldMax, $durationDays, $withdrawalDays, $liquidationCost, $minDurationDays, $maxDurationDays, $featuresJson, $enabled ? 1 : 0, $sortOrder, $id]);
             } else {
-                $stmt = $pdo->prepare('UPDATE plans SET name=?, slug=?, plan_type=?, description=?, icon=?, logo_url=?, investment_risk=?, min_deposit=?, max_deposit=?, yield_min=?, yield_max=?, duration_days=?, withdrawal_days=?, liquidation_cost=?, min_duration_days=?, max_duration_days=?, enabled=?, sort_order=? WHERE id=?');
-                $stmt->execute([$name, $slug, $planType, $description, $icon, $logoUrl, $investmentRisk, $minDeposit, $maxDeposit, $yieldMin, $yieldMax, $durationDays, $withdrawalDays, $liquidationCost, $minDurationDays, $maxDurationDays, $enabled ? 1 : 0, $sortOrder, $id]);
+                $stmt = $pdo->prepare('UPDATE plans SET name=?, slug=?, plan_type=?, description=?, icon=?, logo_url=?, investment_risk=?, tv_symbol=?, tv_embed=?, chart_title=?, chart_pair_label=?, min_deposit=?, max_deposit=?, yield_min=?, yield_max=?, duration_days=?, withdrawal_days=?, liquidation_cost=?, min_duration_days=?, max_duration_days=?, enabled=?, sort_order=? WHERE id=?');
+                $stmt->execute([$name, $slug, $planType, $description, $icon, $logoUrl, $investmentRisk, $tvSymbol, $tvEmbed, $chartTitle, $chartPairLabel, $minDeposit, $maxDeposit, $yieldMin, $yieldMax, $durationDays, $withdrawalDays, $liquidationCost, $minDurationDays, $maxDurationDays, $enabled ? 1 : 0, $sortOrder, $id]);
             }
             $savedId = $id;
         } else {
             if ($featuresJson === null) $featuresJson = '[]';
-            $stmt = $pdo->prepare('INSERT INTO plans (name, slug, plan_type, description, icon, logo_url, investment_risk, min_deposit, max_deposit, yield_min, yield_max, duration_days, withdrawal_days, liquidation_cost, min_duration_days, max_duration_days, features_json, enabled, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$name, $slug, $planType, $description, $icon, $logoUrl, $investmentRisk, $minDeposit, $maxDeposit, $yieldMin, $yieldMax, $durationDays, $withdrawalDays, $liquidationCost, $minDurationDays, $maxDurationDays, $featuresJson, $enabled ? 1 : 0, $sortOrder]);
+            $stmt = $pdo->prepare('INSERT INTO plans (name, slug, plan_type, description, icon, logo_url, investment_risk, tv_symbol, tv_embed, chart_title, chart_pair_label, min_deposit, max_deposit, yield_min, yield_max, duration_days, withdrawal_days, liquidation_cost, min_duration_days, max_duration_days, features_json, enabled, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([$name, $slug, $planType, $description, $icon, $logoUrl, $investmentRisk, $tvSymbol, $tvEmbed, $chartTitle, $chartPairLabel, $minDeposit, $maxDeposit, $yieldMin, $yieldMax, $durationDays, $withdrawalDays, $liquidationCost, $minDurationDays, $maxDurationDays, $featuresJson, $enabled ? 1 : 0, $sortOrder]);
             $savedId = (int) $pdo->lastInsertId();
             $beforePlan = null;
         }

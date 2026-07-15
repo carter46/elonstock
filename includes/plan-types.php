@@ -67,6 +67,10 @@ function ensure_plan_schema(PDO $pdo): void
         'logo_url' => 'ALTER TABLE plans ADD COLUMN logo_url VARCHAR(255) NULL AFTER icon',
         'investment_risk' => "ALTER TABLE plans ADD COLUMN investment_risk VARCHAR(16) NOT NULL DEFAULT 'mid' AFTER logo_url",
         'liquidation_cost' => 'ALTER TABLE plans ADD COLUMN liquidation_cost DECIMAL(18,2) NOT NULL DEFAULT 0.00 AFTER withdrawal_days',
+        'tv_symbol' => 'ALTER TABLE plans ADD COLUMN tv_symbol VARCHAR(80) NULL AFTER investment_risk',
+        'tv_embed' => 'ALTER TABLE plans ADD COLUMN tv_embed LONGTEXT NULL AFTER tv_symbol',
+        'chart_title' => 'ALTER TABLE plans ADD COLUMN chart_title VARCHAR(120) NULL AFTER tv_embed',
+        'chart_pair_label' => 'ALTER TABLE plans ADD COLUMN chart_pair_label VARCHAR(64) NULL AFTER chart_title',
     ];
 
     foreach ($columns as $column => $ddl) {
@@ -81,6 +85,38 @@ function ensure_plan_schema(PDO $pdo): void
         } catch (Throwable $e) {
             // Ignore if INFORMATION_SCHEMA is restricted; API save may still fail with a clear error.
         }
+    }
+
+    // Backfill chart fields from the static market registry only when empty (legacy seeded plans).
+    try {
+        $chk = $pdo->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'plans' AND COLUMN_NAME = 'tv_symbol'");
+        if ($chk && (int) $chk->fetchColumn() > 0) {
+            if (!function_exists('market_instruments_all')) {
+                require_once __DIR__ . '/market-instruments.php';
+            }
+            $upd = $pdo->prepare(
+                'UPDATE plans SET
+                    tv_symbol = COALESCE(NULLIF(tv_symbol, \'\'), ?),
+                    chart_title = COALESCE(NULLIF(chart_title, \'\'), ?),
+                    chart_pair_label = COALESCE(NULLIF(chart_pair_label, \'\'), ?)
+                 WHERE slug = ?'
+            );
+            foreach (market_instruments_all() as $inst) {
+                $sym = trim((string) ($inst['symbol'] ?? ''));
+                $slug = trim((string) ($inst['slug'] ?? ''));
+                if ($sym === '' || $slug === '') {
+                    continue;
+                }
+                $upd->execute([
+                    $sym,
+                    (string) ($inst['name'] ?? ''),
+                    (string) ($inst['pair_label'] ?? $sym),
+                    $slug,
+                ]);
+            }
+        }
+    } catch (Throwable $e) {
+        // Non-fatal
     }
 }
 
@@ -153,23 +189,85 @@ function plan_type_market_category(?string $type): ?string
 function plan_has_live_markets($planOrType): bool
 {
     if (is_array($planOrType)) {
-        if (plan_market_instrument($planOrType) !== null) {
-            return true;
-        }
-        return plan_type_market_category($planOrType['plan_type'] ?? '') !== null;
+        return plan_market_instrument($planOrType) !== null;
     }
-    return plan_type_market_category($planOrType) !== null;
+    return false;
 }
 
-/** Resolve linked market instrument when plan slug matches registry (e.g. usdjpy). */
+/** Normalize TradingView symbol input (e.g. BINANCE:BTCUSDT). */
+function normalize_plan_tv_symbol(?string $symbol): ?string
+{
+    $sym = strtoupper(trim((string) $symbol));
+    if ($sym === '') {
+        return null;
+    }
+    // Allow EXCHANGE:TICKER or plain TICKER
+    if (!preg_match('/^[A-Z0-9._-]{1,40}(:[A-Z0-9._-]{1,40})?$/', $sym)) {
+        return null;
+    }
+    return $sym;
+}
+
+/** Light cleanup for admin-pasted TradingView embed HTML. */
+function normalize_plan_tv_embed(?string $html): ?string
+{
+    $html = trim((string) $html);
+    if ($html === '') {
+        return null;
+    }
+    // Strip event-handler attributes; admin-sourced embeds from TradingView are otherwise kept.
+    $html = preg_replace('/\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html) ?? $html;
+    if (strlen($html) > 100000) {
+        return null;
+    }
+    return $html;
+}
+
+/**
+ * Build the View Trading chart config from plan DB fields (fully dynamic).
+ * Falls back to the static market registry only when chart fields are empty and slug matches.
+ */
 function plan_market_instrument(array $plan): ?array
 {
     $slug = strtolower(trim((string) ($plan['slug'] ?? '')));
-    if ($slug === '') {
-        return null;
+    $tvSymbol = normalize_plan_tv_symbol($plan['tv_symbol'] ?? null);
+    $tvEmbed = normalize_plan_tv_embed($plan['tv_embed'] ?? null);
+    $category = plan_type_market_category($plan['plan_type'] ?? '') ?? 'crypto';
+    $typeLabel = function_exists('plan_type_label')
+        ? plan_type_label($plan['plan_type'] ?? 'crypto')
+        : ucfirst($category);
+    $title = trim((string) ($plan['chart_title'] ?? ''));
+    if ($title === '') {
+        $title = trim((string) ($plan['name'] ?? 'Market'));
     }
-    if (!function_exists('get_market_instrument')) {
-        require_once __DIR__ . '/market-instruments.php';
+    $pair = trim((string) ($plan['chart_pair_label'] ?? ''));
+    if ($pair === '') {
+        $pair = $tvSymbol ?: $title;
     }
-    return get_market_instrument($slug);
+
+    if ($tvSymbol !== null || $tvEmbed !== null) {
+        return [
+            'slug' => $slug !== '' ? $slug : 'custom',
+            'name' => $title,
+            'symbol' => $tvSymbol ?? '',
+            'embed_html' => $tvEmbed,
+            'category' => $category,
+            'coingecko_id' => null,
+            'pair_label' => $pair,
+            'intro' => (string) ($plan['description'] ?? ''),
+            'snapshot' => [
+                'market_type' => $typeLabel,
+            ],
+        ];
+    }
+
+    // Legacy: slug still matches a built-in market page instrument
+    if ($slug !== '') {
+        if (!function_exists('get_market_instrument')) {
+            require_once __DIR__ . '/market-instruments.php';
+        }
+        return get_market_instrument($slug);
+    }
+
+    return null;
 }

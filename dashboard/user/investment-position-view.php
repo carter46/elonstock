@@ -31,7 +31,8 @@ try {
         'SELECT ui.id, ui.amount, ui.start_date, ui.created_at, ui.status,
                 ui.duration_days AS investment_duration_days,
                 p.id AS plan_id, p.name, p.slug, p.plan_type, p.description, p.logo_url,
-                p.investment_risk, p.yield_min, p.yield_max, p.duration_days,
+                p.investment_risk, p.tv_symbol, p.tv_embed, p.chart_title, p.chart_pair_label,
+                p.yield_min, p.yield_max, p.duration_days,
                 p.min_duration_days, p.max_duration_days, p.min_duration_months, p.max_duration_months,
                 p.withdrawal_days, p.liquidation_cost, p.features_json
          FROM user_investments ui
@@ -51,6 +52,10 @@ try {
             'description' => $row['description'] ?? '',
             'logo_url' => $row['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($row['investment_risk'] ?? 'mid'),
+            'tv_symbol' => normalize_plan_tv_symbol($row['tv_symbol'] ?? null),
+            'tv_embed' => normalize_plan_tv_embed($row['tv_embed'] ?? null),
+            'chart_title' => trim((string) ($row['chart_title'] ?? '')) ?: null,
+            'chart_pair_label' => trim((string) ($row['chart_pair_label'] ?? '')) ?: null,
             'yield_min' => (float) $row['yield_min'],
             'yield_max' => (float) $row['yield_max'],
             'duration_days' => (int) $row['duration_days'],

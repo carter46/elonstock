@@ -70,7 +70,14 @@ $backUrl = htmlspecialchars((string) ($marketChartBackUrl ?? '/dashboard/user/in
 </div>
 <?php endif; ?>
 
-<?php if ($chartSymbol !== ''): ?>
+<?php
+$embedHtml = trim((string) ($instrument['embed_html'] ?? ''));
+if ($embedHtml !== ''):
+?>
+<div class="plan-tv-embed w-full min-w-0 overflow-hidden rounded-lg [&_iframe]:w-full [&_iframe]:min-h-[360px]">
+<?php echo $embedHtml; ?>
+</div>
+<?php elseif ($chartSymbol !== ''): ?>
 <tv-mini-chart symbol="<?php echo $chartSymbol; ?>" style="width: 100%; height: 360px; max-width: 100%;"></tv-mini-chart>
 <?php else: ?>
 <p class="text-sm text-text-secondary text-center py-12">Chart unavailable for this market.</p>

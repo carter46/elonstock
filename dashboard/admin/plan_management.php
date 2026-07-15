@@ -241,6 +241,31 @@ foreach ($adminPlans as $idx => $p):
 </div>
 </div>
 </div>
+<!-- View Trading / Live Chart (hero on plan view) -->
+<div class="space-y-4">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">View Trading Chart</p>
+<p class="text-xs text-slate-500">Shown in the hero of the user “View Trading” page. Does <strong>not</strong> require the public Markets list — any TradingView symbol/embed works.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-2">
+<label class="block text-sm font-medium mb-1.5">Chart Title</label>
+<input name="chart_title" id="plan-form-chart-title" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="Defaults to plan name (e.g. Bitcoin)"/>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium mb-1.5">Pair Label</label>
+<input name="chart_pair_label" id="plan-form-chart-pair" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="e.g. BTC / USD · shown under the title"/>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium mb-1.5">TradingView Symbol <span class="text-slate-400 font-normal">(mini chart)</span></label>
+<input name="tv_symbol" id="plan-form-tv-symbol" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" type="text" placeholder="e.g. BINANCE:BTCUSDT, NASDAQ:TSLA, OANDA:USDJPY"/>
+<p class="text-[10px] text-slate-400 mt-1">Loads TradingView’s mini chart automatically. Find symbols on tradingview.com.</p>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium mb-1.5">Custom Widget Embed <span class="text-slate-400 font-normal">(optional — overrides symbol)</span></label>
+<textarea name="tv_embed" id="plan-form-tv-embed" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" rows="5" placeholder="Paste TradingView embed HTML here if you prefer a custom widget…"></textarea>
+<p class="text-[10px] text-slate-400 mt-1">If filled, this embed is shown instead of the symbol mini-chart. Leave empty to use the symbol above. Without symbol or embed, “View Trading” stays hidden.</p>
+</div>
+</div>
+</div>
 <!-- Financial Bounds -->
 <div class="space-y-4">
 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Financial Parameters</p>
@@ -365,6 +390,14 @@ function resetPlanForm() {
   document.getElementById('plan-form-id').value = '';
   document.getElementById('plan-form-name').value = '';
   document.getElementById('plan-form-description').value = '';
+  var tvEl = document.getElementById('plan-form-tv-symbol');
+  if (tvEl) tvEl.value = '';
+  var embEl = document.getElementById('plan-form-tv-embed');
+  if (embEl) embEl.value = '';
+  var ctEl = document.getElementById('plan-form-chart-title');
+  if (ctEl) ctEl.value = '';
+  var cpEl = document.getElementById('plan-form-chart-pair');
+  if (cpEl) cpEl.value = '';
   if (document.getElementById('plan-form-type')) document.getElementById('plan-form-type').value = 'crypto';
   setLogoUrl('');
   if (logoFileInput) logoFileInput.value = '';
@@ -405,6 +438,14 @@ if (drawer) {
             document.getElementById('plan-form-id').value = p.id;
             document.getElementById('plan-form-name').value = p.name;
             document.getElementById('plan-form-description').value = p.description || '';
+            var tvInput = document.getElementById('plan-form-tv-symbol');
+            if (tvInput) tvInput.value = p.tv_symbol || '';
+            var embInput = document.getElementById('plan-form-tv-embed');
+            if (embInput) embInput.value = p.tv_embed || '';
+            var ctInput = document.getElementById('plan-form-chart-title');
+            if (ctInput) ctInput.value = p.chart_title || '';
+            var cpInput = document.getElementById('plan-form-chart-pair');
+            if (cpInput) cpInput.value = p.chart_pair_label || '';
             if (document.getElementById('plan-form-type')) document.getElementById('plan-form-type').value = p.plan_type || 'crypto';
             setLogoUrl(p.logo_url || '');
             if (logoFileInput) logoFileInput.value = '';
@@ -469,7 +510,29 @@ if (drawer) {
     var minDays = parseInt(document.getElementById('plan-form-min-days').value, 10);
     var riskEl = document.querySelector('.plan-form-risk:checked');
     var liqCost = parseFloat((document.getElementById('plan-form-liquidation-cost') || {}).value) || 0;
-    var data = { id: id ? parseInt(id) : 0, name: document.getElementById('plan-form-name').value, plan_type: document.getElementById('plan-form-type').value, description: document.getElementById('plan-form-description').value.trim(), logo_url: document.getElementById('plan-form-logo-url').value.trim(), investment_risk: riskEl ? riskEl.value : 'mid', min_deposit: parseFloat(document.getElementById('plan-form-min').value) || 0, max_deposit: document.getElementById('plan-form-max').value ? parseFloat(document.getElementById('plan-form-max').value) : null, yield: parseFloat(document.getElementById('plan-form-yield').value) || 0, min_duration_days: isNaN(minDays) ? null : minDays, liquidation_cost: liqCost, features: features, features_text: featuresText };
+    var tvSymbolEl = document.getElementById('plan-form-tv-symbol');
+    var tvEmbedEl = document.getElementById('plan-form-tv-embed');
+    var chartTitleEl = document.getElementById('plan-form-chart-title');
+    var chartPairEl = document.getElementById('plan-form-chart-pair');
+    var data = {
+      id: id ? parseInt(id) : 0,
+      name: document.getElementById('plan-form-name').value,
+      plan_type: document.getElementById('plan-form-type').value,
+      description: document.getElementById('plan-form-description').value.trim(),
+      chart_title: chartTitleEl ? chartTitleEl.value.trim() : '',
+      chart_pair_label: chartPairEl ? chartPairEl.value.trim() : '',
+      tv_symbol: tvSymbolEl ? tvSymbolEl.value.trim() : '',
+      tv_embed: tvEmbedEl ? tvEmbedEl.value : '',
+      logo_url: document.getElementById('plan-form-logo-url').value.trim(),
+      investment_risk: riskEl ? riskEl.value : 'mid',
+      min_deposit: parseFloat(document.getElementById('plan-form-min').value) || 0,
+      max_deposit: document.getElementById('plan-form-max').value ? parseFloat(document.getElementById('plan-form-max').value) : null,
+      yield: parseFloat(document.getElementById('plan-form-yield').value) || 0,
+      min_duration_days: isNaN(minDays) ? null : minDays,
+      liquidation_cost: liqCost,
+      features: features,
+      features_text: featuresText
+    };
     fetch('/api/admin/plans.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(data) })
       .then(function(r){ return r.json(); }).then(function(res){ if (res.success) { drawer.classList.add('hidden'); window.location.reload(); } else alert(res.error || 'Failed'); }).catch(function(){ alert('Error'); });
   });

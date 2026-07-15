@@ -24,7 +24,7 @@ try {
     $userBalance = get_user_spendable_usd_balance($pdo, $userId);
 
     $stmt = $pdo->prepare(
-        'SELECT id, name, slug, plan_type, description, logo_url, investment_risk, min_deposit, max_deposit,
+        'SELECT id, name, slug, plan_type, description, logo_url, investment_risk, tv_symbol, tv_embed, chart_title, chart_pair_label, min_deposit, max_deposit,
                 yield_min, yield_max, duration_days, min_duration_days, max_duration_days,
                 min_duration_months, max_duration_months, withdrawal_days, liquidation_cost, features_json
          FROM plans WHERE slug = ? AND enabled = 1 LIMIT 1'
@@ -40,6 +40,10 @@ try {
             'description' => $row['description'] ?? '',
             'logo_url' => $row['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($row['investment_risk'] ?? 'mid'),
+            'tv_symbol' => normalize_plan_tv_symbol($row['tv_symbol'] ?? null),
+            'tv_embed' => normalize_plan_tv_embed($row['tv_embed'] ?? null),
+            'chart_title' => trim((string) ($row['chart_title'] ?? '')) ?: null,
+            'chart_pair_label' => trim((string) ($row['chart_pair_label'] ?? '')) ?: null,
             'min_deposit' => (float) $row['min_deposit'],
             'max_deposit' => $row['max_deposit'] !== null ? (float) $row['max_deposit'] : null,
             'yield_min' => (float) $row['yield_min'],
@@ -91,9 +95,9 @@ $autoOpenInvest = isset($_GET['invest']) && $_GET['invest'] === '1';
 $isCrypto = ($instrument['category'] ?? '') === 'crypto';
 $coingeckoId = $instrument['coingecko_id'] ?? '';
 $snapshot = $instrument['snapshot'] ?? [];
-$marketTypeLabel = $snapshot['market_type'] ?? ucfirst($instrument['category'] ?? 'Market');
-$heroIntro = $instrument['intro'] ?? $plan['description'];
-$displayName = $instrument['name'] ?? $plan['name'];
+$marketTypeLabel = $snapshot['market_type'] ?? plan_type_label($plan['plan_type']);
+$heroIntro = $plan['description'] ?: ($instrument['intro'] ?? '');
+$displayName = !empty($plan['chart_title']) ? $plan['chart_title'] : ($instrument['name'] ?? $plan['name']);
 
 $pageTitle = $siteName . ' | ' . $displayName;
 $pageHeading = '';

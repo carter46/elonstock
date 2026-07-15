@@ -17,7 +17,7 @@ try {
     $userBalance = get_user_spendable_usd_balance($pdo, (int) $userId);
     
     // Fetch enabled plans
-    $stmt = $pdo->query('SELECT id, name, slug, plan_type, description, logo_url, investment_risk, min_deposit, max_deposit, yield_min, yield_max, duration_days, min_duration_days, max_duration_days, min_duration_months, max_duration_months, withdrawal_days, liquidation_cost, features_json FROM plans WHERE enabled = 1 ORDER BY sort_order, id');
+    $stmt = $pdo->query('SELECT id, name, slug, plan_type, description, logo_url, investment_risk, tv_symbol, tv_embed, chart_title, chart_pair_label, min_deposit, max_deposit, yield_min, yield_max, duration_days, min_duration_days, max_duration_days, min_duration_months, max_duration_months, withdrawal_days, liquidation_cost, features_json FROM plans WHERE enabled = 1 ORDER BY sort_order, id');
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $plans[] = [
             'id' => (int)$row['id'],
@@ -27,6 +27,10 @@ try {
             'description' => $row['description'] ?? '',
             'logo_url' => $row['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($row['investment_risk'] ?? 'mid'),
+            'tv_symbol' => normalize_plan_tv_symbol($row['tv_symbol'] ?? null),
+            'tv_embed' => normalize_plan_tv_embed($row['tv_embed'] ?? null),
+            'chart_title' => trim((string) ($row['chart_title'] ?? '')) ?: null,
+            'chart_pair_label' => trim((string) ($row['chart_pair_label'] ?? '')) ?: null,
             'min_deposit' => (float)$row['min_deposit'],
             'max_deposit' => $row['max_deposit'] !== null ? (float)$row['max_deposit'] : null,
             'yield_min' => (float)$row['yield_min'],
