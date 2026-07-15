@@ -99,6 +99,12 @@ View Live Market
 </div>
 </section>
 
+<!-- TradingView Ticker Tape -->
+<section class="tv-ticker-strip w-full max-w-none border-y border-white/5 bg-[#0b0e11] overflow-hidden">
+<script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
+<tv-ticker-tape class="block w-full" symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,FX:EURUSD,BITSTAMP:BTCUSD,BITSTAMP:ETHUSD,CMCMARKETS:GOLD,CBOE:MAGS,NASDAQ:NVDA,NASDAQ:TSLA,NASDAQ:META,NASDAQ:NFLX"></tv-ticker-tape>
+</section>
+
 <!-- Multi-Asset Global Exposure -->
 <section id="portfolio" class="section-large bg-surface-container-lowest/50 border-y border-white/5 relative">
 <div class="absolute inset-0 refined-gradient pointer-events-none"></div>
@@ -250,8 +256,10 @@ Start Investing
 
 <?php if (!empty($partnerImages)): ?>
 <!-- Our Partners -->
-<section class="section-medium bg-surface-container-lowest/40 border-y border-white/5 overflow-hidden">
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<section class="section-medium border-y border-white/5 overflow-hidden relative">
+<div class="section-photo-bg" style="background-image: url('/uploads/images/banner_bg.jpg');"></div>
+<div class="section-photo-overlay"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
 <div class="text-center mb-10 md:mb-12 reveal-up">
 <span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Trusted Network</span>
 <h2 class="font-display-sm text-display-sm text-white">Our Partners</h2>
@@ -516,8 +524,10 @@ Explore Modules <span class="material-symbols-outlined">arrow_forward</span>
 </section>
 
 <!-- Immersive CTA -->
-<section class="section-large relative overflow-hidden bg-background">
-<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
+<section class="section-large relative overflow-hidden">
+<div class="section-photo-bg" style="background-image: url('/uploads/images/contact_bg.png'); opacity: 0.32;"></div>
+<div class="section-photo-overlay"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none z-[1]"></div>
 <div class="relative z-10 text-center px-margin-mobile reveal-up">
 <h2 class="font-display-lg text-display-lg text-white mb-8 tracking-tight leading-none">Global Capital <br/><span class="italic font-normal text-on-surface-variant">Simplified.</span></h2>
 <div class="flex flex-col items-center gap-6">

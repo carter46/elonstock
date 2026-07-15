@@ -2,7 +2,7 @@
 require_once __DIR__ . '/includes/helpers.php';
 $siteName = get_site_name();
 $pageTitle = 'About Us | ' . $siteName . ' - Institutional Grade Trading';
-$heroBg = 'https://lh3.googleusercontent.com/aida/AP1WRLuaqlZwMUTllIVowJvsPs71UrRrOaPOvonLjjptWfNtUe89eodKTGsJELawmdRPTKUT3_hJ0tpi3hoatIQo1H8PScnwZigbNa9QZPVYYjwOmPP7WeMcZ8xN3JqNaU3I-RzfDr2CGZvmHaMVaG7Nt0aewolZdG-y4NHFq8Kdfh8HMIQoQbrYrEfYHTTYb1KSyEh_93YaTd4MmpDPGknsEOh3AMslYaIoDyqkomb33wnIg-vcUFgV7FUnJw';
+$heroBg = '/uploads/images/chart_bg.jpg';
 $infraBg = 'https://lh3.googleusercontent.com/aida/AP1WRLsKriSbY6BJi-Xp2Gkc7D7CVwxW2aLMAeU3vslR5SSitI_47iRoKte8OAQPNNm9SVIVAJP-rxuMAgVJSJdgU79P5g1FgzlR3L1T3iKisxILmQwUVbRBpe9jP9AcBhmn5dOT2lGX6TkC3LxSMhG_7zFbayukNlnb63bYjV8lzW6sJhcDohhWpwHwt7jiN5I_ApLCsQeZ4HaS-BEOnuPIsgpW6dVCbSLy14ewi2QOegd2_aontl0Sqgbjst8';
 ?>
 <!DOCTYPE html>
@@ -30,8 +30,8 @@ $infraBg = 'https://lh3.googleusercontent.com/aida/AP1WRLsKriSbY6BJi-Xp2Gkc7D7CV
 <main class="pt-20">
 <!-- Hero -->
 <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-<div class="absolute inset-0 z-0 about-hero-bg opacity-40"></div>
-<div class="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background z-10"></div>
+<div class="absolute inset-0 z-0 about-hero-bg opacity-30"></div>
+<div class="absolute inset-0 z-10 pointer-events-none" style="background: linear-gradient(to bottom, rgba(7,12,20,0.55) 0%, rgba(7,12,20,0.72) 45%, rgba(7,12,20,0.95) 100%);"></div>
 <div class="relative z-20 max-w-container-max mx-auto px-4 md:px-margin-desktop text-center py-16">
 <span class="inline-block font-label-xs text-label-xs text-surface-tint tracking-[0.2em] mb-4 border border-surface-tint/30 px-4 py-1 rounded-full bg-surface-tint/5">ESTABLISHED 2021</span>
 <h1 class="font-display text-4xl sm:text-5xl lg:text-display text-text-primary mb-6 max-w-4xl mx-auto text-glow">

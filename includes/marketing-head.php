@@ -476,6 +476,40 @@ body.marketing-page {
   filter: grayscale(0.15) brightness(1.05);
   opacity: 0.92;
 }
+.tv-ticker-strip {
+  width: 100vw;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.tv-ticker-strip tv-ticker-tape,
+.tv-ticker-strip > * {
+  display: block;
+  width: 100% !important;
+  max-width: none !important;
+}
+.section-photo-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.28;
+  pointer-events: none;
+  z-index: 0;
+}
+.section-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(7, 12, 20, 0.72) 0%,
+    rgba(7, 12, 20, 0.82) 50%,
+    rgba(7, 12, 20, 0.9) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
 @media (max-width: 768px) {
   .section-large { padding-top: 96px; padding-bottom: 96px; }
   .section-medium { padding-top: 80px; padding-bottom: 80px; }
