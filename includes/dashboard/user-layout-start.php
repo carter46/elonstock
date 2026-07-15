@@ -13,6 +13,6 @@ $siteName = $siteName ?? get_site_name();
 <body class="user-dashboard font-body-md text-on-background bg-surface-dim min-h-screen overflow-x-hidden">
 <div class="noise-overlay" aria-hidden="true"></div>
 <?php include __DIR__ . '/user-sidebar.php'; ?>
-<main class="user-dash-main relative z-10 min-h-screen w-full min-w-0 max-w-full overflow-x-clip flex flex-col lg:ml-64 lg:w-[calc(100%-16rem)]">
+<main class="user-dash-main relative z-10 min-h-screen w-full min-w-0 max-w-full flex flex-col lg:ml-64 lg:w-[calc(100%-16rem)]">
 <?php include __DIR__ . '/user-header.php'; ?>
-<div class="user-dash-content p-4 md:p-8 max-w-[1600px] w-full mx-auto flex-1 min-w-0 space-y-8">
+<div class="user-dash-content p-4 md:p-8 max-w-[1600px] w-full mx-auto flex-1 min-w-0 space-y-8 overflow-x-clip">

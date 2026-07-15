@@ -142,7 +142,7 @@ body.user-dashboard {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: 0.012;
   z-index: 9999;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
@@ -182,7 +182,6 @@ body.user-dashboard {
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
-  overflow-x: clip;
 }
 .user-dash-content {
   max-width: 1600px;
@@ -191,6 +190,13 @@ body.user-dashboard {
   width: 100%;
   min-width: 0;
   overflow-x: clip;
+}
+.metric-balance-card,
+.metric-balance-card.glass-card {
+  background: linear-gradient(135deg, #0a1f3d 0%, #0d3b6e 45%, #002e69 100%);
+  border: 1px solid rgba(75, 142, 255, 0.25);
+  box-shadow: 0 4px 30px rgba(0, 46, 105, 0.25);
+  backdrop-filter: none;
 }
 .dash-page,
 .wallet-page {

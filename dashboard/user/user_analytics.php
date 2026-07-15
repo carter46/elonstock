@@ -619,38 +619,39 @@ Personal best: <?php echo (int)$personalBestStreakDays; ?> day<?php echo ((int)$
 </div>
 </div>
 <!-- History Table Section -->
-<div class="glass-panel rounded-xl overflow-hidden">
-<div class="p-6 border-b border-slate-100 dark:border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-<h2 class="text-lg font-bold">Distribution History</h2>
-<div class="flex items-center gap-3">
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-zinc-800 border-none rounded-lg text-sm w-full md:w-64 focus:ring-2 focus:ring-primary" placeholder="Search entries..." type="text"/>
+<style>
+.tx-history-table th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 639px) {
+  .tx-history-table th,
+  .tx-history-table td { padding: 0.65rem 0.75rem; font-size: 11px; }
+  .tx-history-table .material-symbols-outlined { font-size: 16px !important; }
+}
+</style>
+<div class="glass-panel rounded-xl overflow-hidden min-w-0">
+<div class="p-4 sm:p-6 border-b border-low flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h2 class="text-lg font-bold text-on-surface">Distribution History</h2>
+<div class="relative w-full md:w-auto">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container border border-low rounded-lg text-sm w-full md:w-64 text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Search entries..." type="text" id="dist-history-search"/>
 </div>
-<button class="p-2 border border-slate-200 dark:border-zinc-700 rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800">
-<span class="material-symbols-outlined text-slate-500">filter_list</span>
-</button>
 </div>
-</div>
-<div class="overflow-x-auto custom-scrollbar">
-<table class="w-full text-left border-collapse">
+<div class="overflow-x-auto min-w-0">
+<table class="w-full text-left table-fixed min-w-0 tx-history-table">
 <thead>
-<tr class="bg-slate-50 dark:bg-zinc-800/50 text-slate-400 text-xs font-bold uppercase tracking-wider">
-<th class="px-6 py-4">Date &amp; Time</th>
-<th class="px-6 py-4">Investment Plan</th>
-<th class="px-6 py-4">Asset</th>
-<th class="px-6 py-4">Amount (USD)</th>
-<th class="px-6 py-4">ROI %</th>
-<th class="px-6 py-4">Status</th>
+<tr class="text-on-surface-variant text-[10px] uppercase tracking-wider border-b border-low">
+<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold w-[46%] sm:w-[34%]">Type / Date</th>
+<th class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 font-semibold w-[16%]">Asset</th>
+<th class="px-3 sm:px-6 py-3 sm:py-4 font-semibold text-right w-[32%] sm:w-[18%]">Amount</th>
+<th class="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 font-semibold text-center w-[14%]">ROI</th>
+<th class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 font-semibold text-center w-[18%]">Status</th>
 </tr>
 </thead>
-<tbody class="text-sm divide-y divide-slate-100 dark:divide-zinc-800">
+<tbody class="divide-y divide-low">
 <?php
-$coinLogosAnalytics = [
-    'BTC' => 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',
-    'ETH' => 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-    'USDT' => 'https://assets.coingecko.com/coins/images/325/large/Tether.png',
-];
 foreach ($analyticsTx as $tx):
     $txAmt = (float)($tx['amount'] ?? 0);
     $txType = $tx['type'] ?? '';
@@ -664,10 +665,14 @@ foreach ($analyticsTx as $tx):
     $typeLabel = $analyticsTypeLabels[$txType] ?? ucfirst(str_replace('_', ' ', $txType));
     $isProfitLike = in_array($txType, ['payout', 'profit_adjustment'], true);
     $isProfitCredit = $txType === 'payout' || ($txType === 'profit_adjustment' && $txAmt >= 0);
+    $isIncoming = $isProfitLike ? $isProfitCredit : in_array($txType, ['referral_bonus', 'deposit_bonus'], true);
+    if ($txType === 'referral_bonus_adjustment') {
+        $isIncoming = $txAmt >= 0;
+    }
     $displayAmt = in_array($txType, ['profit_adjustment', 'referral_bonus_adjustment'], true) ? abs($txAmt) : $txAmt;
-    $logo = $coinLogosAnalytics[strtoupper($tx['currency'])] ?? null;
-    $statusClass = $tx['status'] === 'completed' ? 'text-emerald-500' : ($tx['status'] === 'rejected' ? 'text-red-500' : 'text-amber-500');
-    $statusIcon = $tx['status'] === 'completed' ? 'check_circle' : ($tx['status'] === 'rejected' ? 'cancel' : 'schedule');
+    $statusClass = 'bg-primary-container/15 text-primary-container';
+    if ($tx['status'] === 'completed') $statusClass = 'bg-success/15 text-success';
+    elseif (in_array($tx['status'], ['rejected', 'failed'], true)) $statusClass = 'bg-critical/15 text-critical';
     $planLabel = $typeLabel;
     $roiPct = null;
     if ($txType === 'payout' && !empty($tx['reference']) && preg_match('/^earnings_inv_(\d+)/', (string) $tx['reference'], $refMatch)) {
@@ -679,50 +684,55 @@ foreach ($analyticsTx as $tx):
             $roiPct = (float) $payoutInvRoi[$payoutInvId];
         }
     }
+    $searchBlob = strtolower($planLabel . ' ' . $typeLabel . ' ' . ($tx['currency'] ?? '') . ' ' . ($tx['status'] ?? ''));
 ?>
-<tr class="hover:bg-slate-50 dark:hover:bg-zinc-800/30 transition-colors animate-fade-in">
-<td class="px-6 py-4">
-<p class="font-semibold"><?php echo date('M j, Y', strtotime($tx['created_at'])); ?></p>
-<p class="text-xs text-slate-400"><?php echo date('H:i', strtotime($tx['created_at'])); ?></p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-2 h-2 rounded-full bg-primary"></div>
-<span class="font-medium"><?php echo htmlspecialchars($planLabel); ?></span>
+<tr class="hover:bg-white/[0.02] transition-colors dist-history-row" data-search="<?php echo htmlspecialchars($searchBlob); ?>">
+<td class="px-3 sm:px-6 py-3 sm:py-4 min-w-0">
+<div class="flex items-start gap-2 min-w-0">
+<span class="material-symbols-outlined <?php echo $isIncoming ? 'text-success' : 'text-critical'; ?> text-lg shrink-0 mt-0.5"><?php echo $isIncoming ? 'arrow_downward' : 'arrow_upward'; ?></span>
+<div class="min-w-0">
+<p class="text-sm font-bold text-on-surface truncate"><?php echo htmlspecialchars($planLabel); ?></p>
+<p class="text-[10px] text-on-surface-variant truncate"><?php echo date('M j, Y H:i', strtotime($tx['created_at'])); ?></p>
+<p class="text-[10px] text-on-surface-variant sm:hidden mt-0.5"><?php echo htmlspecialchars($tx['currency'] ?? ''); ?><?php if ($roiPct !== null): ?> · <?php echo number_format($roiPct, 1); ?>% ROI<?php endif; ?></p>
+<div class="mt-2 sm:hidden">
+<span class="inline-block px-2 py-1 <?php echo $statusClass; ?> text-[10px] font-bold rounded-full uppercase"><?php echo htmlspecialchars($tx['status']); ?></span>
+</div>
+</div>
 </div>
 </td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<?php if ($logo): ?><img alt="<?php echo htmlspecialchars($tx['currency']); ?>" class="w-5 h-5" src="<?php echo htmlspecialchars($logo); ?>"/><?php endif; ?>
-<span class="font-medium"><?php echo htmlspecialchars($tx['currency']); ?></span>
-</div>
-</td>
-<td class="px-6 py-4 font-bold <?php echo $isProfitLike ? ($isProfitCredit ? 'text-emerald-500' : 'text-red-500') : 'text-slate-600'; ?>"><?php echo $isProfitLike ? ($isProfitCredit ? '+' : '-') : ''; ?>$<?php echo format_usd_amount($displayAmt); ?></td>
-<td class="px-6 py-4">
+<td class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 text-sm font-medium text-on-surface"><?php echo htmlspecialchars($tx['currency'] ?? '—'); ?></td>
+<td class="px-3 sm:px-6 py-3 sm:py-4 text-right text-sm font-bold whitespace-nowrap <?php echo $isIncoming ? 'text-success' : 'text-critical'; ?>"><?php echo $isIncoming ? '+' : '-'; ?>$<?php echo format_usd_amount($displayAmt); ?></td>
+<td class="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 text-center">
 <?php if ($isProfitLike && $isProfitCredit && $txType === 'payout' && $roiPct !== null): ?>
-<span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded font-bold text-xs" title="Plan daily ROI"><?php echo number_format($roiPct, 1); ?>%</span>
+<span class="px-2 py-1 bg-success/15 text-success rounded-full font-bold text-[10px]" title="Plan daily ROI"><?php echo number_format($roiPct, 1); ?>%</span>
 <?php else: ?>
-<span class="px-2 py-1 bg-slate-100 dark:bg-zinc-800 text-slate-500 rounded font-bold text-xs">—</span>
+<span class="text-[10px] text-on-surface-variant">—</span>
 <?php endif; ?>
 </td>
-<td class="px-6 py-4">
-<span class="flex items-center gap-1 <?php echo $statusClass; ?> font-medium">
-<span class="material-symbols-outlined text-sm"><?php echo $statusIcon; ?></span>
-<?php echo htmlspecialchars(ucfirst($tx['status'])); ?>
-</span>
+<td class="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 text-center">
+<span class="px-2 py-1 <?php echo $statusClass; ?> text-[10px] font-bold rounded-full uppercase"><?php echo htmlspecialchars($tx['status']); ?></span>
 </td>
 </tr>
 <?php endforeach; ?>
 <?php if (empty($analyticsTx)): ?>
-<tr><td class="px-6 py-8 text-center text-slate-500" colspan="6">No transactions yet.</td></tr>
+<tr><td class="px-3 sm:px-6 py-12 text-center text-on-surface-variant" colspan="5">No transactions yet.</td></tr>
 <?php endif; ?>
 </tbody>
 </table>
 </div>
-<div class="p-4 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-between">
-<span class="text-xs text-slate-400 font-medium">Showing <?php echo min(count($analyticsTx), 50); ?> entries</span>
+<div class="p-4 border-t border-low flex items-center justify-between">
+<span class="text-xs text-on-surface-variant font-medium">Showing <?php echo min(count($analyticsTx), 50); ?> entries</span>
 </div>
 </div>
+<script>
+document.getElementById('dist-history-search')?.addEventListener('input', function () {
+  var q = this.value.trim().toLowerCase();
+  document.querySelectorAll('.dist-history-row').forEach(function (row) {
+    var hay = row.getAttribute('data-search') || '';
+    row.style.display = !q || hay.indexOf(q) !== -1 ? '' : 'none';
+  });
+});
+</script>
 </div>
 <?php require_once __DIR__ . '/../../includes/dashboard/user-layout-end.php'; ?>
 <!-- Liquidate Plan Modal (outside main so it always overlays correctly) -->

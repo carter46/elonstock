@@ -1,20 +1,4 @@
 </div>
-<footer class="mt-auto w-full flex flex-col md:flex-row justify-between items-center px-4 md:px-8 py-8 border-t border-white/5 bg-surface-container-lowest gap-4">
-<div class="flex flex-col items-center md:items-start gap-1">
-<p class="font-label-sm text-label-sm text-on-surface-variant opacity-60 text-center md:text-left">
-© <?php echo date('Y'); ?> <?php echo htmlspecialchars($siteName ?? get_site_name()); ?>. Institutional trading terminal.
-</p>
-<p class="text-[10px] text-on-surface-variant opacity-40">
-Precision Terminal Version 2.4.11-stable
-</p>
-</div>
-<div class="flex flex-wrap justify-center gap-6 md:gap-8">
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="/legal_centre#privacy">Privacy Policy</a>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="/legal_centre#terms">Terms of Service</a>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="/legal_centre#risk-disclosure">Regulatory Disclosure</a>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="/live_chat">Contact Support</a>
-</div>
-</footer>
 </main>
 <script>
 document.addEventListener('DOMContentLoaded', function () {

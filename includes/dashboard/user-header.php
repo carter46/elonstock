@@ -1,6 +1,6 @@
 <?php
 /**
- * Sticky top bar — matches institutional terminal sample.
+ * Sticky top bar — sticks within the scrolling main column.
  */
 $u = get_current_user_data() ?? [];
 $userName = $u['name'] ?? 'User';
@@ -9,7 +9,7 @@ $initials = strtoupper(substr($userName ?: 'U', 0, 2));
 $isVerified = !empty($u['verified']) || (($u['kyc_status'] ?? '') === 'approved');
 $tierLabel = $isVerified ? 'Verified Institutional' : 'Member';
 ?>
-<header class="user-topbar h-20 w-full flex justify-between items-center px-4 md:px-8 border-b border-white/10 bg-surface/10 backdrop-blur-xl z-40 sticky top-0 shrink-0 gap-3">
+<header class="user-topbar sticky top-0 z-40 h-20 w-full flex justify-between items-center px-4 md:px-8 border-b border-white/10 bg-surface-dim/85 backdrop-blur-xl shrink-0 gap-3">
 <div class="flex items-center gap-3 md:gap-4">
 <button type="button" id="user-sidebar-toggle" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high transition-colors" aria-label="Toggle menu">
 <span class="material-symbols-outlined text-on-surface">menu</span>
@@ -19,13 +19,7 @@ $tierLabel = $isVerified ? 'Verified Institutional' : 'Member';
 <span class="text-[12px] font-medium text-on-surface-variant">Systems Operational</span>
 </div>
 </div>
-<div class="flex items-center gap-4 md:gap-6">
-<div class="relative group">
-<button type="button" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" aria-label="Notifications">notifications</button>
-<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
-</div>
-<div class="hidden sm:block h-6 w-px bg-white/10"></div>
-<div class="flex items-center gap-3 cursor-pointer group">
+<a href="/dashboard/user/profile" class="flex items-center gap-3 group">
 <div class="text-right hidden sm:block">
 <p class="text-label-md font-bold text-on-surface leading-none truncate max-w-[140px]"><?php echo htmlspecialchars($userName); ?></p>
 <p class="text-[11px] text-on-surface-variant mt-1"><?php echo htmlspecialchars($tierLabel); ?></p>
@@ -37,8 +31,7 @@ $tierLabel = $isVerified ? 'Verified Institutional' : 'Member';
 <div class="w-full h-full rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold text-sm"><?php echo htmlspecialchars($initials); ?></div>
 <?php endif; ?>
 </div>
-</div>
-</div>
+</a>
 </header>
 <div class="gtranslate_wrapper"></div>
 <?php require_once __DIR__ . '/../translation-widget.php'; ?>

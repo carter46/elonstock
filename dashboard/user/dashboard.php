@@ -72,18 +72,37 @@ try {
     }
     $referralBonus = get_user_total_referral_bonus($pdo, (int) $userId);
     $referralBonusLast24h = get_user_total_referral_bonus($pdo, (int) $userId, null, 24);
-    $stmt = $pdo->prepare("SELECT DATE(created_at) as date, type, SUM(amount) as total FROM transactions WHERE user_id = ? AND type IN ('deposit', 'withdrawal') AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY) GROUP BY DATE(created_at), type ORDER BY date ASC");
-    $stmt->execute([$userId, $days]);
+    $openStmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount WHEN type = 'withdrawal' THEN -amount ELSE 0 END), 0) FROM transactions WHERE user_id = ? AND type IN ('deposit', 'withdrawal') AND created_at < DATE_SUB(CURDATE(), INTERVAL ? DAY)");
+    $openStmt->execute([$userId, max(0, $days - 1)]);
+    $openingBalance = (float) $openStmt->fetchColumn();
+    $stmt = $pdo->prepare("SELECT DATE(created_at) as date, type, SUM(amount) as total FROM transactions WHERE user_id = ? AND type IN ('deposit', 'withdrawal') AND created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) GROUP BY DATE(created_at), type ORDER BY date ASC");
+    $stmt->execute([$userId, max(0, $days - 1)]);
     $dailyData = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $date = $row['date'];
         if (!isset($dailyData[$date])) $dailyData[$date] = ['deposit' => 0, 'withdrawal' => 0];
         $dailyData[$date][$row['type']] = (float)$row['total'];
     }
-    $cumulative = 0;
-    foreach ($dailyData as $date => $amounts) {
-        $cumulative += $amounts['deposit'] - $amounts['withdrawal'];
-        $chartData[] = ['date' => $date, 'value' => $cumulative];
+    $cumulative = $openingBalance;
+    $endDay = new DateTimeImmutable('today');
+    $startDay = $endDay->modify('-' . max(0, $days - 1) . ' days');
+    for ($d = $startDay; $d <= $endDay; $d = $d->modify('+1 day')) {
+        $key = $d->format('Y-m-d');
+        if (isset($dailyData[$key])) {
+            $cumulative += (float)$dailyData[$key]['deposit'] - (float)$dailyData[$key]['withdrawal'];
+        }
+        $chartData[] = ['date' => $key, 'value' => $cumulative];
+    }
+    $hasMovement = abs($cumulative - $openingBalance) > 0.0001;
+    if (!$hasMovement && $userBalance > 0) {
+        foreach ($chartData as $i => $point) {
+            $chartData[$i]['value'] = (float) $userBalance;
+        }
+    }
+    if (count($chartData) === 1) {
+        $only = $chartData[0];
+        $prev = (new DateTimeImmutable($only['date']))->modify('-1 day')->format('Y-m-d');
+        array_unshift($chartData, ['date' => $prev, 'value' => $only['value']]);
     }
 } catch (Throwable $e) { }
 $profileUser = get_current_user_data() ?? [];
@@ -111,13 +130,13 @@ $axisMidLow = $axisMin + ($axisMax - $axisMin) * 0.33;
 <!-- Welcome Header -->
 <section class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4">
 <div>
-<h2 class="font-display-sm text-[28px] leading-9 md:text-display-sm text-on-surface tracking-tight mb-1 flex flex-wrap items-center gap-3">
+<h2 class="font-headline-md text-xl md:text-headline-md text-on-surface tracking-tight mb-1 flex flex-wrap items-center gap-2">
 <?php echo htmlspecialchars($greeting); ?>, <?php echo htmlspecialchars($dashboardUserName); ?>.
 <?php if ($isVerified): ?>
-<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">verified</span>
 <?php endif; ?>
 </h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant opacity-80">Welcome back to your institutional trading hub.</p>
+<p class="text-sm md:text-body-md text-on-surface-variant opacity-80">Welcome back to your institutional trading hub.</p>
 </div>
 <div class="glass-card px-6 py-3 rounded-xl flex items-center gap-4 max-w-md w-full lg:w-auto animate-fade-in" id="live-notification">
 <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
@@ -129,13 +148,13 @@ $axisMidLow = $axisMin + ($axisMax - $axisMin) * 0.33;
 </section>
 
 <!-- Key Metrics Row -->
-<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+<section class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+<div class="metric-balance-card glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group col-span-2 lg:col-span-1">
 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
 <span class="material-symbols-outlined text-5xl">payments</span>
 </div>
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Balance</p>
-<h3 class="text-3xl font-display-sm text-white">$<?php echo number_format((float) $userBalance, 2, '.', ','); ?></h3>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo number_format((float) $userBalance, 2, '.', ','); ?></h3>
 <div class="mt-4 flex items-center gap-2">
 <?php if ($growthPct > 0): ?>
 <span class="status-pill-green text-[10px] px-2 py-0.5 rounded-full">+<?php echo number_format($growthPct, 1); ?>% realized</span>
@@ -144,30 +163,30 @@ $axisMidLow = $axisMin + ($axisMax - $axisMin) * 0.33;
 <?php endif; ?>
 </div>
 </div>
-<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+<div class="glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group">
 <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
 <span class="material-symbols-outlined text-5xl">trending_up</span>
 </div>
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Profit</p>
-<h3 class="text-3xl font-display-sm text-primary">+$<?php echo format_usd_amount($totalProfit); ?></h3>
-<p class="text-[12px] text-primary/80 mt-2 font-medium"><?php echo $growthPct > 0 ? '+' . number_format($growthPct, 1) . '% Realized Growth' : 'Settled plans only'; ?></p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-primary">+$<?php echo format_usd_amount($totalProfit); ?></h3>
+<p class="text-[11px] md:text-[12px] text-primary/80 mt-2 font-medium"><?php echo $growthPct > 0 ? '+' . number_format($growthPct, 1) . '% Realized Growth' : 'Settled plans only'; ?></p>
 </div>
-<div class="glass-card p-6 rounded-2xl">
+<div class="glass-card p-5 md:p-6 rounded-2xl">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Active Capital</p>
-<h3 class="text-3xl font-display-sm text-white">$<?php echo format_usd_amount($activeCapital); ?></h3>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($activeCapital); ?></h3>
 <div class="w-full bg-white/5 h-1 rounded-full mt-6 overflow-hidden">
 <div class="bg-primary h-full" style="width:<?php echo number_format($capitalRatio, 1); ?>%"></div>
 </div>
 </div>
-<div class="glass-card p-6 rounded-2xl">
+<div class="glass-card p-5 md:p-6 rounded-2xl">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Daily Earning</p>
-<h3 class="text-3xl font-display-sm text-white">$<?php echo format_usd_amount($dailyEarning); ?></h3>
-<p class="text-[12px] text-on-surface-variant mt-2 font-mono">EST. NEXT PAYOUT: 08:00 UTC</p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($dailyEarning); ?></h3>
+<p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2 font-mono">EST. NEXT PAYOUT: 08:00 UTC</p>
 </div>
-<div class="glass-card p-6 rounded-2xl">
+<div class="glass-card p-5 md:p-6 rounded-2xl">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Referral Bonus</p>
-<h3 class="text-3xl font-display-sm text-white">$<?php echo format_usd_amount($referralBonus); ?></h3>
-<p class="text-[12px] text-on-surface-variant mt-2">Last 24h: +$<?php echo format_usd_amount($referralBonusLast24h); ?></p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($referralBonus); ?></h3>
+<p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2">Last 24h: +$<?php echo format_usd_amount($referralBonusLast24h); ?></p>
 </div>
 </section>
 
