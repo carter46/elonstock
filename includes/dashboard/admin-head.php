@@ -151,9 +151,19 @@ body.admin-dashboard {
   width: 100%;
 }
 .admin-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
   padding-top: env(safe-area-inset-top, 0px);
   min-height: calc(4rem + env(safe-area-inset-top, 0px));
   height: calc(4rem + env(safe-area-inset-top, 0px));
+}
+@media (min-width: 1024px) {
+  .admin-topbar {
+    left: 16rem;
+  }
 }
 .admin-scrollbar::-webkit-scrollbar { width: 4px; }
 .admin-scrollbar::-webkit-scrollbar-track { background: #081422; }

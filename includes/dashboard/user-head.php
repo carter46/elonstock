@@ -182,6 +182,7 @@ body.user-dashboard {
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
+  padding-top: calc(5rem + env(safe-area-inset-top, 0px));
 }
 .user-dash-content {
   max-width: 1600px;
@@ -206,8 +207,19 @@ body.user-dashboard {
   overflow-x: clip;
 }
 .user-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
   padding-top: env(safe-area-inset-top, 0px);
   min-height: calc(5rem + env(safe-area-inset-top, 0px));
+  height: calc(5rem + env(safe-area-inset-top, 0px));
+}
+@media (min-width: 1024px) {
+  .user-topbar {
+    left: 16rem;
+  }
 }
 #live-notification {
   transition: opacity 0.5s ease, transform 0.5s ease;

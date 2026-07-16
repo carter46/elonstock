@@ -144,9 +144,8 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
     $pairHint = $instrument ? ($instrument['pair_label'] ?? '') : '';
 ?>
 <div class="plan-asset-card asset-card glass-panel rounded-xl p-4 md:p-6 flex flex-col h-full">
-<div class="flex justify-between items-start gap-2 mb-3">
-<div class="flex flex-col gap-2 min-w-0 flex-1">
-<div class="flex items-start gap-2.5 min-w-0">
+<div class="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-3">
+<div class="flex items-start gap-2.5 min-w-0 flex-1">
 <?php if (!empty($plan['logo_url'])): ?>
 <img src="<?php echo htmlspecialchars($plan['logo_url'], ENT_QUOTES, 'UTF-8'); ?>" alt="" class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover shrink-0 bg-surface-container mt-0.5"/>
 <?php endif; ?>
@@ -155,10 +154,10 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 <?php if ($pairHint): ?>
 <p class="text-xs text-primary-container font-semibold break-words mt-0.5"><?php echo htmlspecialchars($pairHint); ?></p>
 <?php endif; ?>
+<span class="<?php echo $riskBadge['class']; ?> mt-1.5 md:mt-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider inline-flex w-fit md:hidden"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
 </div>
 </div>
-</div>
-<span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shrink-0"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
+<span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shrink-0 hidden md:inline-flex"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
 </div>
 <p class="text-sm text-text-secondary mb-4 md:mb-6 flex-grow line-clamp-3"><?php echo htmlspecialchars($plan['description'] ?: 'Premium investment plan'); ?></p>
 <?php if (plan_has_live_markets($plan)): ?>

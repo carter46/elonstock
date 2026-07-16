@@ -8,7 +8,7 @@ $monthEnd = date('M d, Y', strtotime('last day of this month'));
 $dateRange = $monthStart . ' - ' . $monthEnd;
 $pendingNotifCount = isset($adminPendingNotifCount) ? (int) $adminPendingNotifCount : 0;
 ?>
-<header class="admin-topbar fixed top-0 right-0 left-0 lg:left-64 border-b border-low bg-surface-dim/80 backdrop-blur-xl flex items-center justify-between px-4 md:px-margin-desktop z-50 gap-2 md:gap-4">
+<header class="admin-topbar fixed top-0 right-0 left-0 lg:left-64 border-b border-low bg-surface-dim/95 backdrop-blur-xl flex items-center justify-between px-4 md:px-margin-desktop z-50 gap-2 md:gap-4">
 <div class="flex items-center gap-2 md:gap-6 min-w-0 flex-1">
 <button type="button" id="admin-sidebar-toggle" class="lg:hidden shrink-0 w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high transition-colors" aria-label="Toggle menu">
 <span class="material-symbols-outlined text-on-surface">menu</span>

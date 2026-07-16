@@ -21,8 +21,8 @@ $mobileClass = function ($active) {
 ?>
 <nav class="fixed top-0 w-full z-[100] glass-nav h-20 border-b border-white/5" id="marketing-nav">
 <div class="max-w-container-max mx-auto h-full flex justify-between items-center px-margin-mobile md:px-margin-desktop">
-<a href="/" class="shrink-0 max-w-[min(220px,55vw)] flex items-center" aria-label="<?php echo htmlspecialchars($siteName); ?>">
-<?php echo site_brand_markup('h-9 md:h-10 w-auto max-w-full object-contain object-left', 'font-display-sm text-headline-lg text-primary tracking-tighter truncate'); ?>
+<a href="/" class="shrink-0 max-w-[min(280px,70vw)] flex items-center" aria-label="<?php echo htmlspecialchars($siteName); ?>">
+<?php echo site_brand_markup('h-11 md:h-14 w-auto max-w-full object-contain object-left', 'font-display-sm text-headline-lg text-primary tracking-tighter truncate'); ?>
 </a>
 <div class="hidden md:flex items-center gap-unit-lg">
 <a class="<?php echo $navClass($current === 'home'); ?>" href="/">Home</a>

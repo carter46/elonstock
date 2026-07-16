@@ -46,7 +46,7 @@ function get_site_logo(): string {
 /**
  * Brand mark HTML: logo image when set, otherwise site name text.
  */
-function site_brand_markup(string $imgClass = 'h-8 w-auto max-w-[200px] object-contain', string $textClass = ''): string {
+function site_brand_markup(string $imgClass = 'h-11 w-auto max-w-[260px] object-contain', string $textClass = ''): string {
     $name = get_site_name();
     $logo = get_site_logo();
     if ($logo !== '') {

@@ -15,7 +15,7 @@ $navClass = function ($page) use ($current) {
 <aside id="admin-sidebar" class="fixed inset-y-0 left-0 w-64 border-r border-low bg-surface-dim flex flex-col py-6 z-[60] transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out overflow-hidden">
 <div class="px-6 mb-10 shrink-0">
 <a href="/dashboard/admin" class="block max-w-full" aria-label="<?php echo htmlspecialchars($siteName); ?>">
-<?php echo site_brand_markup('h-9 w-auto max-w-full object-contain object-left', 'font-headline-md text-headline-md font-bold text-primary-container tracking-tight truncate'); ?>
+<?php echo site_brand_markup('h-11 w-auto max-w-full object-contain object-left', 'font-headline-md text-headline-md font-bold text-primary-container tracking-tight truncate'); ?>
 </a>
 <p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Institutional Account</p>
 </div>

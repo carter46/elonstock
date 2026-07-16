@@ -19,7 +19,7 @@ $iconFill = function ($page) use ($current) {
 <aside id="user-sidebar" class="h-full w-64 fixed left-0 top-0 bg-surface-container-lowest flex flex-col py-unit-lg h-screen z-[60] border-r border-white/5 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out">
 <div class="px-6 mb-10 shrink-0">
 <a href="/dashboard/user/dashboard" class="block max-w-full" aria-label="<?php echo htmlspecialchars($siteName); ?>">
-<?php echo site_brand_markup('h-9 w-auto max-w-full object-contain object-left', 'font-headline-md text-headline-md text-primary tracking-tighter'); ?>
+<?php echo site_brand_markup('h-11 w-auto max-w-full object-contain object-left', 'font-headline-md text-headline-md text-primary tracking-tighter'); ?>
 </a>
 <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1 opacity-60">Institutional Terminal</p>
 </div>
