@@ -428,7 +428,7 @@ function renderMethods() {
 }
 
 function getCoinsAlreadyUsed() {
-  return allMethods.filter(function(m){ return m.method_type === 'crypto'; }).map(function(m){ return m.coin_id; });
+  return allMethods.filter(function(m){ return m.method_type === 'crypto'; }).map(function(m){ return parseInt(m.coin_id, 10); }).filter(function(id){ return id > 0; });
 }
 
 function showTypeStep() {
@@ -451,17 +451,20 @@ function showFormStep(type) {
 function populateCryptoCoins(currentCoinId) {
   var sel = document.getElementById('method-coin-id');
   var used = getCoinsAlreadyUsed();
+  var currentId = currentCoinId != null ? parseInt(currentCoinId, 10) : 0;
   var options = allCoins.map(function(coin){
-    var usedAlready = used.indexOf(coin.id) >= 0;
-    var isCurrent = currentCoinId === coin.id;
+    var coinId = parseInt(coin.id, 10);
+    var usedAlready = used.indexOf(coinId) >= 0;
+    var isCurrent = currentId === coinId;
     if (!editingId && usedAlready) return '';
-    return '<option value="' + coin.id + '"' + (isCurrent ? ' selected' : '') + '>' + escapeHtml(coin.display_name) + ' (' + escapeHtml(coin.symbol) + ')' + (usedAlready && !isCurrent ? ' — already added' : '') + '</option>';
+    if (editingId && usedAlready && !isCurrent) return '';
+    return '<option value="' + coinId + '"' + (isCurrent ? ' selected' : '') + '>' + escapeHtml(coin.display_name) + ' (' + escapeHtml(coin.symbol) + ')' + '</option>';
   }).filter(function(o){ return o.length > 0; });
   sel.innerHTML = '<option value="">Select a coin</option>' + options.join('');
   var logoEl = document.getElementById('method-coin-logo');
   function updateLogo() {
     var id = parseInt(sel.value, 10);
-    var coin = allCoins.find(function(c){ return c.id === id; });
+    var coin = allCoins.find(function(c){ return parseInt(c.id, 10) === id; });
     if (coin && coin.logo && /^https?:\/\//i.test(coin.logo)) {
       logoEl.innerHTML = '<img src="' + coin.logo.replace(/"/g,'&quot;') + '" alt="" class="w-full h-full object-cover"/>';
       logoEl.classList.remove('hidden');

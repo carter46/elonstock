@@ -154,6 +154,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute(array_values($parsed));
         $newId = (int) $pdo->lastInsertId();
         $created = get_payment_method_by_id($pdo, $newId, true);
+        if (($created['method_type'] ?? '') === 'crypto') {
+            sync_legacy_wallet_address(
+                $pdo,
+                isset($created['coin_id']) ? (int) $created['coin_id'] : null,
+                $created['wallet_address'] ?? $created['address'] ?? null
+            );
+        }
         admin_audit_log(
             $pdo,
             'create',
@@ -219,6 +226,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $stmt = $pdo->prepare('UPDATE payment_methods SET ' . implode(', ', $sets) . ' WHERE id = ?');
         $stmt->execute($params);
         $updated = get_payment_method_by_id($pdo, $id, true);
+        if (($updated['method_type'] ?? '') === 'crypto') {
+            $oldCoinId = isset($existing['coin_id']) ? (int) $existing['coin_id'] : null;
+            $newCoinId = isset($updated['coin_id']) ? (int) $updated['coin_id'] : null;
+            if ($oldCoinId && $newCoinId && $oldCoinId !== $newCoinId) {
+                sync_legacy_wallet_address($pdo, $oldCoinId, null, true);
+            }
+            sync_legacy_wallet_address(
+                $pdo,
+                $newCoinId,
+                $updated['wallet_address'] ?? $updated['address'] ?? null
+            );
+        }
         admin_audit_log(
             $pdo,
             'update',
@@ -262,6 +281,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'Payment method not found']);
         exit;
+    }
+    if (($existing['method_type'] ?? '') === 'crypto' && !empty($existing['coin_id'])) {
+        sync_legacy_wallet_address($pdo, (int) $existing['coin_id'], null, true);
     }
     admin_audit_log(
         $pdo,

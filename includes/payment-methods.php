@@ -49,17 +49,36 @@ function ensure_payment_methods_schema(PDO $pdo): void
         ) ENGINE=InnoDB"
     );
 
+    // One-time legacy import only. Re-running this on every request made deletes appear to fail
+    // because rows came back from wallet_addresses on the next list load.
     $chk = $pdo->query("SHOW TABLES LIKE 'wallet_addresses'");
     if ($chk && $chk->rowCount() > 0) {
-        $pdo->exec(
-            "INSERT INTO payment_methods (method_type, coin_id, wallet_address, created_at)
-             SELECT 'crypto', wa.coin_id, wa.address, wa.created_at
-             FROM wallet_addresses wa
-             WHERE NOT EXISTS (
-                 SELECT 1 FROM payment_methods pm
-                 WHERE pm.method_type = 'crypto' AND pm.coin_id = wa.coin_id
-             )"
-        );
+        $migrated = false;
+        try {
+            $flag = $pdo->query("SELECT value FROM site_settings WHERE `key` = 'payment_methods_migrated_v1' LIMIT 1");
+            $migrated = $flag && (string) ($flag->fetchColumn() ?: '') === '1';
+        } catch (Throwable $e) {
+            $migrated = false;
+        }
+        if (!$migrated) {
+            $pdo->exec(
+                "INSERT INTO payment_methods (method_type, coin_id, wallet_address, created_at)
+                 SELECT 'crypto', wa.coin_id, wa.address, wa.created_at
+                 FROM wallet_addresses wa
+                 WHERE NOT EXISTS (
+                     SELECT 1 FROM payment_methods pm
+                     WHERE pm.method_type = 'crypto' AND pm.coin_id = wa.coin_id
+                 )"
+            );
+            try {
+                $pdo->prepare(
+                    'INSERT INTO site_settings (`key`, value) VALUES (?, ?)
+                     ON DUPLICATE KEY UPDATE value = VALUES(value)'
+                )->execute(['payment_methods_migrated_v1', '1']);
+            } catch (Throwable $e) {
+                // Flag table may be unavailable; avoid blocking payment methods.
+            }
+        }
     }
 
     $col = $pdo->query("SHOW COLUMNS FROM transactions LIKE 'payment_method_id'");
@@ -69,6 +88,40 @@ function ensure_payment_methods_schema(PDO $pdo): void
     $col = $pdo->query("SHOW COLUMNS FROM transactions LIKE 'payout_details'");
     if (!$col || $col->rowCount() === 0) {
         $pdo->exec('ALTER TABLE transactions ADD COLUMN payout_details TEXT NULL AFTER payment_method_id');
+    }
+}
+
+/**
+ * Keep legacy wallet_addresses in sync when crypto payment methods change.
+ */
+function sync_legacy_wallet_address(PDO $pdo, ?int $coinId, ?string $address, bool $delete = false): void
+{
+    if ($coinId === null || $coinId <= 0) {
+        return;
+    }
+    try {
+        $chk = $pdo->query("SHOW TABLES LIKE 'wallet_addresses'");
+        if (!$chk || $chk->rowCount() === 0) {
+            return;
+        }
+        if ($delete) {
+            $pdo->prepare('DELETE FROM wallet_addresses WHERE coin_id = ?')->execute([$coinId]);
+            return;
+        }
+        $address = trim((string) $address);
+        if ($address === '') {
+            return;
+        }
+        $existing = $pdo->prepare('SELECT id FROM wallet_addresses WHERE coin_id = ? LIMIT 1');
+        $existing->execute([$coinId]);
+        $row = $existing->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $pdo->prepare('UPDATE wallet_addresses SET address = ? WHERE coin_id = ?')->execute([$address, $coinId]);
+        } else {
+            $pdo->prepare('INSERT INTO wallet_addresses (coin_id, address) VALUES (?, ?)')->execute([$coinId, $address]);
+        }
+    } catch (Throwable $e) {
+        // Legacy table sync is best-effort.
     }
 }
 
