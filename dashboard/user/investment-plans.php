@@ -80,6 +80,16 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 .plan-type-panel.is-active { display: grid; }
 .plan-asset-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .plan-asset-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+.plan-type-panel.is-active {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (min-width: 1024px) {
+  .plan-type-panel.is-active {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
 .plan-type-tabs-nav {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -91,25 +101,19 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 
 <div class="dash-page w-full min-w-0">
 <section class="mb-8">
-<div class="glass-panel rounded-xl p-4 md:p-6 flex flex-wrap justify-between items-center gap-4">
+<div class="metric-balance-card glass-card rounded-2xl p-5 md:p-6 flex flex-wrap justify-between items-center gap-4">
 <div class="flex items-center gap-4 min-w-0">
-<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary-container">account_balance_wallet</span>
+<div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
 </div>
 <div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Available to Invest</p>
-<h3 class="text-2xl md:text-3xl font-bold text-text-primary leading-none mt-1">USD <?php echo format_usd_amount($userBalance); ?></h3>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Available to Invest</p>
+<h3 class="text-2xl md:text-3xl font-headline-md text-white leading-none mt-1">USD <?php echo format_usd_amount($userBalance); ?></h3>
 </div>
 </div>
-<div class="flex flex-col items-start md:items-end gap-2">
-<p class="text-xs text-text-secondary flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">info</span>
-Select a plan below, then open <strong>View Trading</strong> for live charts and full plan details.
-</p>
-<a href="/dashboard/user/wallet" class="inline-flex items-center gap-2 bg-primary-container hover:bg-primary-container/90 text-on-primary px-4 py-2 rounded-lg font-label-sm text-label-sm transition-colors">
+<a href="/dashboard/user/wallet" class="inline-flex items-center gap-2 premium-gradient-btn text-white px-4 py-2.5 rounded-lg font-label-sm text-label-sm hover:opacity-90 transition-all">
 <span class="material-symbols-outlined text-sm">add</span> Add Funds
 </a>
-</div>
 </div>
 </section>
 
@@ -132,7 +136,7 @@ Select a plan below, then open <strong>View Trading</strong> for live charts and
 <?php foreach ($activePlanTypes as $typeKey => $typeLabel):
     $typePlans = $plansByType[$typeKey];
 ?>
-<div class="plan-type-panel bento-grid mb-8<?php echo ($typeKey === $defaultTab || !$showPlanTabs) ? ' is-active' : ''; ?>" data-plan-panel="<?php echo htmlspecialchars($typeKey); ?>">
+<div class="plan-type-panel mb-8<?php echo ($typeKey === $defaultTab || !$showPlanTabs) ? ' is-active' : ''; ?>" data-plan-panel="<?php echo htmlspecialchars($typeKey); ?>">
 <?php foreach ($typePlans as $plan):
     $planDays = plan_duration_days($plan);
     $riskBadge = plan_investment_risk_badge($plan['investment_risk'] ?? 'mid');
