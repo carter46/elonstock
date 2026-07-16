@@ -59,7 +59,6 @@ $authBgStyle = 'simple';
 </p>
 </footer>
 </div>
-<?php require_once __DIR__ . '/includes/live-chat-widget.php'; ?>
 <?php require_once __DIR__ . '/includes/app-script.php'; ?>
 </body>
 </html>

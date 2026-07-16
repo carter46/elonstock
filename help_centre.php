@@ -230,7 +230,6 @@ foreach ($faqs as $i => $faq):
 </main>
 
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
-<?php require_once __DIR__ . '/includes/live-chat-widget.php'; ?>
 <?php require_once __DIR__ . '/includes/app-script.php'; ?>
 <script>
 (function () {

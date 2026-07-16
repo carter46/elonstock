@@ -109,4 +109,6 @@ View Certificate
 <div class="gtranslate_wrapper"></div>
 <?php require_once __DIR__ . '/app-script.php'; ?>
 <?php require_once __DIR__ . '/translation-widget.php'; ?>
+<?php if (($currentPage ?? '') === 'live_chat'): ?>
 <?php require_once __DIR__ . '/live-chat-widget.php'; ?>
+<?php endif; ?>
