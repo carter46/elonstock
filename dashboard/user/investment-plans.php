@@ -143,29 +143,33 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
     $instrument = plan_market_instrument($plan);
     $pairHint = $instrument ? ($instrument['pair_label'] ?? '') : '';
 ?>
-<div class="plan-asset-card asset-card glass-panel rounded-xl p-5 md:p-6 flex flex-col h-full">
-<div class="flex justify-between items-start gap-3 mb-3">
-<div class="flex items-center gap-3 min-w-0">
-<?php echo plan_logo_markup($plan['logo_url'] ?? null, $plan['name'], 'w-10 h-10', 'text-sm'); ?>
-<div class="min-w-0">
-<h4 class="text-base md:text-lg font-bold text-text-primary leading-tight truncate"><?php echo htmlspecialchars($plan['name']); ?></h4>
-<?php if ($pairHint): ?>
-<p class="text-xs text-primary-container font-semibold truncate mt-0.5"><?php echo htmlspecialchars($pairHint); ?></p>
+<div class="plan-asset-card asset-card glass-panel rounded-xl p-4 md:p-6 flex flex-col h-full">
+<div class="flex justify-between items-start gap-2 mb-3">
+<div class="flex flex-col gap-2 min-w-0 flex-1">
+<div class="flex items-start gap-2.5 min-w-0">
+<?php if (!empty($plan['logo_url'])): ?>
+<img src="<?php echo htmlspecialchars($plan['logo_url'], ENT_QUOTES, 'UTF-8'); ?>" alt="" class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover shrink-0 bg-surface-container mt-0.5"/>
 <?php endif; ?>
+<div class="min-w-0 flex-1">
+<h4 class="text-sm md:text-lg font-bold text-text-primary leading-snug break-words"><?php echo htmlspecialchars($plan['name']); ?></h4>
+<?php if ($pairHint): ?>
+<p class="text-xs text-primary-container font-semibold break-words mt-0.5"><?php echo htmlspecialchars($pairHint); ?></p>
+<?php endif; ?>
+</div>
 </div>
 </div>
 <span class="<?php echo $riskBadge['class']; ?> px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider shrink-0"><?php echo htmlspecialchars($riskBadge['label']); ?></span>
 </div>
-<p class="text-sm text-text-secondary mb-6 flex-grow line-clamp-3"><?php echo htmlspecialchars($plan['description'] ?: 'Premium investment plan'); ?></p>
+<p class="text-sm text-text-secondary mb-4 md:mb-6 flex-grow line-clamp-3"><?php echo htmlspecialchars($plan['description'] ?: 'Premium investment plan'); ?></p>
 <?php if (plan_has_live_markets($plan)): ?>
-<a href="/dashboard/user/investment-plans/<?php echo htmlspecialchars($plan['slug']); ?>" class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-auto">
-<span>View Trading</span>
-<span class="material-symbols-outlined text-sm">candlestick_chart</span>
+<a href="/dashboard/user/investment-plans/<?php echo htmlspecialchars($plan['slug']); ?>" class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-semibold md:font-bold text-xs md:text-sm py-2 md:py-3 px-3 rounded-lg md:rounded-xl transition-all flex items-center justify-center gap-1.5 mt-auto">
+<span>View Plans</span>
+<span class="material-symbols-outlined text-sm md:text-[18px]">candlestick_chart</span>
 </a>
 <?php else: ?>
-<button type="button" data-plan-id="<?php echo $plan['id']; ?>" data-plan-name="<?php echo htmlspecialchars($plan['name']); ?>" data-plan-min="<?php echo $plan['min_deposit']; ?>" data-plan-max="<?php echo $plan['max_deposit'] ?? 0; ?>" data-plan-days="<?php echo (int) $planDays; ?>" data-plan-liquidation-fee="<?php echo htmlspecialchars(number_format((float)($plan['liquidation_cost'] ?? 0), 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" class="subscribe-plan-btn w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-auto">
+<button type="button" data-plan-id="<?php echo $plan['id']; ?>" data-plan-name="<?php echo htmlspecialchars($plan['name']); ?>" data-plan-min="<?php echo $plan['min_deposit']; ?>" data-plan-max="<?php echo $plan['max_deposit'] ?? 0; ?>" data-plan-days="<?php echo (int) $planDays; ?>" data-plan-liquidation-fee="<?php echo htmlspecialchars(number_format((float)($plan['liquidation_cost'] ?? 0), 2, '.', ''), ENT_QUOTES, 'UTF-8'); ?>" class="subscribe-plan-btn w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-semibold md:font-bold text-xs md:text-sm py-2 md:py-3 px-3 rounded-lg md:rounded-xl transition-all flex items-center justify-center gap-1.5 mt-auto">
 <span>Invest Now</span>
-<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="material-symbols-outlined text-sm md:text-[18px]">trending_up</span>
 </button>
 <?php endif; ?>
 </div>

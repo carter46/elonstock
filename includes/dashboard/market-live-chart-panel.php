@@ -76,6 +76,11 @@ $backUrl = htmlspecialchars((string) ($marketChartBackUrl ?? '/dashboard/user/in
 
 <?php
 $embedHtml = trim((string) ($instrument['embed_html'] ?? ''));
+if ($embedHtml !== '') {
+    // Hide TradingView attribution / “by TradingView” lines pasted with the widget.
+    $embedHtml = preg_replace('/<div[^>]*class="[^"]*tradingview-widget-copyright[^"]*"[^>]*>.*?<\/div>/is', '', $embedHtml) ?? $embedHtml;
+    $embedHtml = preg_replace('/<span[^>]*class="[^"]*trademark[^"]*"[^>]*>.*?<\/span>/is', '', $embedHtml) ?? $embedHtml;
+}
 $hasChart = $embedHtml !== '' || $chartSymbol !== '';
 if ($hasChart):
   if ($embedHtml !== ''):

@@ -241,9 +241,9 @@ foreach ($adminPlans as $idx => $p):
 </div>
 </div>
 </div>
-<!-- View Trading (optional chart + optional market detail) -->
+<!-- View Plans (optional chart + optional market detail) -->
 <div class="space-y-4">
-<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">View Trading Page</p>
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">View Plans Page</p>
 <p class="text-xs text-slate-500">All fields below are optional. Plan name is used for the hero title. Features auto-include “Live {Name} chart”.</p>
 <div class="grid grid-cols-2 gap-4">
 <div class="col-span-2">
@@ -251,17 +251,9 @@ foreach ($adminPlans as $idx => $p):
 <textarea name="tv_embed" id="plan-form-tv-embed" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" rows="5" placeholder="Paste TradingView widget / embed HTML…"></textarea>
 <p class="text-[10px] text-slate-400 mt-1">Shown in the hero chart area. Leave empty to hide the chart (page still opens).</p>
 </div>
-<div class="col-span-2">
-<label class="block text-sm font-medium mb-1.5">Pair Label <span class="text-slate-400 font-normal">(optional)</span></label>
-<input name="chart_pair_label" id="plan-form-chart-pair" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="e.g. BTC / USD"/>
-</div>
 <div>
 <label class="block text-sm font-medium mb-1.5">Market Type <span class="text-slate-400 font-normal">(optional)</span></label>
 <input name="chart_market_type" id="plan-form-chart-market-type" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="Defaults to plan type"/>
-</div>
-<div>
-<label class="block text-sm font-medium mb-1.5">Exchange <span class="text-slate-400 font-normal">(optional)</span></label>
-<input name="chart_exchange" id="plan-form-chart-exchange" class="w-full bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm" type="text" placeholder="e.g. Binance"/>
 </div>
 <div>
 <label class="block text-sm font-medium mb-1.5">Trading Hours <span class="text-slate-400 font-normal">(optional)</span></label>
@@ -401,7 +393,7 @@ function resetPlanForm() {
   document.getElementById('plan-form-id').value = '';
   document.getElementById('plan-form-name').value = '';
   document.getElementById('plan-form-description').value = '';
-  ['plan-form-tv-embed','plan-form-chart-pair','plan-form-chart-market-type','plan-form-chart-exchange','plan-form-chart-hours','plan-form-chart-volatility','plan-form-chart-suitable'].forEach(function (id) {
+  ['plan-form-tv-embed','plan-form-chart-market-type','plan-form-chart-hours','plan-form-chart-volatility','plan-form-chart-suitable'].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -447,9 +439,7 @@ if (drawer) {
             document.getElementById('plan-form-description').value = p.description || '';
             var setVal = function (id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
             setVal('plan-form-tv-embed', p.tv_embed);
-            setVal('plan-form-chart-pair', p.chart_pair_label);
             setVal('plan-form-chart-market-type', p.chart_market_type);
-            setVal('plan-form-chart-exchange', p.chart_exchange);
             setVal('plan-form-chart-hours', p.chart_hours);
             setVal('plan-form-chart-volatility', p.chart_volatility);
             setVal('plan-form-chart-suitable', p.chart_suitable_for);
@@ -524,9 +514,9 @@ if (drawer) {
       plan_type: document.getElementById('plan-form-type').value,
       description: document.getElementById('plan-form-description').value.trim(),
       tv_embed: valOf('plan-form-tv-embed'),
-      chart_pair_label: valOf('plan-form-chart-pair').trim(),
+      chart_pair_label: '',
       chart_market_type: valOf('plan-form-chart-market-type').trim(),
-      chart_exchange: valOf('plan-form-chart-exchange').trim(),
+      chart_exchange: '',
       chart_hours: valOf('plan-form-chart-hours').trim(),
       chart_volatility: valOf('plan-form-chart-volatility').trim(),
       chart_suitable_for: valOf('plan-form-chart-suitable').trim(),

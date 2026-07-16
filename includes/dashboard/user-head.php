@@ -230,5 +230,25 @@ body.user-dashboard {
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in { animation: fade-in 0.6s ease both; }
+/* Hide TradingView “by TradingView” attribution under plan embeds */
+.plan-tv-embed .tradingview-widget-copyright,
+.plan-market-chart-wrap .tradingview-widget-copyright,
+.plan-tv-embed .tv-widget-copyright,
+.plan-market-chart-wrap a[href*="tradingview.com"]:not(iframe) {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+/* Clip in-iframe TradingView footer when attribution can’t be removed from HTML */
+.plan-tv-embed {
+  max-height: 380px;
+}
+.plan-tv-embed iframe {
+  margin-bottom: -28px !important;
+}
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

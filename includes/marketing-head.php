@@ -431,24 +431,34 @@ body.marketing-page {
 .partner-slider {
   overflow: hidden;
   width: 100%;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
 .partner-slider-track {
   display: flex;
   align-items: stretch;
+  width: max-content;
   gap: 12px;
   will-change: transform;
-}
-.partner-slider-slide {
-  flex: 0 0 calc((100% - 24px) / 3);
-  max-width: calc((100% - 24px) / 3);
+  animation: partner-marquee 22s linear infinite;
 }
 @media (min-width: 768px) {
   .partner-slider-track {
     gap: 16px;
+    animation-duration: 28s;
   }
+}
+@keyframes partner-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.partner-slider-slide {
+  flex: 0 0 auto;
+  width: 140px;
+}
+@media (min-width: 768px) {
   .partner-slider-slide {
-    flex: 0 0 calc((100% - 64px) / 5);
-    max-width: calc((100% - 64px) / 5);
+    width: 168px;
   }
 }
 .partner-logo-wrap {

@@ -292,15 +292,22 @@ Start Investing
 We work alongside leading payment, custody, and market infrastructure partners to deliver secure, reliable access for <?php echo htmlspecialchars($siteName); ?> clients.
 </p>
 </div>
-<div class="partner-slider reveal-up" data-partner-slider>
+<div class="partner-slider reveal-up" data-partner-slider aria-hidden="false">
 <div class="partner-slider-track">
-<?php foreach ($partnerImages as $partnerSrc): ?>
+<?php
+// Two identical sets → CSS marquee loops seamlessly (translateX -50%).
+foreach ([$partnerImages, $partnerImages] as $partnerSet):
+    foreach ($partnerSet as $partnerSrc):
+?>
 <div class="partner-slider-slide">
 <div class="partner-logo-wrap">
-<img src="<?php echo htmlspecialchars($partnerSrc); ?>" alt="Partner" loading="lazy"/>
+<img src="<?php echo htmlspecialchars($partnerSrc); ?>" alt="" loading="lazy" decoding="async"/>
 </div>
 </div>
-<?php endforeach; ?>
+<?php
+    endforeach;
+endforeach;
+?>
 </div>
 </div>
 </div>
@@ -700,85 +707,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     requestAnimationFrame(frame);
   }
-  // Partner logo slider: 3 visible mobile / 5 desktop, auto-advance
-  (function initPartnerSlider() {
-    var root = document.querySelector('[data-partner-slider]');
-    if (!root) return;
-    var track = root.querySelector('.partner-slider-track');
-    if (!track) return;
-    var slides = Array.prototype.slice.call(track.querySelectorAll('.partner-slider-slide'));
-    if (slides.length < 2) return;
-
-    // Duplicate slides for seamless looping
-    slides.forEach(function (slide) {
-      track.appendChild(slide.cloneNode(true));
-    });
-
-    var index = 0;
-    var timer = null;
-    var animating = false;
-
-    function visibleCount() {
-      return window.matchMedia('(min-width: 768px)').matches ? 5 : 3;
-    }
-
-    function gapPx() {
-      var styles = window.getComputedStyle(track);
-      return parseFloat(styles.gap || styles.columnGap || '0') || 0;
-    }
-
-    function slideStep() {
-      var first = track.querySelector('.partner-slider-slide');
-      if (!first) return 0;
-      return first.getBoundingClientRect().width + gapPx();
-    }
-
-    function goNext() {
-      if (animating) return;
-      animating = true;
-      index += 1;
-      track.style.transition = 'transform 0.55s ease';
-      track.style.transform = 'translateX(' + (-index * slideStep()) + 'px)';
-    }
-
-    track.addEventListener('transitionend', function () {
-      if (index >= slides.length) {
-        track.style.transition = 'none';
-        index = 0;
-        track.style.transform = 'translateX(0)';
-        track.offsetHeight; // reflow
-      }
-      animating = false;
-    });
-
-    function start() {
-      stop();
-      if (slides.length <= visibleCount()) return;
-      timer = setInterval(goNext, 2800);
-    }
-
-    function stop() {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
-    }
-
-    window.addEventListener('resize', function () {
-      track.style.transition = 'none';
-      track.style.transform = 'translateX(' + (-index * slideStep()) + 'px)';
-      start();
-    });
-
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', start);
-    root.addEventListener('pointerdown', function () {
-      stop();
-      setTimeout(start, 4000);
-    }, { passive: true });
-
-    start();
-  })();
 });
 </script>
 </body>
