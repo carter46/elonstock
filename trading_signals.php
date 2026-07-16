@@ -3,6 +3,9 @@ require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/market-instruments.php';
 $siteName = get_site_name();
 $pageTitle = $siteName . ' | Live Markets & Auto Trading Signals';
+$pageDescription = 'Live market data and auto trading signals for stocks, equities, and global markets on ' . $siteName . '.';
+$ogTitle = $pageTitle;
+$ogDescription = $pageDescription;
 $cryptoIds = array_values(array_filter(array_map(fn($m) => $m['coingecko_id'] ?? null, get_markets_by_category('crypto'))));
 ?>
 <!DOCTYPE html>
@@ -10,7 +13,6 @@ $cryptoIds = array_values(array_filter(array_map(fn($m) => $m['coingecko_id'] ??
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta name="description" content="Live market data and auto trading signals for stocks, equities, and global markets on <?php echo htmlspecialchars($siteName); ?>."/>
 <?php require_once __DIR__ . '/includes/marketing-head.php'; ?>
 </head>
 <body class="marketing-page font-body-md text-body-md overflow-x-hidden">

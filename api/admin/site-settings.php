@@ -25,6 +25,8 @@ $allowedKeys = [
     'site_name',
     'site_logo',
     'site_favicon',
+    'site_description',
+    'og_image',
     'contact_email',
     // Mail (SMTP + identity)
     'mail_smtp_host',

@@ -85,11 +85,69 @@ function get_site_brand_parts(?string $name = null): array {
  * Output favicon link tags if favicon is set.
  */
 function output_favicon_tags(): void {
-    $favicon = get_site_setting('site_favicon', '');
-    if (!empty($favicon)) {
-        echo '<link rel="icon" type="image/x-icon" href="' . htmlspecialchars($favicon) . '"/>' . "\n";
-        echo '<link rel="shortcut icon" type="image/x-icon" href="' . htmlspecialchars($favicon) . '"/>' . "\n";
+    $favicon = trim((string) (get_site_setting('site_favicon', '') ?? ''));
+    $logo = get_site_logo();
+    $icon = $favicon !== '' ? $favicon : $logo;
+    if ($icon === '') {
+        return;
     }
+    $ext = strtolower(pathinfo(parse_url($icon, PHP_URL_PATH) ?: $icon, PATHINFO_EXTENSION));
+    $type = $ext === 'svg' ? 'image/svg+xml' : ($ext === 'png' ? 'image/png' : ($ext === 'webp' ? 'image/webp' : 'image/x-icon'));
+    $href = htmlspecialchars($icon, ENT_QUOTES, 'UTF-8');
+    echo '<link rel="icon" href="' . $href . '" type="' . $type . '"/>' . "\n";
+    echo '<link rel="shortcut icon" href="' . $href . '" type="' . $type . '"/>' . "\n";
+    echo '<link rel="apple-touch-icon" href="' . $href . '"/>' . "\n";
+}
+
+/**
+ * Turn a relative site path into an absolute URL.
+ */
+function absolute_asset_url(string $pathOrUrl): string {
+    $pathOrUrl = trim($pathOrUrl);
+    if ($pathOrUrl === '') {
+        return '';
+    }
+    if (preg_match('#^https?://#i', $pathOrUrl)) {
+        return $pathOrUrl;
+    }
+    return rtrim(get_base_url(), '/') . '/' . ltrim($pathOrUrl, '/');
+}
+
+/**
+ * Default social / SEO description for the site.
+ */
+function get_site_description(): string {
+    $custom = trim((string) (get_site_setting('site_description', '') ?? ''));
+    if ($custom !== '') {
+        return $custom;
+    }
+    return 'Invest across stocks, equities, and real estate with intelligent auto trading and institutional-grade portfolio management.';
+}
+
+/**
+ * Default Open Graph image path (relative). Prefers a dedicated OG asset.
+ */
+function get_default_og_image_path(): string {
+    $custom = trim((string) (get_site_setting('og_image', '') ?? ''));
+    if ($custom !== '') {
+        return $custom;
+    }
+    $candidates = [
+        '/uploads/images/og-image.png',
+        '/uploads/images/og-image.jpg',
+        '/uploads/images/crypto-assets.jpg',
+        '/uploads/images/crypto-assets.jpeg',
+        '/uploads/images/crypto-assets.png',
+        '/uploads/images/chart_bg.jpg',
+    ];
+    $root = dirname(__DIR__);
+    foreach ($candidates as $path) {
+        if (is_file($root . $path)) {
+            return $path;
+        }
+    }
+    $logo = get_site_logo();
+    return $logo !== '' ? $logo : '/uploads/images/chart_bg.jpg';
 }
 
 /**
@@ -701,27 +759,83 @@ function output_market_seo_tags(array $instrument): void {
         echo '<meta name="description" content="' . htmlspecialchars($desc) . '"/>' . "\n";
     }
     echo '<link rel="canonical" href="' . htmlspecialchars($canonical) . '"/>' . "\n";
+    echo '<meta name="application-name" content="' . htmlspecialchars($siteName) . '"/>' . "\n";
     echo '<meta property="og:type" content="website"/>' . "\n";
+    echo '<meta property="og:site_name" content="' . htmlspecialchars($siteName) . '"/>' . "\n";
     echo '<meta property="og:title" content="' . htmlspecialchars($ogTitle) . '"/>' . "\n";
     if ($ogDesc !== '') {
         echo '<meta property="og:description" content="' . htmlspecialchars($ogDesc) . '"/>' . "\n";
     }
     echo '<meta property="og:url" content="' . htmlspecialchars($canonical) . '"/>' . "\n";
     echo '<meta property="og:image" content="' . htmlspecialchars($ogImage) . '"/>' . "\n";
+    echo '<meta property="og:image:alt" content="' . htmlspecialchars($ogTitle) . '"/>' . "\n";
     echo '<meta name="twitter:card" content="summary_large_image"/>' . "\n";
     echo '<meta name="twitter:title" content="' . htmlspecialchars($ogTitle) . '"/>' . "\n";
     if ($ogDesc !== '') {
         echo '<meta name="twitter:description" content="' . htmlspecialchars($ogDesc) . '"/>' . "\n";
     }
+    echo '<meta name="twitter:image" content="' . htmlspecialchars($ogImage) . '"/>' . "\n";
 }
 
 /**
- * Output shared brand meta tags (application name, Open Graph site name).
+ * Output shared brand + Open Graph / Twitter Card meta tags.
+ * Page overrides (set before including marketing-head / auth-head):
+ * - $pageDescription / $metaDescription
+ * - $ogTitle
+ * - $ogDescription
+ * - $ogImage (absolute or site-relative path)
+ * - $canonicalUrl
  */
 function output_site_brand_meta_tags(): void {
-    $name = htmlspecialchars(get_site_name());
-    echo '<meta name="application-name" content="' . $name . '"/>' . "\n";
-    echo '<meta property="og:site_name" content="' . $name . '"/>' . "\n";
+    $siteName = get_site_name();
+    $pageTitle = $GLOBALS['pageTitle'] ?? ($siteName . ' | Multi-Asset Investment Platform');
+    $description = trim((string) (
+        $GLOBALS['pageDescription']
+        ?? $GLOBALS['metaDescription']
+        ?? $GLOBALS['ogDescription']
+        ?? get_site_description()
+    ));
+    $ogTitle = trim((string) ($GLOBALS['ogTitle'] ?? $pageTitle));
+    $ogDescription = trim((string) ($GLOBALS['ogDescription'] ?? $description));
+    $ogImageRaw = trim((string) ($GLOBALS['ogImage'] ?? get_default_og_image_path()));
+    $ogImage = absolute_asset_url($ogImageRaw);
+    $canonical = trim((string) ($GLOBALS['canonicalUrl'] ?? ''));
+    if ($canonical === '') {
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        $path = parse_url($requestUri, PHP_URL_PATH);
+        $canonical = rtrim(get_base_url(), '/') . ($path ?: '/');
+    } elseif (!preg_match('#^https?://#i', $canonical)) {
+        $canonical = absolute_asset_url($canonical);
+    }
+
+    if ($description !== '') {
+        echo '<meta name="description" content="' . htmlspecialchars($description, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    }
+    echo '<meta name="application-name" content="' . htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+
+    echo '<meta property="og:type" content="website"/>' . "\n";
+    echo '<meta property="og:site_name" content="' . htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    echo '<meta property="og:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    if ($ogDescription !== '') {
+        echo '<meta property="og:description" content="' . htmlspecialchars($ogDescription, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    }
+    echo '<meta property="og:url" content="' . htmlspecialchars($canonical, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    if ($ogImage !== '') {
+        echo '<meta property="og:image" content="' . htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+        echo '<meta property="og:image:width" content="1200"/>' . "\n";
+        echo '<meta property="og:image:height" content="630"/>' . "\n";
+        echo '<meta property="og:image:alt" content="' . htmlspecialchars($ogTitle, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    }
+
+    echo '<meta name="twitter:card" content="summary_large_image"/>' . "\n";
+    echo '<meta name="twitter:title" content="' . htmlspecialchars($ogTitle, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    if ($ogDescription !== '') {
+        echo '<meta name="twitter:description" content="' . htmlspecialchars($ogDescription, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    }
+    if ($ogImage !== '') {
+        echo '<meta name="twitter:image" content="' . htmlspecialchars($ogImage, ENT_QUOTES, 'UTF-8') . '"/>' . "\n";
+    }
 }
 
 /**

@@ -5,6 +5,9 @@ $contactEmail = get_site_setting('contact_email', 'support@example.com');
 $officeAddress = get_site_setting('office_address', "Lindeyer Francis Ferguson\nNorth House, 198 High Street\nTonbridge, Kent, TN9 1BE");
 $officeTitle = get_site_setting('office_title', 'Registered Office');
 $pageTitle = 'Help Center | ' . $siteName;
+$pageDescription = 'Get help with your ' . $siteName . ' account, investments, deposits, and withdrawals.';
+$ogTitle = $pageTitle;
+$ogDescription = $pageDescription;
 ?>
 <!DOCTYPE html>
 <html class="dark scroll-smooth" lang="en">

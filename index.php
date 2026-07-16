@@ -2,7 +2,10 @@
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/market-instruments.php';
 $siteName = get_site_name();
-$pageTitle = $siteName . ' | Institutional Asset Management & Global Liquidity';
+$pageTitle = $siteName . ' | Multi-Asset Investment Platform';
+$pageDescription = 'Invest across stocks, equities, and real estate with intelligent auto trading and institutional-grade portfolio management.';
+$ogTitle = $siteName . ' | Multi-Asset Investment Platform';
+$ogDescription = $pageDescription;
 $statsAssets = get_site_setting('stats_assets', '$4.2B+');
 $statsClients = get_site_setting('stats_bots', '120+');
 $statsUptime = get_site_setting('stats_uptime', '99.9%');

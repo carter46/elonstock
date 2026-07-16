@@ -6,6 +6,9 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <?php
 $pageTitle = $siteName . ' Legal Center | Terms & Privacy';
+$pageDescription = 'Terms of Service, Privacy Policy, risk disclosures, and company information for ' . $siteName . '.';
+$ogTitle = $pageTitle;
+$ogDescription = $pageDescription;
 require_once __DIR__ . '/includes/marketing-head.php';
 ?>
 <style>

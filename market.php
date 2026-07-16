@@ -54,6 +54,7 @@ $coingeckoId = $instrument['coingecko_id'] ?? '';
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <?php
 $pageTitle = $instrument['seo']['title'] ?? ($instrument['name'] . ' | ' . $siteName);
+$skipDefaultSocialMeta = true;
 require_once __DIR__ . '/includes/marketing-head.php';
 output_market_seo_tags($instrument);
 ?>

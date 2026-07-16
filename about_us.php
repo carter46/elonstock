@@ -2,6 +2,9 @@
 require_once __DIR__ . '/includes/helpers.php';
 $siteName = get_site_name();
 $pageTitle = 'About Us | ' . $siteName . ' - Stocks, Equities & Real Estate Investment';
+$pageDescription = $siteName . ' provides stocks, equities, real estate investment, and auto trading — with transparency as our number one priority.';
+$ogTitle = 'About ' . $siteName;
+$ogDescription = $pageDescription;
 $heroBg = '/uploads/images/chart_bg.jpg';
 $infraBg = 'https://lh3.googleusercontent.com/aida/AP1WRLsKriSbY6BJi-Xp2Gkc7D7CVwxW2aLMAeU3vslR5SSitI_47iRoKte8OAQPNNm9SVIVAJP-rxuMAgVJSJdgU79P5g1FgzlR3L1T3iKisxILmQwUVbRBpe9jP9AcBhmn5dOT2lGX6TkC3LxSMhG_7zFbayukNlnb63bYjV8lzW6sJhcDohhWpwHwt7jiN5I_ApLCsQeZ4HaS-BEOnuPIsgpW6dVCbSLy14ewi2QOegd2_aontl0Sqgbjst8';
 ?>

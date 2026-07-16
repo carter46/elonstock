@@ -5,10 +5,12 @@
  */
 $pageTitle = $pageTitle ?? get_site_name();
 ?>
-<title><?php echo htmlspecialchars($pageTitle); ?></title>
+$title><?php echo htmlspecialchars($pageTitle); ?></title>
 <meta name="theme-color" content="#081422"/>
 <?php output_favicon_tags(); ?>
+<?php if (empty($skipDefaultSocialMeta)): ?>
 <?php output_site_brand_meta_tags(); ?>
+<?php endif; ?>
 <?php require_once __DIR__ . '/pwa-head.php'; ?>
 <?php if (!defined('BB_TV_MINI_CHART_SCRIPT')) { define('BB_TV_MINI_CHART_SCRIPT', true); ?>
 <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
