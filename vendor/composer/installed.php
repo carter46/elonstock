@@ -3,7 +3,7 @@
         'name' => 'bloombit/platform',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '53c8576f107656434e6bf43eb7d543b46dfc2294',
+        'reference' => '1dc721c4d1f08e32c1fa4547e8463ac2ff964ea9',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'bloombit/platform' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '53c8576f107656434e6bf43eb7d543b46dfc2294',
+            'reference' => '1dc721c4d1f08e32c1fa4547e8463ac2ff964ea9',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
