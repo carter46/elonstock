@@ -23,7 +23,9 @@ $authBgStyle = 'simple';
 <main class="auth-main flex items-center justify-center px-4 md:px-margin-mobile py-2 md:py-0">
 <div class="w-full max-w-[440px]">
 <div class="mb-4 md:mb-5 text-center md:text-left">
-<h1 class="font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight mb-1"><?php echo htmlspecialchars($siteName); ?></h1>
+<div class="mb-1 flex justify-center md:justify-start">
+<?php echo site_brand_markup('h-10 w-auto max-w-[220px] object-contain', 'font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight'); ?>
+</div>
 <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Forgot password?</h2>
 <p class="font-body-md text-body-md text-on-surface-variant text-sm">Enter your email and we'll send you a link to reset your password.</p>
 </div>

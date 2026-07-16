@@ -147,14 +147,14 @@ $axisMidLow = $axisMin + ($axisMax - $axisMin) * 0.33;
 <script type="application/json" id="user-social-proof-data"><?php echo json_encode($socialProofMessages, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
 </section>
 
-<!-- Key Metrics Row -->
-<section class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-<div class="metric-balance-card glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group col-span-2 lg:col-span-1">
-<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<!-- Key Metrics Row (same desktop widths as wallet: total balance spans 2 of 6) -->
+<section class="grid grid-cols-2 lg:grid-cols-6 gap-4 min-w-0">
+<div class="metric-balance-card glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group col-span-2 flex flex-col justify-between min-w-0">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
 <span class="material-symbols-outlined text-5xl">payments</span>
 </div>
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Balance</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo number_format((float) $userBalance, 2, '.', ','); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo number_format((float) $userBalance, 2, '.', ','); ?></h3>
 <div class="mt-4 flex items-center gap-2">
 <?php if ($growthPct > 0): ?>
 <span class="status-pill-green text-[10px] px-2 py-0.5 rounded-full">+<?php echo number_format($growthPct, 1); ?>% realized</span>
@@ -163,29 +163,29 @@ $axisMidLow = $axisMin + ($axisMax - $axisMin) * 0.33;
 <?php endif; ?>
 </div>
 </div>
-<div class="glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group">
-<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<div class="glass-card p-5 md:p-6 rounded-2xl relative overflow-hidden group min-w-0">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
 <span class="material-symbols-outlined text-5xl">trending_up</span>
 </div>
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Profit</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-primary">+$<?php echo format_usd_amount($totalProfit); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-primary tabular-nums">+$<?php echo format_usd_amount($totalProfit); ?></h3>
 <p class="text-[11px] md:text-[12px] text-primary/80 mt-2 font-medium"><?php echo $growthPct > 0 ? '+' . number_format($growthPct, 1) . '% Realized Growth' : 'Settled plans only'; ?></p>
 </div>
-<div class="glass-card p-5 md:p-6 rounded-2xl">
+<div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Active Capital</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($activeCapital); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($activeCapital); ?></h3>
 <div class="w-full bg-white/5 h-1 rounded-full mt-6 overflow-hidden">
 <div class="bg-primary h-full" style="width:<?php echo number_format($capitalRatio, 1); ?>%"></div>
 </div>
 </div>
-<div class="glass-card p-5 md:p-6 rounded-2xl">
+<div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Daily Earning</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($dailyEarning); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($dailyEarning); ?></h3>
 <p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2 font-mono">EST. NEXT PAYOUT: 08:00 UTC</p>
 </div>
-<div class="glass-card p-5 md:p-6 rounded-2xl">
+<div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Referral Bonus</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($referralBonus); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($referralBonus); ?></h3>
 <p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2">Last 24h: +$<?php echo format_usd_amount($referralBonusLast24h); ?></p>
 </div>
 </section>

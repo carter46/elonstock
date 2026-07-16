@@ -14,7 +14,9 @@ $navClass = function ($page) use ($current) {
 <div id="admin-sidebar-overlay" class="fixed inset-0 bg-black/60 z-[55] lg:hidden hidden" aria-hidden="true"></div>
 <aside id="admin-sidebar" class="fixed inset-y-0 left-0 w-64 border-r border-low bg-surface-dim flex flex-col py-6 z-[60] transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out overflow-hidden">
 <div class="px-6 mb-10 shrink-0">
-<h1 class="font-headline-md text-headline-md font-bold text-primary-container tracking-tight truncate"><?php echo htmlspecialchars($siteName); ?></h1>
+<a href="/dashboard/admin" class="block max-w-full" aria-label="<?php echo htmlspecialchars($siteName); ?>">
+<?php echo site_brand_markup('h-9 w-auto max-w-full object-contain object-left', 'font-headline-md text-headline-md font-bold text-primary-container tracking-tight truncate'); ?>
+</a>
 <p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Institutional Account</p>
 </div>
 <nav class="flex-1 flex flex-col gap-1 px-2 min-h-0 overflow-y-auto admin-scrollbar overscroll-contain">

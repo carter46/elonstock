@@ -37,6 +37,28 @@ function get_site_name(): string {
 }
 
 /**
+ * Uploaded site logo URL from settings, or empty string.
+ */
+function get_site_logo(): string {
+    return trim((string) (get_site_setting('site_logo', '') ?? ''));
+}
+
+/**
+ * Brand mark HTML: logo image when set, otherwise site name text.
+ */
+function site_brand_markup(string $imgClass = 'h-8 w-auto max-w-[200px] object-contain', string $textClass = ''): string {
+    $name = get_site_name();
+    $logo = get_site_logo();
+    if ($logo !== '') {
+        return '<img src="' . htmlspecialchars($logo, ENT_QUOTES, 'UTF-8')
+            . '" alt="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8')
+            . '" class="' . htmlspecialchars($imgClass, ENT_QUOTES, 'UTF-8') . '"/>';
+    }
+    $cls = $textClass !== '' ? ' class="' . htmlspecialchars($textClass, ENT_QUOTES, 'UTF-8') . '"' : '';
+    return '<span' . $cls . '>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
+}
+
+/**
  * Split brand name into base + accent segment.
  * Rules:
  * - Multi-word names: accent the last word (e.g. "Metal FX" => ["Metal ", "FX"])

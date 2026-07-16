@@ -11,7 +11,10 @@ $cta_text = $cta_text ?? null;
 $cta_url = $cta_url ?? '#';
 $site_url = $site_url ?? '/';
 $siteName = $siteName ?? get_site_name();
-$siteLogo = get_site_setting('site_logo', '');
+$siteLogo = trim((string) (get_site_setting('site_logo', '') ?? ''));
+if ($siteLogo !== '' && strpos($siteLogo, 'http') !== 0 && rtrim((string) $site_url, '/') !== '') {
+    $siteLogo = rtrim((string) $site_url, '/') . (strpos($siteLogo, '/') === 0 ? $siteLogo : '/' . $siteLogo);
+}
 [$brandBase, $brandAccent] = get_site_brand_parts($siteName);
 ?>
 <!DOCTYPE html>
@@ -31,7 +34,11 @@ a{color:#4b8eff;text-decoration:none}
 <div style="background:#fff;border:1px solid #d5dde8;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(8,20,34,0.08)">
 <div style="height:6px;width:100%;background:linear-gradient(90deg,#4b8eff 0%,#002e69 100%);background-color:#4b8eff"></div>
 <div style="padding:32px 40px 24px;background:#fff;border-bottom:1px solid #e8eef6;text-align:center">
+<?php if ($siteLogo !== ''): ?>
+<img src="<?= htmlspecialchars($siteLogo) ?>" alt="<?= htmlspecialchars($siteName) ?>" style="max-height:48px;max-width:220px;width:auto;height:auto;display:inline-block"/>
+<?php else: ?>
 <span style="font-size:32px;font-weight:700;color:#081422;letter-spacing:-0.02em;line-height:1.2"><?= htmlspecialchars($brandBase) ?><?php if ($brandAccent !== ''): ?><span style="color:#4b8eff"><?= htmlspecialchars($brandAccent) ?></span><?php endif; ?></span>
+<?php endif; ?>
 </div>
 <div style="padding:32px 40px">
 <div style="margin-bottom:24px;text-align:center">

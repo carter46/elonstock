@@ -123,7 +123,7 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 <div class="relative">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Available Balance</p>
 <div class="flex items-baseline gap-2 flex-wrap">
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($walletTotalUsd); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($walletTotalUsd); ?></h3>
 <span class="text-sm text-on-surface-variant">USD</span>
 </div>
 </div>
@@ -144,22 +144,22 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 <span class="material-symbols-outlined text-5xl">trending_up</span>
 </div>
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Total Profit</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-primary">+$<?php echo format_usd_amount($totalProfit); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-primary tabular-nums">+$<?php echo format_usd_amount($totalProfit); ?></h3>
 <p class="text-[11px] md:text-[12px] text-primary/80 mt-2 font-medium">Settled plans only</p>
 </div>
 <div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Active Capital</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($activeCapital); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($activeCapital); ?></h3>
 <p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2"><?php echo $activeCapital > 0 ? 'Active plans running' : 'No active plans'; ?></p>
 </div>
 <div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Daily Earning</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($dailyEarning); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($dailyEarning); ?></h3>
 <p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2 font-mono">Last 24h update</p>
 </div>
 <div class="glass-card p-5 md:p-6 rounded-2xl min-w-0">
 <p class="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Referral Bonus</p>
-<h3 class="text-2xl md:text-3xl font-headline-md text-white">$<?php echo format_usd_amount($referralBonus); ?></h3>
+<h3 class="text-xl md:text-2xl font-headline-md text-white tabular-nums">$<?php echo format_usd_amount($referralBonus); ?></h3>
 <p class="text-[11px] md:text-[12px] text-on-surface-variant mt-2">Last 24h: +$<?php echo format_usd_amount($referralBonusLast24h); ?></p>
 </div>
 </div>

@@ -11,7 +11,9 @@ $homepageModalImage = get_site_setting('homepage_modal_image', '');
 <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
 <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 <div class="col-span-1 space-y-6">
-<div class="font-display-sm text-headline-lg text-primary tracking-tighter"><?php echo htmlspecialchars($siteName); ?></div>
+<div class="max-w-[220px]">
+<?php echo site_brand_markup('h-10 w-auto max-w-full object-contain object-left', 'font-display-sm text-headline-lg text-primary tracking-tighter'); ?>
+</div>
 <p class="font-body-md text-on-surface-variant leading-relaxed pr-0 md:pr-8"><?php echo htmlspecialchars($footerDesc); ?></p>
 <div class="flex gap-4">
 <a class="text-on-surface-variant hover:text-primary transition-colors" href="/about_us" aria-label="About us">
