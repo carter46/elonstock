@@ -273,7 +273,7 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 <span class="material-symbols-outlined text-3xl">savings</span>
 </div>
 <h5 class="font-headline-md text-lg font-bold text-on-surface mb-1">Staking Beta</h5>
-<p class="text-sm text-on-surface-variant mb-4">Earn up to <span class="text-success font-bold">12% APY</span> on your idle digital assets.</p>
+<p class="text-sm text-on-surface-variant mb-4">Earn up to <span class="text-success font-bold">12% APY</span> on your idle investment balance.</p>
 <div class="bg-surface-container-high px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">Coming Soon</div>
 <button type="button" class="w-full py-2.5 bg-primary-container text-on-primary font-bold rounded-lg text-sm hover:opacity-90 active:scale-95 transition-all">Join Waitlist</button>
 </div>

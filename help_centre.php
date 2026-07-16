@@ -2,8 +2,8 @@
 require_once __DIR__ . '/includes/helpers.php';
 $siteName = get_site_name();
 $contactEmail = get_site_setting('contact_email', 'support@example.com');
-$officeAddress = get_site_setting('office_address', '40 Bank Street, Canary Wharf<br/>London, E14 5NR<br/>United Kingdom');
-$officeTitle = get_site_setting('office_title', 'London Office');
+$officeAddress = get_site_setting('office_address', "Lindeyer Francis Ferguson\nNorth House, 198 High Street\nTonbridge, Kent, TN9 1BE");
+$officeTitle = get_site_setting('office_title', 'Registered Office');
 $pageTitle = 'Help Center | ' . $siteName;
 ?>
 <!DOCTYPE html>
@@ -184,11 +184,11 @@ Our team is here around the clock for account, investment, and technical questio
 <div class="lg:col-span-9 space-y-3" id="faq-list">
 <?php
 $faqs = [
-  ['cat' => 'general', 'q' => 'What exactly is ' . $siteName . ' and how does the AI work?', 'a' => $siteName . ' is a fintech platform that uses proprietary algorithms to analyze crypto market volatility. The system helps execute trades across liquidity pools to pursue optimal returns for investors.'],
+  ['cat' => 'general', 'q' => 'What exactly is ' . $siteName . ' and how does investing work?', 'a' => $siteName . ' is an investment platform focused on stocks, equities, real estate bidding and investment, and auto trading. Our team manages opportunities across commercial stocks, real estate brokerage, and Oil & Gas — with transparency as our number one priority so you can sit back while profits are pursued daily.'],
   ['cat' => 'investments', 'q' => 'What is the minimum investment required?', 'a' => 'You can start investing with as little as $500. Plans and minimums may vary — check Investment Plans in your dashboard for current options.'],
   ['cat' => 'investments', 'q' => 'Are my funds insured against market volatility?', 'a' => 'All investments carry risk. ' . $siteName . ' uses risk-management strategies and reserve policies designed to mitigate extreme events, but returns are not guaranteed and principal may be at risk.'],
-  ['cat' => 'security', 'q' => 'How are my private keys and data secured?', 'a' => 'We use cold storage for the majority of funds and AES-256 encryption for sensitive data. We do not store full private keys on our servers.'],
-  ['cat' => 'withdrawals', 'q' => 'How long do withdrawals take?', 'a' => 'Withdrawal processing times depend on asset type and network conditions. Most requests are reviewed within 24–48 hours after submission from your wallet page.'],
+  ['cat' => 'security', 'q' => 'How is my account and data secured?', 'a' => 'We use strong encryption for sensitive data, secure authentication (including optional 2FA), and institutional-grade security practices to protect client accounts and funds.'],
+  ['cat' => 'withdrawals', 'q' => 'How long do withdrawals take?', 'a' => 'Withdrawal processing times depend on method and review checks. Most requests are reviewed within 24–48 hours after submission from your wallet page.'],
   ['cat' => 'general', 'q' => 'Do I need KYC to use the platform?', 'a' => 'KYC may be required for certain features depending on jurisdiction and account activity. Check Settings → KYC in your dashboard for your verification status.'],
 ];
 foreach ($faqs as $i => $faq):

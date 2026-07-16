@@ -25,8 +25,8 @@ $settings = [
     'about_youtube_url' => get_site_setting('about_youtube_url', ''),
     'homepage_modal_image' => get_site_setting('homepage_modal_image', ''),
     'header_image' => get_site_setting('header_image', '/bloombit.jpg'),
-    'office_title' => get_site_setting('office_title', 'London Office'),
-    'office_address' => get_site_setting('office_address', '40 Bank Street, Canary Wharf<br/>London, E14 5NR<br/>United Kingdom'),
+    'office_title' => get_site_setting('office_title', 'Registered Office'),
+    'office_address' => get_site_setting('office_address', "Lindeyer Francis Ferguson\nNorth House, 198 High Street\nTonbridge, Kent, TN9 1BE"),
     'smartsupp_key' => get_site_setting('smartsupp_key', '6fe6ebe5789e92d09f1a2fd405bd5b7d7967835d'),
     'deposit_countdown_minutes' => get_site_setting('deposit_countdown_minutes', '30'),
     'referral_enabled' => get_site_setting('referral_enabled', '0'),
@@ -158,11 +158,11 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 </div>
 <div class="md:col-span-2">
 <label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Office Title</label>
-<input id="settings-office-title" type="text" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['office_title']); ?>" placeholder="London Office"/>
+<input id="settings-office-title" type="text" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['office_title']); ?>" placeholder="Registered Office"/>
 </div>
 <div class="md:col-span-2">
 <label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Office Address</label>
-<textarea id="settings-office-address" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" rows="3" placeholder="40 Bank Street, Canary Wharf&#10;London, E14 5NR&#10;United Kingdom"><?php echo htmlspecialchars($settings['office_address']); ?></textarea>
+<textarea id="settings-office-address" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" rows="3" placeholder="Lindeyer Francis Ferguson&#10;North House, 198 High Street&#10;Tonbridge, Kent, TN9 1BE"><?php echo htmlspecialchars($settings['office_address']); ?></textarea>
 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Office address shown on Help Centre page. Use &lt;br/&gt; for line breaks.</p>
 </div>
 <div class="md:col-span-2">

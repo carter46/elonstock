@@ -71,7 +71,7 @@ require_once __DIR__ . '/includes/marketing-head.php';
 <ul class="space-y-3">
 <li><a class="legal-sidebar-link block" href="#acceptance">Acceptance of Terms</a></li>
 <li><a class="legal-sidebar-link block" href="#risk-disclosure">Risk Disclosure</a></li>
-<li><a class="legal-sidebar-link block" href="#ai-disclaimer">AI Trading Disclaimer</a></li>
+<li><a class="legal-sidebar-link block" href="#ai-disclaimer">Auto Trading Disclaimer</a></li>
 <li><a class="legal-sidebar-link block" href="#responsibilities">Account Responsibilities</a></li>
 <li><a class="legal-sidebar-link block" href="#regulatory-info">Regulatory Info</a></li>
 </ul>
@@ -106,7 +106,7 @@ Terms of Service
 <div class="mt-8 legal-anchor" id="acceptance">
 <h3 class="text-lg font-semibold text-on-surface mb-3">1. Acceptance of Terms</h3>
 <p class="text-on-secondary-container leading-relaxed mb-4">
-By accessing or using the <?php echo htmlspecialchars($siteName); ?> platform, including our website, mobile application, and AI trading services, you agree to be bound by these Terms of Service. If you do not agree to these terms, you must immediately cease all use of our services. These terms constitute a legally binding agreement between you and <?php echo htmlspecialchars($siteName); ?> Global Ltd.
+By accessing or using the <?php echo htmlspecialchars($siteName); ?> platform, including our website, mobile application, and investment services, you agree to be bound by these Terms of Service. If you do not agree to these terms, you must immediately cease all use of our services. These terms constitute a legally binding agreement between you and <?php echo htmlspecialchars($siteName); ?>, operated under STRATEGIC WEALTH MANAGEMENT LIMITED (Company number 02205890).
 </p>
 </div>
 <div class="mt-8 p-6 bg-primary-container/5 border-l-4 border-primary-container rounded-r-xl legal-anchor" id="risk-disclosure">
@@ -115,18 +115,18 @@ By accessing or using the <?php echo htmlspecialchars($siteName); ?> platform, i
 2. Risk Disclosure
 </h3>
 <p class="text-on-secondary-container leading-relaxed mb-4">
-Trading currencies, digital assets, and other financial instruments involves substantial risk of loss. Past performance is not indicative of future results. You should only invest capital you can afford to lose. <?php echo htmlspecialchars($siteName); ?> does not guarantee profits or specific investment outcomes.
+Investing in stocks, equities, real estate, Oil &amp; Gas, and other financial instruments — including strategies that use automated trading — involves substantial risk of loss. Past performance is not indicative of future results. You should only invest capital you can afford to lose. <?php echo htmlspecialchars($siteName); ?> does not guarantee profits or specific investment outcomes.
 </p>
 <ul class="list-disc ml-6 space-y-2 text-on-secondary-container text-sm">
-<li>Market volatility can result in rapid and significant losses.</li>
-<li>AI-assisted tools are for informational purposes and do not eliminate risk.</li>
-<li>You are solely responsible for your trading and investment decisions.</li>
+<li>Market volatility can result in rapid and significant losses across equities and related markets.</li>
+<li>Automated trading and AI-assisted tools are for informational and operational support and do not eliminate risk.</li>
+<li>You are solely responsible for your investment decisions and for reviewing plan terms before committing capital.</li>
 </ul>
 </div>
 <div class="mt-8 legal-anchor" id="ai-disclaimer">
-<h3 class="text-lg font-semibold text-on-surface mb-3">3. AI Trading Disclaimer</h3>
+<h3 class="text-lg font-semibold text-on-surface mb-3">3. Auto Trading &amp; Analysis Disclaimer</h3>
 <p class="text-on-secondary-container leading-relaxed">
-Our platform utilizes proprietary artificial intelligence and machine learning algorithms to support trading analysis. The system continuously adapts in real time, but automated insights do not constitute financial advice and should not be relied upon as the sole basis for investment decisions.
+Our platform may use proprietary algorithms and automated trading workflows to support investment execution across stocks, equities, and related markets. Automated insights and system-driven activity do not constitute personalised financial advice and should not be relied upon as the sole basis for investment decisions.
 </p>
 </div>
 <div class="mt-8 legal-anchor" id="responsibilities">
@@ -143,9 +143,12 @@ Our platform utilizes proprietary artificial intelligence and machine learning a
 </div>
 </div>
 <div class="mt-8 legal-anchor" id="regulatory-info">
-<h3 class="text-lg font-semibold text-on-surface mb-3">5. Regulatory Information &amp; Anti-Fraud Policy</h3>
+<h3 class="text-lg font-semibold text-on-surface mb-3">5. Regulatory Information &amp; Company Details</h3>
+<p class="text-on-secondary-container leading-relaxed mb-4">
+<?php echo htmlspecialchars($siteName); ?> is a private limited company registered under <strong class="text-on-surface">STRATEGIC WEALTH MANAGEMENT LIMITED</strong> with Company number <strong class="text-on-surface">02205890</strong>. Registered office address: Lindeyer Francis Ferguson, North House, 198 High Street, Tonbridge, Kent, TN9 1BE.
+</p>
 <p class="text-on-secondary-container leading-relaxed">
-<?php echo htmlspecialchars($siteName); ?> maintains a zero-tolerance policy towards fraudulent activities, including market manipulation, money laundering, and unauthorized access. We cooperate fully with international law enforcement agencies and financial regulators where applicable.
+We maintain a zero-tolerance policy towards fraudulent activities, including market manipulation, money laundering, and unauthorized access. We cooperate fully with international law enforcement agencies and financial regulators where applicable.
 </p>
 </div>
 </section>
@@ -162,7 +165,7 @@ Privacy Policy
 <p class="text-on-secondary-container leading-relaxed mb-4">We collect information necessary to provide and secure our services, including:</p>
 <ol class="list-decimal ml-6 space-y-3 text-on-secondary-container">
 <li><strong class="text-on-surface">Identity Data:</strong> Full name, date of birth, and government-issued ID for KYC compliance.</li>
-<li><strong class="text-on-surface">Financial Data:</strong> Wallet addresses, transaction history, and funding sources.</li>
+<li><strong class="text-on-surface">Financial Data:</strong> Account balances, transaction history, deposit/withdrawal details, and funding sources.</li>
 <li><strong class="text-on-surface">Technical Data:</strong> IP address, browser type, and device information for security monitoring.</li>
 </ol>
 </div>
@@ -182,8 +185,8 @@ We use essential cookies to maintain user sessions and security. Analytical cook
 </div>
 <div class="flex-1 p-4 bg-primary-container/5 rounded-lg border border-primary-container/10">
 <div class="material-symbols-outlined text-primary-container mb-2">security</div>
-<div class="text-sm font-bold mb-1 text-on-surface">Cold Storage</div>
-<p class="text-xs text-on-secondary-container">Digital assets are stored using institutional-grade custody practices.</p>
+<div class="text-sm font-bold mb-1 text-on-surface">Secure Custody</div>
+<p class="text-xs text-on-secondary-container">Client funds and account data are protected with institutional-grade security practices.</p>
 </div>
 <div class="flex-1 p-4 bg-primary-container/5 rounded-lg border border-primary-container/10">
 <div class="material-symbols-outlined text-primary-container mb-2">visibility_off</div>

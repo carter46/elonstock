@@ -56,7 +56,7 @@ require_once __DIR__ . '/../../includes/dashboard/admin-layout-start.php';
 </style>
 <?php
 $pageHeading = 'Investment Plan Management';
-$pageSubtitle = "Manage and configure {$siteName}'s crypto investment offerings.";
+$pageSubtitle = "Manage and configure {$siteName}'s investment plan offerings.";
 include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 ?>
 <div class="flex justify-end mb-8">
@@ -222,7 +222,7 @@ foreach ($adminPlans as $idx => $p):
 </div>
 <div class="col-span-2">
 <label class="block text-sm font-medium mb-1.5">Plan Name</label>
-<input name="name" id="plan-form-name" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="e.g. Bitcoin (BTC)" required/>
+<input name="name" id="plan-form-name" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm" type="text" placeholder="e.g. Professional Equity Plan" required/>
 </div>
 <div class="col-span-2">
 <label class="block text-sm font-medium mb-1.5">Description</label>

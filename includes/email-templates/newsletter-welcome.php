@@ -26,7 +26,7 @@ $email = $email ?? '';
 <div style="padding:32px 40px">
 <span style="display:inline-block;padding:6px 12px;background:rgba(75,142,255,0.15);color:#005bc1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:9999px;margin-bottom:20px">Welcome</span>
 <h2 style="margin:0 0 24px;font-size:28px;font-weight:700;color:#081422;line-height:1.3">Thanks for subscribing to <?= htmlspecialchars($siteName) ?></h2>
-<p style="margin:0 0 16px;color:#5a6578;font-size:16px">You're now part of a community of forward-thinking investors who use AI to optimize their crypto portfolios.</p>
+<p style="margin:0 0 16px;color:#5a6578;font-size:16px">You're now part of a community of investors focused on stocks, equities, real estate investment, and auto trading.</p>
 <p style="margin:0 0 24px;color:#5a6578;font-size:16px">Expect exclusive insights, market updates, and platform news delivered to your inbox.</p>
 <div style="margin-top:32px;margin-bottom:32px;text-align:center">
 <a href="<?= htmlspecialchars($site_url) ?>" style="display:inline-block;padding:16px 32px;background:#4b8eff;color:#ffffff;font-weight:700;font-size:16px;border-radius:8px;text-decoration:none;box-shadow:0 4px 14px rgba(75,142,255,0.35)">Visit <?= htmlspecialchars($siteName) ?> →</a>

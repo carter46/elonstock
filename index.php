@@ -85,7 +85,7 @@ if (is_dir($partnerDir)) {
 Secure Capital. <br/> <span class="italic font-normal text-on-surface-variant">Intelligent Growth.</span>
 </h1>
 <p class="font-body-md md:font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-8 md:mb-unit-xl reveal-up text-base md:text-lg">
-<?php echo htmlspecialchars($siteName); ?> provides institutional-grade access to global markets. We leverage advanced technical precision and deep liquidity to preserve and grow sovereign and private capital.
+<?php echo htmlspecialchars($siteName); ?> provides professional access to stocks, equities, real estate investment, and automated trading. Sit back and enjoy how your profit grows on a daily basis — with transparency as our number one priority.
 </p>
 <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-unit-md reveal-up w-full max-w-md sm:max-w-none mx-auto">
 <a href="/register" class="gradient-button w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest group inline-flex items-center justify-center gap-2 text-white">
@@ -154,12 +154,12 @@ View Live Market
 <p class="text-on-surface-variant text-sm">Strategic investments in energy infrastructure and production, focusing on supply chain stability and long-term energy security.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.1s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#f7931a">currency_bitcoin</span>
-<h3 class="font-headline-md text-white mb-2">Cryptocurrency</h3>
-<p class="text-on-surface-variant text-sm">Institutional-grade digital asset custody and algorithmic trading in major liquid tokens and emerging blockchain protocols.</p>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#60a5fa">candlestick_chart</span>
+<h3 class="font-headline-md text-white mb-2">Equities &amp; Auto Trading</h3>
+<p class="text-on-surface-variant text-sm">Automated trading strategies across listed equities and commercial stocks, built to pursue consistent daily growth without constant manual oversight.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.15s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#60a5fa">trending_up</span>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#34d399">trending_up</span>
 <h3 class="font-headline-md text-white mb-2">Commercial Stocks</h3>
 <p class="text-on-surface-variant text-sm">Active management of blue-chip equities and mid-cap growth stocks leveraging proprietary fundamental analysis.</p>
 </div>
@@ -187,20 +187,7 @@ View Live Market
 </div>
 
 <div class="mb-10">
-<h3 class="font-headline-md text-white mb-6">Cryptocurrency</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-cards">
-<?php foreach (get_markets_by_category('crypto') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
-</div>
-
-<div class="mb-10">
-<h3 class="font-headline-md text-white mb-6">Stocks</h3>
+<h3 class="font-headline-md text-white mb-6">Stocks &amp; Equities</h3>
 <div class="market-slider" data-market-slider>
 <div class="market-slider-track market-stocks">
 <?php foreach (get_markets_by_category('stock') as $instrument): ?>
@@ -212,11 +199,24 @@ View Live Market
 </div>
 </div>
 
-<div class="mb-12">
+<div class="mb-10">
 <h3 class="font-headline-md text-white mb-6">Forex</h3>
 <div class="market-slider" data-market-slider>
 <div class="market-slider-track market-forex">
 <?php foreach (get_markets_by_category('forex') as $instrument): ?>
+<div class="market-slider-slide">
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+
+<div class="mb-12">
+<h3 class="font-headline-md text-white mb-6">Digital Markets</h3>
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-cards">
+<?php foreach (get_markets_by_category('crypto') as $instrument): ?>
 <div class="market-slider-slide">
 <?php require __DIR__ . '/includes/market-home-card.php'; ?>
 </div>
@@ -268,7 +268,7 @@ $renderOrbitRing($orbitRing3, 150, 'orbit-spin-fast', 'w-8 h-8', 'w-5 h-5');
 </div>
 </div>
 <p class="font-body-md text-on-surface-variant max-w-xl mx-auto mt-10 reveal-up">
-<?php echo htmlspecialchars($siteName); ?> continuously monitors crypto, equities, and forex so your portfolio stays aligned with live market conditions — then turns those insights into clear next steps for your capital.
+<?php echo htmlspecialchars($siteName); ?> continuously monitors equities, stocks, and global market conditions so your portfolio stays aligned — then turns those insights into clear next steps for your capital.
 </p>
 <div class="mt-8 reveal-up">
 <a href="/register" class="gradient-button inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest text-white">
@@ -567,7 +567,7 @@ Explore Modules <span class="material-symbols-outlined">arrow_forward</span>
 Get Started
 </a>
 <p class="font-body-md text-on-surface-variant max-w-xl mx-auto opacity-60">
-Join an elite network of hedge funds, sovereign wealth managers, and private family offices who trust <?php echo htmlspecialchars($siteName); ?> for capital growth.
+Join investors who trust <?php echo htmlspecialchars($siteName); ?> for stocks, equities, real estate investment, and auto trading.
 </p>
 </div>
 </div>

@@ -204,7 +204,7 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 <div class="bg-surface-container-high rounded-2xl p-8 border border-border-low">
 <div class="flex items-center gap-3 mb-4">
 <span class="material-symbols-outlined text-primary-container text-3xl">smart_toy</span>
-<span class="font-bold text-on-surface text-lg">AI Monitoring</span>
+<span class="font-bold text-on-surface text-lg">Market Monitoring</span>
 </div>
 <p class="text-on-secondary-container text-sm leading-relaxed">Our neural engine continuously analyzes market conditions for <?php echo htmlspecialchars($instrument['name']); ?> — surfacing context, not hype.</p>
 </div>
@@ -232,7 +232,7 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop text-center">
 <p class="text-on-surface font-semibold text-lg md:text-xl">
 <span class="material-symbols-outlined align-middle text-primary-container mr-2">insights</span>
-AI-powered monitoring for <?php echo htmlspecialchars($instrument['name']); ?> — available 24/7 on <?php echo htmlspecialchars($siteName); ?>.
+Live market monitoring for <?php echo htmlspecialchars($instrument['name']); ?> — available 24/7 on <?php echo htmlspecialchars($siteName); ?>.
 </p>
 </div>
 </section>

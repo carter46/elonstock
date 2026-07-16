@@ -3,7 +3,7 @@ require_once __DIR__ . '/helpers.php';
 $siteName = get_site_name();
 $footerDesc = get_site_setting(
     'footer_description',
-    'Empowering high-net-worth investors with professional tools and global market access since 2018.'
+    'Focused on stocks, equities, real estate investment, and auto trading — with transparency as our number one priority.'
 );
 $homepageModalImage = get_site_setting('homepage_modal_image', '');
 ?>
@@ -67,7 +67,7 @@ View Certificate
 </div>
 <div class="pt-12 border-t border-white/5">
 <p class="text-on-surface-variant font-label-sm text-label-sm leading-relaxed max-w-4xl">
-© <?php echo date('Y'); ?> <?php echo htmlspecialchars($siteName); ?>. High-risk investment products may not be suitable for all investors. The trading of currencies and digital assets involves significant risk. You should only invest capital you can afford to lose.
+© <?php echo date('Y'); ?> <?php echo htmlspecialchars($siteName); ?>. Operated under STRATEGIC WEALTH MANAGEMENT LIMITED (Company number 02205890). High-risk investment products may not be suitable for all investors. Investing in stocks, equities, real estate, and related markets involves significant risk. You should only invest capital you can afford to lose.
 </p>
 <div class="flex flex-wrap gap-6 mt-6">
 <a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline" href="/legal_centre#privacy">Privacy Policy</a>

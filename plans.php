@@ -180,7 +180,7 @@ for ($i = 0; $i < count($plans); $i++):
 <span class="material-icons text-primary-container">add</span>
 </button>
 <div class="px-6 pb-5 text-sm text-on-surface-variant leading-relaxed border-t border-white/5 pt-4">
-                        Our AI algorithms execute thousands of micro-trades across multiple liquidity pools, arbitrage opportunities, and trend-following strategies 24/7. The yield reflects the collective performance of these automated strategies minus a small platform fee.
+                        Our automated trading systems execute strategies across stocks, equities, and related markets 24/7 — including trend-following and opportunity capture. The yield reflects the collective performance of these strategies minus a small platform fee.
                     </div>
 </div>
 <div class="rounded-2xl bg-surface-container border border-white/5 overflow-hidden">
@@ -212,7 +212,7 @@ for ($i = 0; $i < count($plans); $i++):
 <div class="absolute inset-0 bg-primary-container/5"></div>
 <div class="max-w-4xl mx-auto relative text-center">
 <h2 class="text-4xl font-bold mb-6 text-white">Ready to grow your wealth?</h2>
-<p class="text-on-surface-variant mb-10 text-lg">Join <?php $ic = get_site_setting('investors_count', '45000'); echo htmlspecialchars(is_numeric($ic) ? number_format((float)$ic) . '+' : $ic . '+'); ?> investors using <?php echo htmlspecialchars($siteName); ?> to automate their crypto growth.</p>
+<p class="text-on-surface-variant mb-10 text-lg">Join <?php $ic = get_site_setting('investors_count', '45000'); echo htmlspecialchars(is_numeric($ic) ? number_format((float)$ic) . '+' : $ic . '+'); ?> investors using <?php echo htmlspecialchars($siteName); ?> to grow capital through stocks, equities, and auto trading.</p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center">
 <a href="/register" class="gradient-button px-10 py-4 font-bold text-lg inline-block text-center">Create Account</a>
 <button type="button" class="btn-secondary px-10 py-4 font-bold text-lg">Contact Sales</button>

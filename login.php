@@ -33,7 +33,7 @@ $authBgStyle = 'login';
 <?php echo site_brand_markup('h-10 w-auto max-w-[220px] object-contain', 'font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight'); ?>
 </div>
 <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Welcome back</h2>
-<p class="font-body-md text-body-md text-on-surface-variant text-sm md:text-base">Enter your details to manage your digital assets securely.</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm md:text-base">Enter your details to manage your investments securely.</p>
 </div>
 <div class="auth-glass-card p-5 md:p-7 rounded-xl shadow-lg shadow-primary-container/5">
 <form id="login-form" class="space-y-4">
