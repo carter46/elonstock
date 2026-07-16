@@ -3,6 +3,11 @@
  * Bloombit - Helper Functions
  */
 
+// Start session before any page HTML so marketing CTAs can see login state.
+if (PHP_SAPI !== 'cli' && !defined('BB_SKIP_SESSION')) {
+    require_once __DIR__ . '/session-bootstrap.php';
+}
+
 /**
  * Get a site setting from DB. Falls back to config or default.
  */
@@ -121,7 +126,9 @@ function time_ago(string $datetime): string {
  * Returns null if not logged in or user not found.
  */
 function get_current_user_data(): ?array {
-    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        require_once __DIR__ . '/session-bootstrap.php';
+    }
     if (!isset($_SESSION['user_id'])) return null;
     static $cache = null;
     if ($cache !== null) return $cache;
