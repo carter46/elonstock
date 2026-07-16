@@ -243,8 +243,6 @@ foreach ($adminPlans as $idx => $p):
 </div>
 <!-- View Plans (optional chart + optional market detail) -->
 <div class="space-y-4">
-<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">View Plans Page</p>
-<p class="text-xs text-slate-500">All fields below are optional. Plan name is used for the hero title. Features auto-include “Live {Name} chart”.</p>
 <div class="grid grid-cols-2 gap-4">
 <div class="col-span-2">
 <label class="block text-sm font-medium mb-1.5">Chart Widget Code <span class="text-slate-400 font-normal">(optional)</span></label>
@@ -499,8 +497,17 @@ if (drawer) {
     });
   });
   var adminPlanForm = document.getElementById('admin-plan-form');
+  var planFormSubmitting = false;
   if (adminPlanForm) adminPlanForm.addEventListener('submit', function(e){
     e.preventDefault();
+    if (planFormSubmitting) return;
+    planFormSubmitting = true;
+    var submitBtns = document.querySelectorAll('button[form="admin-plan-form"], #admin-plan-form button[type="submit"]');
+    submitBtns.forEach(function(b){ b.disabled = true; b.classList.add('opacity-60','cursor-not-allowed'); });
+    var releaseSubmit = function(){
+      planFormSubmitting = false;
+      submitBtns.forEach(function(b){ b.disabled = false; b.classList.remove('opacity-60','cursor-not-allowed'); });
+    };
     var id = document.getElementById('plan-form-id').value;
     var featuresText = document.getElementById('plan-form-features').value || '';
     var features = featuresText.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
@@ -531,7 +538,12 @@ if (drawer) {
       features_text: featuresText
     };
     fetch('/api/admin/plans.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(data) })
-      .then(function(r){ return r.json(); }).then(function(res){ if (res.success) { drawer.classList.add('hidden'); window.location.reload(); } else alert(res.error || 'Failed'); }).catch(function(){ alert('Error'); });
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if (res.success) { drawer.classList.add('hidden'); window.location.reload(); }
+        else { alert(res.error || 'Failed'); releaseSubmit(); }
+      })
+      .catch(function(){ alert('Error'); releaseSubmit(); });
   });
   var planDrawerBackdrop = document.getElementById('plan-drawer-backdrop');
   if (planDrawerBackdrop) planDrawerBackdrop.addEventListener('click', function(){ drawer.classList.add('hidden'); });

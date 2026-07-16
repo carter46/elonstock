@@ -4,6 +4,7 @@
 
 - **u502532383_bloombit.sql** – Full schema dump (tables + default data). Use for a new database.
 - **migration.sql** – Update an existing database (adds missing columns/tables; safe, no data loss). Run after a full dump if the dump is older than the migration.
+- **migrate-stockswelt-users.sql** – One-time import of legacy `stockswelt_uikvfiku76` users, USD balances, and Keith Baker’s active Professional investments into **`u502532383_stockwealthy`**. Run via phpMyAdmin → SQL while that database is selected.
 
 ## Setup (New Install)
 
