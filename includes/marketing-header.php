@@ -5,8 +5,8 @@
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/session-bootstrap.php';
 $siteName = get_site_name();
-$currentUser = get_current_user_data();
-$isLoggedIn = !empty($currentUser);
+// Prefer session flag — DB lookup can fail on marketing pages and incorrectly show Login.
+$isLoggedIn = isset($_SESSION['user_id']) && (int) $_SESSION['user_id'] > 0;
 $current = $currentPage ?? '';
 
 $navClass = function ($active) {
