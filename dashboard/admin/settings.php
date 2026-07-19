@@ -27,7 +27,9 @@ $settings = [
     'header_image' => get_site_setting('header_image', '/bloombit.jpg'),
     'office_title' => get_site_setting('office_title', 'Registered Office'),
     'office_address' => get_site_setting('office_address', "Lindeyer Francis Ferguson\nNorth House, 198 High Street\nTonbridge, Kent, TN9 1BE"),
-    'smartsupp_key' => get_site_setting('smartsupp_key', '6fe6ebe5789e92d09f1a2fd405bd5b7d7967835d'),
+    'smartsupp_key' => get_site_setting('smartsupp_key', ''),
+    'jivo_widget_id' => get_site_setting('jivo_widget_id', ''),
+    'live_chat_provider' => get_site_setting('live_chat_provider', ''),
     'deposit_countdown_minutes' => get_site_setting('deposit_countdown_minutes', '30'),
     'referral_enabled' => get_site_setting('referral_enabled', '0'),
     'referral_percentage' => get_site_setting('referral_percentage', '15'),
@@ -165,10 +167,46 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 <textarea id="settings-office-address" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" rows="3" placeholder="Lindeyer Francis Ferguson&#10;North House, 198 High Street&#10;Tonbridge, Kent, TN9 1BE"><?php echo htmlspecialchars($settings['office_address']); ?></textarea>
 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Office address shown on Help Centre page. Use &lt;br/&gt; for line breaks.</p>
 </div>
-<div class="md:col-span-2">
-<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Smartsupp Live Chat Key</label>
-<input id="settings-smartsupp-key" type="text" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['smartsupp_key']); ?>" placeholder="6fe6ebe5789e92d09f1a2fd405bd5b7d7967835d"/>
-<p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Your Smartsupp account key for live chat widget. Get it from your Smartsupp dashboard.</p>
+<?php
+$liveChatProvider = strtolower(trim((string) ($settings['live_chat_provider'] ?? '')));
+if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
+    $liveChatProvider = trim((string) ($settings['smartsupp_key'] ?? '')) !== '' ? 'smartsupp' : 'none';
+}
+?>
+<div class="md:col-span-2 border-t border-slate-200 dark:border-zinc-700 pt-6 mt-2">
+<h3 class="text-sm font-bold text-slate-700 dark:text-zinc-300 mb-2 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">forum</span> Live Chat Providers</h3>
+<p class="text-xs text-slate-500 dark:text-zinc-400 mb-4">Enable only one provider at a time. The widget loads on the Live Chat page.</p>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<div class="rounded-xl border border-slate-200 dark:border-zinc-700 p-4 space-y-3 bg-slate-50/50 dark:bg-zinc-800/30">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-sm font-bold">Smartsupp</p>
+<p class="text-[11px] text-slate-500 dark:text-zinc-400">Use your Smartsupp account key</p>
+</div>
+<div class="flex items-center gap-2">
+<input id="settings-smartsupp-enabled" class="sr-only peer" type="checkbox" <?php echo $liveChatProvider === 'smartsupp' ? 'checked' : ''; ?>/>
+<label for="settings-smartsupp-enabled" class="relative w-11 h-6 bg-slate-200 dark:bg-zinc-700 rounded-full cursor-pointer peer-focus:ring-2 peer-focus:ring-primary/50 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 peer-checked:bg-primary"></label>
+</div>
+</div>
+<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-1.5">Smartsupp Key</label>
+<input id="settings-smartsupp-key" type="text" class="w-full bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm" value="<?php echo htmlspecialchars($settings['smartsupp_key']); ?>" placeholder="Your Smartsupp key"/>
+</div>
+<div class="rounded-xl border border-slate-200 dark:border-zinc-700 p-4 space-y-3 bg-slate-50/50 dark:bg-zinc-800/30">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-sm font-bold">JivoChat</p>
+<p class="text-[11px] text-slate-500 dark:text-zinc-400">Paste widget ID from Jivo installation code</p>
+</div>
+<div class="flex items-center gap-2">
+<input id="settings-jivo-enabled" class="sr-only peer" type="checkbox" <?php echo $liveChatProvider === 'jivo' ? 'checked' : ''; ?>/>
+<label for="settings-jivo-enabled" class="relative w-11 h-6 bg-slate-200 dark:bg-zinc-700 rounded-full cursor-pointer peer-focus:ring-2 peer-focus:ring-primary/50 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 peer-checked:bg-primary"></label>
+</div>
+</div>
+<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-1.5">Jivo Widget ID</label>
+<input id="settings-jivo-widget-id" type="text" class="w-full bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm" value="<?php echo htmlspecialchars($settings['jivo_widget_id']); ?>" placeholder="e.g. AbCdEfGhIj"/>
+<p class="text-[11px] text-slate-500 dark:text-zinc-400">From Jivo → Manage → Channels → Settings → Installation. You can paste the full script; we extract the ID.</p>
+</div>
+</div>
 </div>
 <div class="md:col-span-2">
 <label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Deposit Countdown Duration</label>
@@ -383,6 +421,29 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
     var officeTitle = document.getElementById('settings-office-title').value.trim();
     var officeAddress = document.getElementById('settings-office-address').value.trim();
     var smartsuppKey = document.getElementById('settings-smartsupp-key').value.trim();
+    var jivoWidgetId = (document.getElementById('settings-jivo-widget-id') || {}).value || '';
+    jivoWidgetId = String(jivoWidgetId).trim();
+    var smartsuppOn = !!(document.getElementById('settings-smartsupp-enabled') || {}).checked;
+    var jivoOn = !!(document.getElementById('settings-jivo-enabled') || {}).checked;
+    var liveChatProvider = 'none';
+    if (smartsuppOn && jivoOn) {
+      if (document.getElementById('settings-smartsupp-enabled')) document.getElementById('settings-smartsupp-enabled').checked = false;
+      if (document.getElementById('settings-jivo-enabled')) document.getElementById('settings-jivo-enabled').checked = false;
+      showMsg(document.getElementById('settings-branding-msg'), 'Only one live chat provider can be enabled at a time.', false);
+      return;
+    } else if (smartsuppOn) {
+      if (!smartsuppKey) {
+        showMsg(document.getElementById('settings-branding-msg'), 'Enter a Smartsupp key before enabling Smartsupp.', false);
+        return;
+      }
+      liveChatProvider = 'smartsupp';
+    } else if (jivoOn) {
+      if (!jivoWidgetId) {
+        showMsg(document.getElementById('settings-branding-msg'), 'Enter a JivoChat widget ID before enabling JivoChat.', false);
+        return;
+      }
+      liveChatProvider = 'jivo';
+    }
     var depositCountdown = (document.getElementById('settings-deposit-countdown') || {}).value || '30';
     var referralEnabled = (document.getElementById('settings-referral-enabled') || {}).checked ? '1' : '0';
     var referralPct = (document.getElementById('settings-referral-percentage') || {}).value;
@@ -397,7 +458,22 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin',
-      body: JSON.stringify({ site_name: siteName || <?php echo json_encode($siteName); ?>, contact_email: contactEmail || '', homepage_youtube_url: homepageYoutube || '', about_youtube_url: aboutYoutube || '', office_title: officeTitle || '', office_address: officeAddress || '', smartsupp_key: smartsuppKey || '', deposit_countdown_minutes: depositCountdown, referral_enabled: referralEnabled, referral_percentage: referralPct, referral_level2_percentage: referralL2Pct, deposit_bonus_percentage: depositBonusPct })
+      body: JSON.stringify({
+        site_name: siteName || <?php echo json_encode($siteName); ?>,
+        contact_email: contactEmail || '',
+        homepage_youtube_url: homepageYoutube || '',
+        about_youtube_url: aboutYoutube || '',
+        office_title: officeTitle || '',
+        office_address: officeAddress || '',
+        smartsupp_key: smartsuppKey || '',
+        jivo_widget_id: jivoWidgetId || '',
+        live_chat_provider: liveChatProvider,
+        deposit_countdown_minutes: depositCountdown,
+        referral_enabled: referralEnabled,
+        referral_percentage: referralPct,
+        referral_level2_percentage: referralL2Pct,
+        deposit_bonus_percentage: depositBonusPct
+      })
     }).then(function(r){ return r.json(); }).then(function(res){
       showMsg(document.getElementById('settings-branding-msg'), res.success ? 'Branding saved.' : (res.error || 'Failed'), res.success);
       btn.disabled = false;
@@ -406,6 +482,18 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
       btn.disabled = false;
     });
   });
+
+  (function setupLiveChatToggles(){
+    var smartsuppCb = document.getElementById('settings-smartsupp-enabled');
+    var jivoCb = document.getElementById('settings-jivo-enabled');
+    if (!smartsuppCb || !jivoCb) return;
+    smartsuppCb.addEventListener('change', function(){
+      if (smartsuppCb.checked) jivoCb.checked = false;
+    });
+    jivoCb.addEventListener('change', function(){
+      if (jivoCb.checked) smartsuppCb.checked = false;
+    });
+  })();
 
   function uploadAsset(type, fileInput, previewEl){
     if (!fileInput.files || !fileInput.files[0]) return Promise.resolve();

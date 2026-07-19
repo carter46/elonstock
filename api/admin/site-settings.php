@@ -51,6 +51,8 @@ $allowedKeys = [
     'office_title',
     'office_address',
     'smartsupp_key',
+    'jivo_widget_id',
+    'live_chat_provider',
     'deposit_countdown_minutes',
 ];
 $sensitiveKeys = ['mail_smtp_password', 'mail_imap_password'];
@@ -97,7 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'header_image' => '/bloombit.jpg',
         'office_title' => 'London Office',
         'office_address' => '40 Bank Street, Canary Wharf<br/>London, E14 5NR<br/>United Kingdom',
-        'smartsupp_key' => '6fe6ebe5789e92d09f1a2fd405bd5b7d7967835d',
+        'smartsupp_key' => '',
+        'jivo_widget_id' => '',
+        'live_chat_provider' => 'none',
         'deposit_countdown_minutes' => '30',
         // write-only flags
         'mail_smtp_password_set' => '0',
@@ -115,6 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $data[$r['key']] = $r['value'] ?? '';
         }
     }
+    // Normalize live chat provider: only smartsupp | jivo | none
+    $provider = strtolower(trim((string) ($data['live_chat_provider'] ?? 'none')));
+    if (!in_array($provider, ['smartsupp', 'jivo', 'none'], true)) {
+        $provider = trim((string) ($data['smartsupp_key'] ?? '')) !== '' ? 'smartsupp' : 'none';
+    }
+    $data['live_chat_provider'] = $provider;
     echo json_encode(['success' => true, 'data' => $data]);
     exit;
 }
@@ -151,12 +161,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($k === 'referral_enabled') {
             $v = in_array(strtolower($v), ['1', 'true', 'yes', 'on'], true) ? '1' : '0';
         }
+        if ($k === 'live_chat_provider') {
+            $vv = strtolower($v);
+            if (!in_array($vv, ['smartsupp', 'jivo', 'none', ''], true)) {
+                continue;
+            }
+            $v = $vv === '' ? 'none' : $vv;
+        }
+        if ($k === 'jivo_widget_id') {
+            // Allow pasting full script snippet; store widget id when possible.
+            if (preg_match('#code\.jivosite\.com/(?:script/)?widget/([A-Za-z0-9_-]+)#i', $v, $m)) {
+                $v = $m[1];
+            } elseif (preg_match('#(?:jv-id|data-jv-id)=[\'"]?([A-Za-z0-9_-]+)#i', $v, $m)) {
+                $v = $m[1];
+            } elseif (preg_match('#widget_id\s*=\s*[\'"]?([A-Za-z0-9_-]+)#i', $v, $m)) {
+                $v = $m[1];
+            }
+            $v = preg_replace('/[^A-Za-z0-9_-]/', '', $v) ?? '';
+        }
         if ($k === 'referral_percentage' || $k === 'referral_level2_percentage' || $k === 'deposit_bonus_percentage') {
             $pct = (float) $v;
             $pct = max(0, min(100, $pct));
             $v = (string) round($pct, 2);
         }
         $updates[$k] = $v;
+    }
+    // Enforce only one live-chat provider at a time, and require credentials.
+    if (isset($updates['live_chat_provider'])) {
+        $p = $updates['live_chat_provider'];
+        if (!in_array($p, ['smartsupp', 'jivo', 'none'], true)) {
+            $p = 'none';
+        }
+        $smartKey = $updates['smartsupp_key'] ?? null;
+        $jivoId = $updates['jivo_widget_id'] ?? null;
+        if ($smartKey === null || $jivoId === null) {
+            // Pull current values when only provider changes.
+            try {
+                $cur = $pdo->query("SELECT `key`, value FROM site_settings WHERE `key` IN ('smartsupp_key','jivo_widget_id')");
+                $map = [];
+                if ($cur) {
+                    while ($row = $cur->fetch(PDO::FETCH_ASSOC)) {
+                        $map[$row['key']] = (string) ($row['value'] ?? '');
+                    }
+                }
+                if ($smartKey === null) $smartKey = $map['smartsupp_key'] ?? '';
+                if ($jivoId === null) $jivoId = $map['jivo_widget_id'] ?? '';
+            } catch (Throwable $e) {
+                $smartKey = (string) ($smartKey ?? '');
+                $jivoId = (string) ($jivoId ?? '');
+            }
+        }
+        if ($p === 'smartsupp' && trim((string) $smartKey) === '') {
+            $p = 'none';
+        }
+        if ($p === 'jivo' && trim((string) $jivoId) === '') {
+            $p = 'none';
+        }
+        $updates['live_chat_provider'] = $p;
     }
     $stmt = $pdo->prepare('INSERT INTO site_settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)');
     foreach ($updates as $k => $v) {

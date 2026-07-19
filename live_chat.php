@@ -9,10 +9,8 @@ $pageTitle = 'Live Chat | ' . $siteName;
 require_once __DIR__ . '/includes/marketing-head.php';
 ?>
 <style>
-        .smartsupp-widget {
-            --smartsupp-primary-color: #4b8eff !important;
-        }
-    </style>
+.smartsupp-widget { --smartsupp-primary-color: #4b8eff !important; }
+</style>
 </head>
 <body class="marketing-page font-body-md text-body-md bg-background text-on-surface overflow-x-hidden">
 <?php $currentPage = 'live_chat'; require_once __DIR__ . '/includes/marketing-header.php'; ?>
