@@ -5,7 +5,7 @@
  */
 $pageTitle = $pageTitle ?? get_site_name();
 ?>
-$title><?php echo htmlspecialchars($pageTitle); ?></title>
+<title><?php echo htmlspecialchars($pageTitle); ?></title>
 <meta name="theme-color" content="#081422"/>
 <?php output_favicon_tags(); ?>
 <?php if (empty($skipDefaultSocialMeta)): ?>

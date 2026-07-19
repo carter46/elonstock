@@ -11,7 +11,7 @@ $cta_text = $cta_text ?? null;
 $cta_url = $cta_url ?? '#';
 $site_url = $site_url ?? '/';
 $siteName = $siteName ?? get_site_name();
-$siteLogo = trim((string) (get_site_setting('site_logo', '') ?? ''));
+$siteLogo = get_site_logo();
 if ($siteLogo !== '' && strpos($siteLogo, 'http') !== 0 && rtrim((string) $site_url, '/') !== '') {
     $siteLogo = rtrim((string) $site_url, '/') . (strpos($siteLogo, '/') === 0 ? $siteLogo : '/' . $siteLogo);
 }

@@ -38,9 +38,27 @@ function get_site_name(): string {
 
 /**
  * Uploaded site logo URL from settings, or empty string.
+ * Local paths are returned only when the file exists on disk (avoids broken image icons).
  */
 function get_site_logo(): string {
-    return trim((string) (get_site_setting('site_logo', '') ?? ''));
+    $logo = trim((string) (get_site_setting('site_logo', '') ?? ''));
+    if ($logo === '' || strcasecmp($logo, 'null') === 0 || $logo === '0') {
+        return '';
+    }
+    // Absolute remote URLs: keep as configured (load failure handled in markup).
+    if (preg_match('#^https?://#i', $logo)) {
+        return $logo;
+    }
+    $path = parse_url($logo, PHP_URL_PATH);
+    if (!is_string($path) || $path === '') {
+        $path = $logo;
+    }
+    $path = '/' . ltrim(str_replace('\\', '/', $path), '/');
+    $fsPath = dirname(__DIR__) . $path;
+    if (!is_file($fsPath)) {
+        return '';
+    }
+    return $logo;
 }
 
 /**
@@ -49,13 +67,18 @@ function get_site_logo(): string {
 function site_brand_markup(string $imgClass = 'h-11 w-auto max-w-[260px] object-contain', string $textClass = ''): string {
     $name = get_site_name();
     $logo = get_site_logo();
-    if ($logo !== '') {
-        return '<img src="' . htmlspecialchars($logo, ENT_QUOTES, 'UTF-8')
-            . '" alt="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8')
-            . '" class="' . htmlspecialchars($imgClass, ENT_QUOTES, 'UTF-8') . '"/>';
-    }
     $cls = $textClass !== '' ? ' class="' . htmlspecialchars($textClass, ENT_QUOTES, 'UTF-8') . '"' : '';
-    return '<span' . $cls . '>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
+    $textHtml = '<span' . $cls . '>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
+    if ($logo === '') {
+        return $textHtml;
+    }
+    // If the image 404s (remote or race), swap to site name instead of a broken icon.
+    $onError = 'this.onerror=null;var s=this.nextElementSibling;this.remove();if(s){s.hidden=false;}';
+    return '<img src="' . htmlspecialchars($logo, ENT_QUOTES, 'UTF-8')
+        . '" alt="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8')
+        . '" class="' . htmlspecialchars($imgClass, ENT_QUOTES, 'UTF-8') . '"'
+        . ' onerror="' . htmlspecialchars($onError, ENT_QUOTES, 'UTF-8') . '"/>'
+        . '<span' . $cls . ' hidden>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
 }
 
 /**
@@ -86,6 +109,16 @@ function get_site_brand_parts(?string $name = null): array {
  */
 function output_favicon_tags(): void {
     $favicon = trim((string) (get_site_setting('site_favicon', '') ?? ''));
+    if ($favicon !== '' && !preg_match('#^https?://#i', $favicon)) {
+        $favPath = parse_url($favicon, PHP_URL_PATH);
+        if (!is_string($favPath) || $favPath === '') {
+            $favPath = $favicon;
+        }
+        $favPath = '/' . ltrim(str_replace('\\', '/', $favPath), '/');
+        if (!is_file(dirname(__DIR__) . $favPath)) {
+            $favicon = '';
+        }
+    }
     $logo = get_site_logo();
     $icon = $favicon !== '' ? $favicon : $logo;
     if ($icon === '') {
