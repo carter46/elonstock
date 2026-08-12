@@ -85,7 +85,7 @@ foreach ($plans as $plan):
 </li>
 <?php endforeach; ?>
 </ul>
-<a href="/register" class="w-full py-4 <?php echo $isHighlight ? 'gradient-button' : 'btn-secondary'; ?> font-bold block text-center">Start Investing</a>
+<a href="/dashboard/user/investment-plans/<?php echo htmlspecialchars($plan['slug']); ?>" class="w-full py-4 <?php echo $isHighlight ? 'gradient-button' : 'btn-secondary'; ?> font-bold block text-center">Select Plan</a>
 </div>
 <?php endforeach; ?>
 <?php if (empty($plans)): ?>

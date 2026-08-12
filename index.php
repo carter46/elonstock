@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/market-instruments.php';
+require_once __DIR__ . '/includes/plan-types.php';
 $siteName = get_site_name();
 $pageTitle = $siteName . ' | Multi-Asset Investment Platform';
 $pageDescription = 'Invest across stocks, equities, and real estate with intelligent auto trading and institutional-grade portfolio management.';
@@ -11,6 +12,36 @@ $statsClients = get_site_setting('stats_bots', '120+');
 $statsUptime = get_site_setting('stats_uptime', '99.9%');
 $statsLiquidity = get_site_setting('stats_roi', '14+');
 
+$homePlans = [];
+$orbitCoins = [];
+$pdo = null;
+try {
+    $pdo = require __DIR__ . '/includes/db.php';
+    ensure_plan_schema($pdo);
+    $stmt = $pdo->query('SELECT id, name, slug, plan_type, description, logo_url, min_deposit, max_deposit, yield_min, yield_max, withdrawal_days, features_json FROM plans WHERE enabled = 1 ORDER BY sort_order, id');
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $row['features'] = $row['features_json'] ? json_decode($row['features_json'], true) : [];
+        if (!is_array($row['features'])) $row['features'] = [];
+        $row['plan_type'] = normalize_plan_type($row['plan_type'] ?? 'crypto');
+        $homePlans[] = $row;
+    }
+} catch (Throwable $e) {
+    $homePlans = [];
+}
+try {
+    if (!($pdo instanceof PDO)) {
+        $pdo = require __DIR__ . '/includes/db.php';
+    }
+    $coinStmt = $pdo->query('SELECT symbol, logo FROM coins WHERE enabled = 1 AND logo IS NOT NULL AND logo != "" ORDER BY sort_order, id LIMIT 14');
+    if ($coinStmt) {
+        while ($row = $coinStmt->fetch(PDO::FETCH_ASSOC)) {
+            $orbitCoins[] = $row;
+        }
+    }
+} catch (Throwable $e) {
+    // fall through to defaults
+}
+
 $execImg = '/uploads/images/evergren_cmarket.png';
 $wealthImg = '/uploads/images/wallet_image3.png';
 $heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg';
@@ -18,16 +49,6 @@ $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fy
 $eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
 $eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTjeBaz-FYpuIcbtXW_-rbo6AcxjJgKfVR2jecI-nQ1lrSn8fWdmLi-t99OUPHZgN_NO7hSRwNbbteLmUbrMvWLAk42D9OO3H2H9QVmQ0JcGGuWnHZ99UJlAYT8_hUbJakBBvwWMCn7Ztlamrd-ccxL-ZB96l17wF8YLv9DLZsAiMDsyzLwfeAWPDNLwrkCdBcboSejRk3gMPOLOeI_1F0zlphMTW8IWVYb6VYvr-a3o2';
 
-$orbitCoins = [];
-try {
-    $pdo = require __DIR__ . '/includes/db.php';
-    $stmt = $pdo->query('SELECT symbol, logo FROM coins WHERE enabled = 1 AND logo IS NOT NULL AND logo != "" ORDER BY sort_order, id LIMIT 14');
-    if ($stmt) {
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $orbitCoins[] = $row;
-        }
-    }
-} catch (Throwable $e) { /* fall through to defaults */ }
 if (empty($orbitCoins)) {
     $orbitCoins = [
         ['symbol' => 'BTC', 'logo' => 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png'],
@@ -179,6 +200,79 @@ View Live Market
 </div>
 </div>
 </section>
+
+<?php if (!empty($homePlans)): ?>
+<!-- Investment Plans -->
+<section id="investment-plans" class="section-large bg-surface border-y border-white/5 relative">
+<div class="absolute inset-0 refined-gradient pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6">
+<div class="max-w-2xl reveal-up">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Investment Plans</span>
+<h2 class="font-display-sm text-display-sm text-white">Choose Your Plan</h2>
+<p class="mt-4 text-on-surface-variant font-body-md max-w-[42rem]">Select a plan to open it in your dashboard and invest with your account balance. Your selection is kept when you sign in.</p>
+</div>
+<a href="/plans" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center shrink-0">Compare Plans</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+<?php
+$homePlanIndex = 0;
+foreach ($homePlans as $plan):
+    $isHighlight = ($homePlanIndex === 1 && count($homePlans) >= 2);
+    $homePlanIndex++;
+    $minFmt = format_usd_amount($plan['min_deposit']);
+    $maxFmt = !empty($plan['max_deposit']) ? format_usd_amount($plan['max_deposit']) : null;
+    $rangeStr = $maxFmt ? '$' . $minFmt . ' – $' . $maxFmt : 'From $' . $minFmt;
+    $planSlug = trim((string) ($plan['slug'] ?? ''));
+    if ($planSlug === '') continue;
+    $planUrl = '/dashboard/user/investment-plans/' . rawurlencode($planSlug);
+    $features = array_values(array_filter(array_map(static function ($f) {
+        return trim((string) $f);
+    }, $plan['features'] ?? [])));
+    $features = array_slice($features, 0, 4);
+    $desc = trim((string) ($plan['description'] ?? ''));
+?>
+<a href="<?php echo htmlspecialchars($planUrl); ?>" class="trading-card p-6 md:p-8 flex flex-col h-full reveal-up group transition-all hover:border-primary-container/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 <?php echo $isHighlight ? 'border-primary-container/40 relative' : ''; ?>" style="transition-delay:<?php echo number_format(($homePlanIndex - 1) * 0.05, 2); ?>s">
+<?php if ($isHighlight): ?>
+<span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-container text-on-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full whitespace-nowrap">Most Popular</span>
+<?php endif; ?>
+<div class="flex items-start gap-3 mb-5">
+<?php echo plan_logo_markup($plan['logo_url'] ?? null, $plan['name'], 'w-11 h-11', 'text-sm'); ?>
+<div class="min-w-0 flex-1">
+<span class="text-[10px] font-bold uppercase tracking-wider text-primary-container"><?php echo htmlspecialchars(plan_type_label($plan['plan_type'] ?? 'crypto')); ?></span>
+<h3 class="text-lg md:text-xl font-bold text-white leading-snug mt-0.5 group-hover:text-primary transition-colors"><?php echo htmlspecialchars($plan['name']); ?></h3>
+</div>
+</div>
+<?php if ($desc !== ''): ?>
+<p class="text-on-surface-variant text-sm mb-5 line-clamp-2"><?php echo htmlspecialchars($desc); ?></p>
+<?php endif; ?>
+<div class="mb-5">
+<div class="text-3xl md:text-4xl font-bold <?php echo $isHighlight ? 'text-primary-container' : 'text-white'; ?>"><?php echo number_format((float) ($plan['yield_min'] ?? 0), 1); ?><?php if ((float) ($plan['yield_max'] ?? 0) > (float) ($plan['yield_min'] ?? 0)): ?>–<?php echo number_format((float) $plan['yield_max'], 1); ?><?php endif; ?>%</div>
+<div class="text-sm font-medium text-on-surface-variant mt-1">Daily ROI</div>
+<p class="text-xs text-on-surface-variant mt-2"><?php echo htmlspecialchars($rangeStr); ?></p>
+</div>
+<?php if (!empty($features)): ?>
+<ul class="space-y-2.5 mb-6 flex-grow">
+<?php foreach ($features as $f): ?>
+<li class="flex items-start gap-2.5 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-container text-base shrink-0 mt-0.5">check_circle</span>
+<span class="leading-snug"><?php echo htmlspecialchars($f); ?></span>
+</li>
+<?php endforeach; ?>
+</ul>
+<?php else: ?>
+<div class="flex-grow"></div>
+<?php endif; ?>
+<span class="w-full py-3.5 <?php echo $isHighlight ? 'gradient-button' : 'btn-secondary'; ?> font-bold text-center inline-flex items-center justify-center gap-2 mt-auto group-hover:brightness-110">
+Select Plan
+<span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+</span>
+</a>
+<?php endforeach; ?>
+</div>
+</div>
+</section>
+<?php endif; ?>
 
 <!-- Live Market Performance -->
 <section id="markets" class="section-medium bg-surface-container-lowest/50 border-y border-white/5 relative">
