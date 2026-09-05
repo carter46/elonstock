@@ -99,7 +99,7 @@ Secure Capital. <br/> <span class="italic font-normal hero-orange-gradient">Inte
 Open an Account
 <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
 </a>
-<a href="/trading_signals" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
+<a href="/login" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
 View Live Market
 </a>
 </div>
@@ -171,24 +171,24 @@ View Live Market
 </ul>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.1s">
+<img src="/uploads/images/Neuralink.png" alt="Neuralink" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
+<h3 class="font-headline-md text-white mb-2">Neuralink</h3>
+<p class="text-on-surface-variant text-sm">Musk's brain-computer interface venture. While achieving massive milestones with human implants, it is funded entirely through private venture capital.</p>
+</div>
+<div class="trading-card p-8 reveal-up" style="transition-delay:0.15s">
 <span class="material-symbols-outlined mb-4 text-3xl" style="color:#60a5fa">candlestick_chart</span>
 <h3 class="font-headline-md text-white mb-2">Equities &amp; Auto Trading</h3>
 <p class="text-on-surface-variant text-sm">Automated trading strategies across listed equities and commercial stocks, built to pursue consistent daily growth without constant manual oversight.</p>
 </div>
-<div class="trading-card p-8 reveal-up" style="transition-delay:0.15s">
+<div class="trading-card p-8 reveal-up" style="transition-delay:0.2s">
 <img src="/uploads/images/Alphabet.png" alt="Alphabet" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
 <h3 class="font-headline-md text-white mb-2">Alphabet Inc.</h3>
 <p class="text-on-surface-variant text-sm">Alphabet Inc. is an American multinational technology conglomerate and the parent holding company of Google.</p>
 </div>
-<div class="trading-card p-8 reveal-up" style="transition-delay:0.2s">
+<div class="trading-card p-8 reveal-up" style="transition-delay:0.25s">
 <span class="material-symbols-outlined mb-4 text-3xl" style="color:#a78bfa">account_balance</span>
 <h3 class="font-headline-md text-white mb-2">Alternative Assets</h3>
 <p class="text-on-surface-variant text-sm">Venture capital, private credit, and specialized commodities providing non-correlated returns for sophisticated portfolios.</p>
-</div>
-<div class="trading-card p-8 reveal-up" style="transition-delay:0.25s">
-<img src="/uploads/images/Neuralink.png" alt="Neuralink" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
-<h3 class="font-headline-md text-white mb-2">Neuralink</h3>
-<p class="text-on-surface-variant text-sm">Musk's brain-computer interface venture. While achieving massive milestones with human implants, it is funded entirely through private venture capital.</p>
 </div>
 </div>
 </div>

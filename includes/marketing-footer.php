@@ -16,10 +16,10 @@ $homepageModalImage = get_site_setting('homepage_modal_image', '');
 </div>
 <p class="font-body-md text-on-surface-variant leading-relaxed pr-0 md:pr-8"><?php echo htmlspecialchars($footerDesc); ?></p>
 <div class="flex gap-4">
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="/about_us" aria-label="About us">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="/login" aria-label="Login">
 <span class="material-symbols-outlined">public</span>
 </a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="/trading_signals" aria-label="Markets">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="/#markets" aria-label="Markets">
 <span class="material-symbols-outlined">show_chart</span>
 </a>
 <a class="text-on-surface-variant hover:text-primary transition-colors" href="/live_chat" aria-label="Contact">
@@ -40,9 +40,9 @@ View Certificate
 <div>
 <span class="font-label-sm text-white uppercase tracking-widest block mb-6">Company</span>
 <ul class="space-y-4">
-<li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/about_us">About Us</a></li>
+<li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/login">About Us</a></li>
 <li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/legal_centre">Legal Centre</a></li>
-<li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/about_us">Our Leadership</a></li>
+<li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/login">Our Leadership</a></li>
 <li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/plans">Investment Plans</a></li>
 </ul>
 </div>
@@ -52,7 +52,7 @@ View Certificate
 <li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/help_centre">Help Center</a></li>
 <li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/live_chat">Contact Concierge</a></li>
 <li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/live_chat">Institutional Support</a></li>
-<li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/trading_signals">Market Data</a></li>
+<li><a class="font-label-md text-on-surface-variant hover:text-primary transition-colors" href="/login">Market Data</a></li>
 </ul>
 </div>
 <div>

@@ -169,7 +169,7 @@ body.marketing-page {
 }
 .gradient-button,
 .btn-get-started {
-  background: linear-gradient(135deg, #4b8eff 0%, #002e69 100%);
+  background: linear-gradient(135deg, #ff5c1a 0%, #c41e0a 55%, #8b0000 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
   color: #ffffff;
   border-radius: 9999px;
@@ -179,7 +179,7 @@ body.marketing-page {
 .btn-get-started:hover {
   filter: brightness(1.06);
   transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 24px rgba(75, 142, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 24px rgba(196, 30, 10, 0.35);
 }
 .btn-secondary {
   background: transparent;
@@ -261,16 +261,16 @@ body.marketing-page {
   background:
     linear-gradient(
       to top,
-      rgba(2, 4, 8, 0.82) 0%,
-      rgba(3, 5, 10, 0.70) 18%,
-      rgba(4, 6, 12, 0.55) 36%,
-      rgba(5, 7, 14, 0.40) 52%,
-      rgba(6, 8, 16, 0.28) 68%,
-      rgba(7, 9, 18, 0.16) 82%,
-      rgba(8, 10, 20, 0.08) 92%,
+      rgba(2, 4, 8, 0.88) 0%,
+      rgba(3, 5, 10, 0.76) 18%,
+      rgba(4, 6, 12, 0.62) 36%,
+      rgba(5, 7, 14, 0.48) 52%,
+      rgba(6, 8, 16, 0.34) 68%,
+      rgba(7, 9, 18, 0.22) 82%,
+      rgba(8, 10, 20, 0.12) 92%,
       rgba(11, 14, 17, 0) 100%
     ),
-    rgba(4, 6, 12, 0.16);
+    rgba(4, 6, 12, 0.22);
 }
 .hero-orange-gradient {
   background: linear-gradient(135deg, #ff8a3d 0%, #ff5c1a 45%, #e03d00 100%);

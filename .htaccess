@@ -61,6 +61,10 @@ Options -Indexes
     RewriteRule ^reset-password$ reset-password.php [L]
     RewriteRule ^logout$ logout.php [L]
 
+    # Removed pages -> login
+    RewriteRule ^trading_signals/?$ /login [R=301,L]
+    RewriteRule ^about_us/?$ /login [R=301,L]
+
     # Skip rewrite for existing files and directories (static assets: js, css, images)
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d

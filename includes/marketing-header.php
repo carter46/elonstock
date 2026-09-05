@@ -26,8 +26,6 @@ $mobileClass = function ($active) {
 </a>
 <div class="hidden md:flex items-center gap-unit-lg">
 <a class="<?php echo $navClass($current === 'home'); ?>" href="/">Home</a>
-<a class="<?php echo $navClass($current === 'trading_signals'); ?>" href="/trading_signals">Markets</a>
-<a class="<?php echo $navClass($current === 'about_us'); ?>" href="/about_us">About Us</a>
 <a class="<?php echo $navClass($helpActive); ?>" href="/help_centre">Help Center</a>
 <a class="<?php echo $navClass($current === 'legal_centre'); ?>" href="/legal_centre">Legal</a>
 </div>
@@ -47,8 +45,6 @@ $mobileClass = function ($active) {
 <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-surface-container-lowest">
 <div class="max-w-container-max mx-auto px-margin-mobile py-4 flex flex-col gap-1">
 <a class="py-3 px-4 rounded-xl hover:bg-white/5 font-label-md <?php echo $mobileClass($current === 'home'); ?>" href="/">Home</a>
-<a class="py-3 px-4 rounded-xl hover:bg-white/5 font-label-md <?php echo $mobileClass($current === 'trading_signals'); ?>" href="/trading_signals">Markets</a>
-<a class="py-3 px-4 rounded-xl hover:bg-white/5 font-label-md <?php echo $mobileClass($current === 'about_us'); ?>" href="/about_us">About Us</a>
 <a class="py-3 px-4 rounded-xl hover:bg-white/5 font-label-md <?php echo $mobileClass($helpActive); ?>" href="/help_centre">Help Center</a>
 <a class="py-3 px-4 rounded-xl hover:bg-white/5 font-label-md <?php echo $mobileClass($current === 'legal_centre'); ?>" href="/legal_centre">Legal</a>
 <button type="button" data-pwa-install="menu" class="hidden py-3 px-4 rounded-xl hover:bg-white/5 font-label-md text-on-surface-variant text-left w-full border border-white/10" data-pwa-label>Install App</button>
