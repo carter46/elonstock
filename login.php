@@ -26,8 +26,9 @@ $authBgStyle = 'login';
 <span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary-container">Back to home</span>
 </a>
 </nav>
-<main class="auth-main flex items-center justify-center px-4 md:px-margin-mobile py-2 md:py-0">
-<div class="w-full max-w-[440px]">
+<main class="auth-main">
+<?php if (!empty($authMobileHeroHtml)) echo $authMobileHeroHtml; ?>
+<div class="auth-main-inner w-full max-w-[440px]">
 <div class="mb-4 md:mb-5 text-center md:text-left">
 <div class="mb-1 flex justify-center md:justify-start">
 <?php echo site_brand_markup('h-10 w-auto max-w-[220px] object-contain', 'font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight'); ?>
@@ -65,9 +66,9 @@ $authBgStyle = 'login';
 <div class="text-sm text-primary-container bg-primary-container/10 border border-primary-container/20 px-3 py-2 rounded-lg">You were logged out due to inactivity. Please sign in again.</div>
 <?php endif; ?>
 <div id="login-form-message" class="text-sm hidden"></div>
-<button class="w-full bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] transition-all py-3 px-6 rounded-lg flex items-center justify-center gap-2 group" type="submit">
-<span class="font-label-sm text-label-sm text-on-primary uppercase tracking-widest">Sign In</span>
-<span class="material-symbols-outlined text-on-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+<button class="gradient-button w-full active:scale-[0.98] transition-all py-3 px-6 rounded-lg flex items-center justify-center gap-2 group" type="submit">
+<span class="font-label-sm text-label-sm text-white uppercase tracking-widest">Sign In</span>
+<span class="material-symbols-outlined text-white group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </button>
 </form>
 <div id="login-otp-step" class="space-y-4 hidden">
@@ -81,18 +82,17 @@ $authBgStyle = 'login';
 </div>
 <div id="login-otp-message" class="text-sm hidden"></div>
 <button type="button" id="login-otp-resend" class="text-primary-container hover:underline text-sm font-medium disabled:opacity-50" disabled>Resend code (60s)</button>
-<button type="button" id="login-otp-submit" class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+<button type="button" id="login-otp-submit" class="gradient-button w-full font-bold py-3 rounded-lg flex items-center justify-center gap-2">
 Verify &amp; Sign In
 </button>
 </div>
 <div class="mt-5 pt-5 border-t border-white/5 text-center">
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-widest">Institutional grade security</p>
+<a href="/register" class="gradient-button w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-label-sm text-label-sm uppercase tracking-widest">
+Create Account
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</a>
 </div>
 </div>
-<p class="mt-4 text-center text-sm text-on-surface-variant" id="login-have-account">
-Don't have an account?
-<a class="text-primary-fixed-dim font-bold hover:underline underline-offset-4 ml-1" href="/register">Create an account</a>
-</p>
 </div>
 </main>
 <footer class="shrink-0 h-10 md:h-12 flex items-center justify-center px-4 md:px-margin-desktop opacity-50">

@@ -126,13 +126,39 @@ body.auth-fit-screen .auth-main {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-top: 0;
+  padding-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+body.auth-fit-screen .auth-main-inner {
+  width: 100%;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.75rem;
+}
+body.auth-fit-screen .auth-main-inner.auth-main-inner--wide {
+  max-width: 480px;
+}
+.auth-mobile-hero {
+  width: 100%;
+  margin: 0;
 }
 @media (min-width: 768px) {
   body.auth-fit-screen .auth-main {
-    overflow: hidden;
-    display: flex;
-    align-items: center;
+    padding-top: 0.75rem;
+    align-items: safe center;
     justify-content: center;
+  }
+  body.auth-fit-screen .auth-main-inner {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
   }
 }
 .auth-glass-card {
@@ -203,12 +229,15 @@ body.auth-fit-screen .auth-main {
   box-shadow: 0 0 0 2px rgba(75, 142, 255, 0.22);
 }
 .gradient-button {
-  background: linear-gradient(135deg, #4b8eff 0%, #002e69 100%);
+  background: linear-gradient(135deg, #ff5c1a 0%, #c41e0a 55%, #8b0000 100%);
   color: #ffffff;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 .gradient-button:hover {
-  opacity: 0.92;
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 24px rgba(196, 30, 10, 0.35);
 }
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

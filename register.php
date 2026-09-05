@@ -27,8 +27,9 @@ $refPrefill = isset($_GET['ref']) ? strtoupper(trim((string)$_GET['ref'])) : '';
 <span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary-container">Back to home</span>
 </a>
 </nav>
-<main class="auth-main flex items-center justify-center px-4 md:px-margin-mobile py-2 md:py-0">
-<div class="w-full max-w-[480px]">
+<main class="auth-main">
+<?php if (!empty($authMobileHeroHtml)) echo $authMobileHeroHtml; ?>
+<div class="auth-main-inner auth-main-inner--wide w-full max-w-[480px]">
 <div class="mb-4 md:mb-5 text-center md:text-left">
 <div class="mb-1 flex justify-center md:justify-start">
 <?php echo site_brand_markup('h-10 w-auto max-w-[220px] object-contain', 'font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight'); ?>
@@ -76,7 +77,7 @@ $refPrefill = isset($_GET['ref']) ? strtoupper(trim((string)$_GET['ref'])) : '';
 </div>
 </div>
 <div id="register-step1-message" class="text-sm text-red-400 hidden"></div>
-<button type="button" id="register-step1-next" class="w-full bg-primary-container text-on-primary font-bold py-3 rounded-lg hover:bg-primary-container/90 transition-all shadow-lg shadow-primary-container/10 active:scale-95 flex items-center justify-center gap-2 group">
+<button type="button" id="register-step1-next" class="gradient-button w-full font-bold py-3 rounded-lg active:scale-95 flex items-center justify-center gap-2 group">
 <span>Continue</span>
 <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </button>
@@ -120,7 +121,7 @@ I agree to the <a class="text-primary-container hover:underline underline-offset
 <button type="button" id="register-step2-back" class="flex-1 py-3 rounded-lg border border-border-low text-on-surface-variant font-bold hover:border-primary-container/50 transition-colors">
 Back
 </button>
-<button type="submit" class="flex-[2] bg-primary-container text-on-primary font-bold py-3 rounded-lg hover:bg-primary-container/90 transition-all shadow-lg shadow-primary-container/10 active:scale-95 flex items-center justify-center gap-2 group">
+<button type="submit" class="gradient-button flex-[2] font-bold py-3 rounded-lg active:scale-95 flex items-center justify-center gap-2 group">
 <span>Create My Account</span>
 <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
 </button>
@@ -138,7 +139,7 @@ Back
 </div>
 <div id="register-otp-message" class="text-sm hidden"></div>
 <button type="button" id="register-otp-resend" class="text-primary-container hover:underline text-sm font-medium disabled:opacity-50" disabled>Resend code (60s)</button>
-<button type="button" id="register-otp-submit" class="w-full bg-primary-container hover:bg-primary-container/90 text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+<button type="button" id="register-otp-submit" class="gradient-button w-full font-bold py-3 rounded-lg flex items-center justify-center gap-2">
 Verify &amp; Continue
 </button>
 </div>
@@ -150,14 +151,13 @@ Verify &amp; Continue
 <p class="text-on-surface-variant text-sm mb-4">Your account has been verified. Redirecting to your dashboard...</p>
 </div>
 <div class="mt-5 pt-5 border-t border-white/5 text-center">
-<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-widest">Institutional grade security</p>
+<a href="/login" class="gradient-button w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-label-sm text-label-sm uppercase tracking-widest">
+Login
+<span class="material-symbols-outlined text-[18px]">login</span>
+</a>
 </div>
 </div>
 </div>
-<p class="mt-4 text-center text-sm text-on-surface-variant" id="register-have-account">
-Already have an account?
-<a class="text-primary-fixed-dim font-bold hover:underline underline-offset-4 ml-1" href="/login">Log in here</a>
-</p>
 </div>
 </main>
 <footer class="shrink-0 h-10 md:h-12 flex items-center justify-center px-4 md:px-margin-desktop opacity-50">
