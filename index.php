@@ -30,8 +30,8 @@ $homePlansPreview = array_slice($homePlans, 0, 3);
 
 $heroSlides = [
     '/uploads/images/Business-Endeavors-03.jpg',
-    '/uploads/images/psace_xx.jpg',
     '/uploads/images/fleets_tuk.webp',
+    '/uploads/images/psace_xx.jpg',
     '/uploads/images/msjd_spadd.jpg',
 ];
 $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
@@ -100,7 +100,7 @@ Open an Account
 <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
 </a>
 <a href="/login" class="btn-secondary w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-on-surface-variant inline-flex items-center justify-center">
-View Live Market
+Login
 </a>
 </div>
 </div>
@@ -147,7 +147,6 @@ View Live Market
 <h2 class="font-display-sm text-display-sm text-white">Multi-Asset Global Exposure</h2>
 <p class="mt-4 text-on-surface-variant font-body-md max-w-[42rem]"><?php echo htmlspecialchars($siteName); ?> manages a high-conviction portfolio spanning traditional and alternative asset classes, ensuring resilience through market cycles.</p>
 </div>
-<a href="/plans" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center shrink-0">Sector Analysis</a>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <div class="trading-card p-8 reveal-up">
@@ -328,8 +327,8 @@ $renderOrbitRing($orbitRing1, 450, 'orbit-spin-slow', 'w-10 h-10', 'w-7 h-7');
 $renderOrbitRing($orbitRing2, 300, 'orbit-spin-mid-reverse', 'w-9 h-9', 'w-6 h-6');
 $renderOrbitRing($orbitRing3, 150, 'orbit-spin-fast', 'w-8 h-8', 'w-5 h-5');
 ?>
-<div class="relative z-10 w-32 h-32 sm:w-40 sm:h-40 bg-primary-container rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(75,142,255,0.45)]">
-<div class="text-on-primary-container text-center">
+<div class="relative z-10 w-32 h-32 sm:w-40 sm:h-40 ai-core-orb rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(196,30,10,0.45)]">
+<div class="text-white text-center">
 <div class="font-black leading-tight text-sm tracking-wide">AI CORE</div>
 <div class="text-[10px] font-bold opacity-80 uppercase tracking-tighter mt-1">Intelligence<br/>Engine</div>
 </div>

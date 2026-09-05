@@ -181,6 +181,9 @@ body.marketing-page {
   transform: translateY(-1px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 24px rgba(196, 30, 10, 0.35);
 }
+.ai-core-orb {
+  background: linear-gradient(135deg, #ff5c1a 0%, #c41e0a 55%, #8b0000 100%);
+}
 .btn-secondary {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
