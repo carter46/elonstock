@@ -31,9 +31,6 @@ $refPrefill = isset($_GET['ref']) ? strtoupper(trim((string)$_GET['ref'])) : '';
 <?php if (!empty($authMobileHeroHtml)) echo $authMobileHeroHtml; ?>
 <div class="auth-main-inner auth-main-inner--wide w-full max-w-[480px]">
 <div class="mb-4 md:mb-5 text-center md:text-left">
-<div class="mb-1 flex justify-center md:justify-start">
-<?php echo site_brand_markup('h-10 w-auto max-w-[220px] object-contain', 'font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight'); ?>
-</div>
 <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Create Account</h2>
 <p class="font-body-md text-body-md text-on-surface-variant text-sm md:text-base">Get started with your free account today.</p>
 </div>
@@ -151,10 +148,10 @@ Verify &amp; Continue
 <p class="text-on-surface-variant text-sm mb-4">Your account has been verified. Redirecting to your dashboard...</p>
 </div>
 <div class="mt-5 pt-5 border-t border-white/5 text-center">
-<a href="/login" class="gradient-button w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-label-sm text-label-sm uppercase tracking-widest">
-Login
-<span class="material-symbols-outlined text-[18px]">login</span>
-</a>
+<p class="text-sm text-on-surface-variant">
+Already have an account?
+<a href="/login" class="text-primary-fixed-dim font-bold hover:underline underline-offset-4 ml-1">Login</a>
+</p>
 </div>
 </div>
 </div>

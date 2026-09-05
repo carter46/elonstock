@@ -30,9 +30,6 @@ $authBgStyle = 'login';
 <?php if (!empty($authMobileHeroHtml)) echo $authMobileHeroHtml; ?>
 <div class="auth-main-inner w-full max-w-[440px]">
 <div class="mb-4 md:mb-5 text-center md:text-left">
-<div class="mb-1 flex justify-center md:justify-start">
-<?php echo site_brand_markup('h-10 w-auto max-w-[220px] object-contain', 'font-headline-md text-headline-md font-extrabold text-primary-container tracking-tight'); ?>
-</div>
 <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Welcome back</h2>
 <p class="font-body-md text-body-md text-on-surface-variant text-sm md:text-base">Enter your details to manage your investments securely.</p>
 </div>
@@ -87,10 +84,10 @@ Verify &amp; Sign In
 </button>
 </div>
 <div class="mt-5 pt-5 border-t border-white/5 text-center">
-<a href="/register" class="gradient-button w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-label-sm text-label-sm uppercase tracking-widest">
-Create Account
-<span class="material-symbols-outlined text-[18px]">person_add</span>
-</a>
+<p class="text-sm text-on-surface-variant">
+Don&apos;t have an account?
+<a href="/register" class="text-primary-fixed-dim font-bold hover:underline underline-offset-4 ml-1">Create Account</a>
+</p>
 </div>
 </div>
 </div>
