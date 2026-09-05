@@ -42,8 +42,6 @@ try {
     // fall through to defaults
 }
 
-$execImg = '/uploads/images/evergren_cmarket.png';
-$wealthImg = '/uploads/images/wallet_image3.png';
 $heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg';
 $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
 $eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
@@ -168,14 +166,24 @@ View Live Market
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <div class="trading-card p-8 reveal-up">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#34d399">apartment</span>
-<h3 class="font-headline-md text-white mb-2">Real Estate Brokerage</h3>
-<p class="text-on-surface-variant text-sm">Direct access to prime commercial real estate and high-yield residential developments across European and Asian markets.</p>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#e11d48">electric_car</span>
+<h3 class="font-headline-md text-white mb-2">Tesla, Inc. ($TSLA)</h3>
+<ul class="text-on-surface-variant text-sm space-y-1.5 list-disc list-inside">
+<li>Electric Vehicles (EVs)</li>
+<li>Tesla Energy (Solar/Megapack)</li>
+<li>Optimus Humanoid Robotics</li>
+<li>Full Self-Driving (FSD) AI</li>
+</ul>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.05s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#fbbf24">oil_barrel</span>
-<h3 class="font-headline-md text-white mb-2">Oil &amp; Gas</h3>
-<p class="text-on-surface-variant text-sm">Strategic investments in energy infrastructure and production, focusing on supply chain stability and long-term energy security.</p>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#fbbf24">rocket_launch</span>
+<h3 class="font-headline-md text-white mb-2">SpaceX ($SPCX)</h3>
+<ul class="text-on-surface-variant text-sm space-y-1.5 list-disc list-inside">
+<li>Rocket Launch (Falcon 9 / Starship)</li>
+<li>Starlink Satellite Internet</li>
+<li>SpaceXAI (Grok AI)</li>
+<li>X Corp. (formerly Twitter)</li>
+</ul>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.1s">
 <span class="material-symbols-outlined mb-4 text-3xl" style="color:#60a5fa">candlestick_chart</span>
@@ -183,9 +191,9 @@ View Live Market
 <p class="text-on-surface-variant text-sm">Automated trading strategies across listed equities and commercial stocks, built to pursue consistent daily growth without constant manual oversight.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.15s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#34d399">trending_up</span>
-<h3 class="font-headline-md text-white mb-2">Commercial Stocks</h3>
-<p class="text-on-surface-variant text-sm">Active management of blue-chip equities and mid-cap growth stocks leveraging proprietary fundamental analysis.</p>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#4285f4">search</span>
+<h3 class="font-headline-md text-white mb-2">Alphabet Inc.</h3>
+<p class="text-on-surface-variant text-sm">Alphabet Inc. is an American multinational technology conglomerate and the parent holding company of Google.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.2s">
 <span class="material-symbols-outlined mb-4 text-3xl" style="color:#a78bfa">account_balance</span>
@@ -193,9 +201,9 @@ View Live Market
 <p class="text-on-surface-variant text-sm">Venture capital, private credit, and specialized commodities providing non-correlated returns for sophisticated portfolios.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.25s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#2dd4bf">public</span>
-<h3 class="font-headline-md text-white mb-2">Sovereign Bonds</h3>
-<p class="text-on-surface-variant text-sm">Fixed income strategies focused on capital preservation through high-rated government and corporate debt instruments.</p>
+<span class="material-symbols-outlined mb-4 text-3xl" style="color:#2dd4bf">neurology</span>
+<h3 class="font-headline-md text-white mb-2">Neuralink</h3>
+<p class="text-on-surface-variant text-sm">Musk's brain-computer interface venture. While achieving massive milestones with human implants, it is funded entirely through private venture capital.</p>
 </div>
 </div>
 </div>
@@ -295,36 +303,6 @@ Select Plan
 </div>
 </div>
 </div>
-
-<div class="mb-10">
-<h3 class="font-headline-md text-white mb-6">Forex</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-forex">
-<?php foreach (get_markets_by_category('forex') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
-</div>
-
-<div class="mb-12">
-<h3 class="font-headline-md text-white mb-6">Digital Markets</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-cards">
-<?php foreach (get_markets_by_category('crypto') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
-</div>
-
-<div class="flex justify-center reveal-up">
-<a href="/trading_signals" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center">View All Markets</a>
-</div>
 </div>
 </section>
 
@@ -411,52 +389,6 @@ endforeach;
 </section>
 <?php endif; ?>
 
-<!-- Authoritative Execution -->
-<section class="section-large relative overflow-hidden">
-<div class="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-<div class="reveal-up">
-<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Technical Standards</span>
-<h2 class="font-display-sm text-display-sm text-white leading-tight mb-8">Authoritative Execution <br/>Infrastructure.</h2>
-<div class="space-y-12">
-<div class="flex gap-6">
-<div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary">speed</span>
-</div>
-<div>
-<h3 class="font-headline-md text-white mb-2">Low-Latency Order Routing</h3>
-<p class="font-body-md text-on-surface-variant max-w-[42rem]">Utilizing Tier-1 connectivity through Equinix LD4, ensuring order execution with minimal slippage and maximum price efficiency.</p>
-</div>
-</div>
-<div class="flex gap-6">
-<div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary">analytics</span>
-</div>
-<div>
-<h3 class="font-headline-md text-white mb-2">Quantitative Risk Modeling</h3>
-<p class="font-body-md text-on-surface-variant max-w-[42rem]">Real-time exposure monitoring and Monte Carlo simulations integrated into every trade workflow for rigorous capital protection.</p>
-</div>
-</div>
-<div class="flex gap-6">
-<div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary">security</span>
-</div>
-<div>
-<h3 class="font-headline-md text-white mb-2">Institutional Custody</h3>
-<p class="font-body-md text-on-surface-variant max-w-[42rem]">Assets are secured in segregated, bankruptcy-remote accounts with multi-layered insurance and jurisdictional regulatory oversight.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="relative reveal-up">
-<div class="relative rounded-3xl overflow-hidden institutional-border">
-<img alt="Execution Terminal Dashboard" class="w-full img-institutional" src="<?php echo htmlspecialchars($execImg); ?>"/>
-</div>
-<div class="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/10 blur-[60px] rounded-full pointer-events-none"></div>
-</div>
-</div>
-</section>
-
 <!-- Quantitative Engine -->
 <section class="section-large bg-surface-container-low/30 relative">
 <div class="absolute inset-0 atmosphere-grid opacity-20 pointer-events-none"></div>
@@ -511,53 +443,6 @@ endforeach;
 <div class="bg-green-500/60 rounded"></div>
 </div>
 </div>
-</div>
-</div>
-</section>
-
-<!-- Bespoke Wealth -->
-<section id="wealth" class="section-large relative">
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-<div class="order-2 lg:order-1 relative reveal-up">
-<img alt="Bespoke Wealth Management" class="w-full max-w-lg mx-auto img-institutional rounded-3xl institutional-border" src="<?php echo htmlspecialchars($wealthImg); ?>"/>
-<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
-</div>
-<div class="order-1 lg:order-2 reveal-up">
-<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Private Client Advisory</span>
-<h2 class="font-display-sm text-display-sm text-white leading-tight mb-8">Bespoke Wealth <br/>Management.</h2>
-<div class="space-y-6 mb-12">
-<div class="flex items-start gap-4 group">
-<div class="w-6 h-6 rounded-full border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-all mt-1">
-<span class="material-symbols-outlined text-[14px] text-primary">check</span>
-</div>
-<div>
-<span class="font-body-lg text-white block">Tailored Portfolio Construction</span>
-<p class="text-sm text-on-surface-variant mt-1 max-w-[42rem]">Custom investment mandates aligned with specific risk tolerances and multi-generational wealth objectives.</p>
-</div>
-</div>
-<div class="flex items-start gap-4 group">
-<div class="w-6 h-6 rounded-full border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-all mt-1">
-<span class="material-symbols-outlined text-[14px] text-primary">check</span>
-</div>
-<div>
-<span class="font-body-lg text-white block">Tax-Optimized Rebalancing</span>
-<p class="text-sm text-on-surface-variant mt-1 max-w-[42rem]">Automated portfolio adjustments designed to capture market alpha while minimizing tax liabilities across global jurisdictions.</p>
-</div>
-</div>
-<div class="flex items-start gap-4 group">
-<div class="w-6 h-6 rounded-full border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-all mt-1">
-<span class="material-symbols-outlined text-[14px] text-primary">check</span>
-</div>
-<div>
-<span class="font-body-lg text-white block">Dedicated Relationship Directors</span>
-<p class="text-sm text-on-surface-variant mt-1 max-w-[42rem]">Direct access to senior wealth consultants for strategic planning, estate management, and venture capital access.</p>
-</div>
-</div>
-</div>
-<p class="font-body-md text-on-surface-variant max-w-lg mb-10">
-Our Bespoke Wealth Management division specializes in serving Ultra-High-Net-Worth Individuals and Family Offices, offering a level of discretion and strategic oversight synonymous with top-tier global private banks.
-</p>
-<a href="/live_chat" class="btn-secondary px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest text-white inline-flex items-center justify-center">Schedule Private Consultation</a>
 </div>
 </div>
 </section>
@@ -673,17 +558,8 @@ Join investors who trust <?php echo htmlspecialchars($siteName); ?> for stocks, 
 </main>
 
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
-<script src="/js/crypto-config.js"></script>
-<script src="/js/crypto-prices.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  if (window.BloombitCryptoPrices) {
-    window.BloombitCryptoPrices.init(['bitcoin', 'ethereum', 'binancecoin', 'solana'], {
-      marketCardsSelector: '.market-cards',
-      refreshInterval: 120000
-    });
-  }
-
   // Mobile market carousels: peek next slide + auto-advance when in view
   (function initMarketSliders() {
     var mq = window.matchMedia('(max-width: 639px)');
