@@ -34,6 +34,8 @@ if (!$instrument) {
 }
 
 $illustration = market_illustration_src($instrument);
+$illustrationAlt = market_illustration_alt_src($instrument);
+$heroSlides = market_hero_slides($instrument);
 $related = get_related_markets($slug);
 $benefits = market_benefits_cards();
 $snapshot = $instrument['snapshot'] ?? [];
@@ -63,16 +65,23 @@ output_market_seo_tags($instrument);
 <?php $currentPage = 'markets'; require_once __DIR__ . '/includes/marketing-header.php'; ?>
 
 <!-- Hero -->
-<section class="market-hero relative pt-32 pb-16 md:pb-24 bg-surface-container-lowest overflow-hidden">
+<section class="market-hero relative pt-32 pb-16 md:pb-24 overflow-hidden"<?php echo !empty($heroSlides) ? ' data-hero-slider' : ''; ?>>
+<?php if (!empty($heroSlides)): ?>
+<?php foreach ($heroSlides as $i => $slideSrc): ?>
+<div class="absolute inset-0 hero-bg hero-slide<?php echo $i === 0 ? ' is-active' : ''; ?>" style="background-image: url('<?php echo htmlspecialchars($slideSrc); ?>');"></div>
+<?php endforeach; ?>
+<div class="absolute inset-0 hero-bg-overlay"></div>
+<?php else: ?>
 <div class="absolute inset-0 market-hero-glow opacity-40"></div>
+<?php endif; ?>
 <div class="relative z-10 max-w-[1440px] mx-auto px-4 md:px-margin-desktop">
 <div class="max-w-3xl">
-<span class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full mb-6 border border-border-low text-label-xs text-on-secondary-container uppercase tracking-wide">
+<span class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high/80 rounded-full mb-6 border border-border-low text-label-xs text-on-secondary-container uppercase tracking-wide">
 <span class="material-symbols-outlined text-primary-container text-sm">candlestick_chart</span>
 <?php echo htmlspecialchars($snapshot['market_type'] ?? ucfirst($instrument['category'])); ?>
 </span>
-<h1 class="font-display text-4xl sm:text-5xl lg:text-display mb-6 text-on-surface leading-tight"><?php echo htmlspecialchars($h1Title); ?></h1>
-<p class="font-body-lg text-body-lg text-on-secondary-container mb-10 max-w-2xl"><?php echo htmlspecialchars($instrument['intro']); ?></p>
+<h1 class="font-display text-4xl sm:text-5xl lg:text-display mb-6 text-white leading-tight"><?php echo htmlspecialchars($h1Title); ?></h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-2xl"><?php echo htmlspecialchars($instrument['intro']); ?></p>
 <a href="/dashboard" class="gradient-button inline-flex items-center gap-2 px-8 py-4 font-bold text-label-sm hover:scale-105 transition-transform">
 Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 </a>
@@ -164,7 +173,7 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 <section class="py-16 md:py-20 bg-surface border-y border-white/5">
 <div class="max-w-[1440px] mx-auto px-4 md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 <div class="flex justify-center order-1">
-<img src="<?php echo htmlspecialchars($illustration); ?>" alt="" class="market-illustration market-illustration-alt rounded-2xl shadow-lg max-w-sm w-full object-cover opacity-90 img-institutional" loading="lazy" aria-hidden="true"/>
+<img src="<?php echo htmlspecialchars($illustrationAlt); ?>" alt="" class="market-illustration market-illustration-alt rounded-2xl shadow-lg max-w-sm w-full object-cover opacity-90 img-institutional" loading="lazy" aria-hidden="true"/>
 </div>
 <div class="order-2">
 <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Why Investors Watch This Market</h2>
@@ -272,6 +281,22 @@ Get Started Now <span class="material-symbols-outlined">arrow_forward</span>
 
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  (function initHeroSlider() {
+    var root = document.querySelector('[data-hero-slider]');
+    if (!root) return;
+    var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-slide'));
+    if (slides.length < 2) return;
+    var index = 0;
+    setInterval(function () {
+      slides[index].classList.remove('is-active');
+      index = (index + 1) % slides.length;
+      slides[index].classList.add('is-active');
+    }, 5000);
+  })();
+});
+</script>
 <script src="/js/crypto-config.js"></script>
 <script src="/js/crypto-prices.js"></script>
 <?php if ($isCrypto && $coingeckoId): ?>

@@ -58,6 +58,31 @@ function market_illustration_src(array $instrument): string {
     return '/uploads/images/markets/placeholder.svg';
 }
 
+function market_illustration_alt_src(array $instrument): string {
+    $path = $instrument['illustration_alt'] ?? '';
+    $full = dirname(__DIR__) . $path;
+    if ($path && is_file($full)) {
+        return $path;
+    }
+    return market_illustration_src($instrument);
+}
+
+function market_hero_slides(array $instrument): array {
+    $slides = $instrument['hero_slides'] ?? [];
+    if (!is_array($slides) || empty($slides)) {
+        $fallback = market_illustration_src($instrument);
+        return $fallback !== '/uploads/images/markets/placeholder.svg' ? [$fallback] : [];
+    }
+    $out = [];
+    foreach ($slides as $path) {
+        $path = (string) $path;
+        if ($path !== '' && is_file(dirname(__DIR__) . $path)) {
+            $out[] = $path;
+        }
+    }
+    return $out;
+}
+
 function market_benefits_cards(): array {
     return [
         ['icon' => 'monitoring', 'title' => 'Real-Time Market Monitoring', 'text' => 'Track price action and volatility across assets from one professional dashboard.'],
@@ -298,6 +323,14 @@ function market_instrument_tsla(): array {
         'category' => 'stock',
         'coingecko_id' => null,
         'pair_label' => 'TSLA / USD',
+        'illustration' => '/uploads/images/1776940281102-ktk0fq16.jpg',
+        'illustration_alt' => '/uploads/images/1776940235697-7ans74go.jpg',
+        'hero_slides' => [
+            '/uploads/images/1776940235697-7ans74go.jpg',
+            '/uploads/images/1776940281102-ktk0fq16.jpg',
+            '/uploads/images/1776940259754-c03igc7z.jpg',
+            '/uploads/images/1776940199798-dga3jvle.jpg',
+        ],
         'snapshot' => [
             'market_type' => 'Stock',
             'sector' => 'Consumer Discretionary / EV',
@@ -341,6 +374,12 @@ function market_instrument_msft(): array {
         'category' => 'stock',
         'coingecko_id' => null,
         'pair_label' => 'SPCX / USD',
+        'illustration' => '/uploads/images/pace33.jpg',
+        'illustration_alt' => '/uploads/images/spac345.jpg',
+        'hero_slides' => [
+            '/uploads/images/spac345.jpg',
+            '/uploads/images/pace33.jpg',
+        ],
         'snapshot' => [
             'market_type' => 'Stock',
             'sector' => 'Aerospace / Satellite',
@@ -427,6 +466,12 @@ function market_instrument_meta(): array {
         'category' => 'stock',
         'coingecko_id' => null,
         'pair_label' => 'NLINK / USD',
+        'illustration' => '/uploads/images/nurall3.jpg',
+        'illustration_alt' => '/uploads/images/burall34.jpg',
+        'hero_slides' => [
+            '/uploads/images/burall34.jpg',
+            '/uploads/images/nurall3.jpg',
+        ],
         'snapshot' => [
             'market_type' => 'Stock',
             'sector' => 'Neurotechnology',
