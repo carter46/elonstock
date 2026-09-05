@@ -381,7 +381,7 @@ body.marketing-page {
 .section-large { padding-top: 160px; padding-bottom: 160px; }
 .section-medium { padding-top: 128px; padding-bottom: 128px; }
 .section-small { padding-top: 96px; padding-bottom: 96px; }
-/* Live markets: grid on desktop, peek carousel on mobile */
+/* Live markets: grid on desktop, vertical stack on mobile */
 .market-slider {
   width: 100%;
 }
@@ -405,27 +405,21 @@ body.marketing-page {
 }
 @media (max-width: 639px) {
   .market-slider {
-    overflow: hidden;
-    margin-right: -20px;
-    padding-right: 20px;
+    overflow: visible;
+    margin-right: 0;
+    padding-right: 0;
   }
   .market-slider-track {
     display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-  .market-slider-track::-webkit-scrollbar {
-    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: visible;
+    scroll-snap-type: none;
   }
   .market-slider-slide {
-    flex: 0 0 82%;
-    max-width: 82%;
-    scroll-snap-align: start;
+    flex: none;
+    max-width: 100%;
+    width: 100%;
   }
 }
 @keyframes orbit-spin {
