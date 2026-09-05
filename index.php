@@ -13,8 +13,6 @@ $statsUptime = get_site_setting('stats_uptime', '99.9%');
 $statsLiquidity = get_site_setting('stats_roi', '14+');
 
 $homePlans = [];
-$orbitCoins = [];
-$pdo = null;
 try {
     $pdo = require __DIR__ . '/includes/db.php';
     ensure_plan_schema($pdo);
@@ -28,42 +26,22 @@ try {
 } catch (Throwable $e) {
     $homePlans = [];
 }
-try {
-    if (!($pdo instanceof PDO)) {
-        $pdo = require __DIR__ . '/includes/db.php';
-    }
-    $coinStmt = $pdo->query('SELECT symbol, logo FROM coins WHERE enabled = 1 AND logo IS NOT NULL AND logo != "" ORDER BY sort_order, id LIMIT 14');
-    if ($coinStmt) {
-        while ($row = $coinStmt->fetch(PDO::FETCH_ASSOC)) {
-            $orbitCoins[] = $row;
-        }
-    }
-} catch (Throwable $e) {
-    // fall through to defaults
-}
+$homePlansPreview = array_slice($homePlans, 0, 3);
 
-$heroBgImg = '/uploads/images/nasa-Q1p7bh3SHj8-unsplash.jpg';
+$heroBgImg = '/uploads/images/Business-Endeavors-03.jpg';
 $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
 $eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
 $eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTjeBaz-FYpuIcbtXW_-rbo6AcxjJgKfVR2jecI-nQ1lrSn8fWdmLi-t99OUPHZgN_NO7hSRwNbbteLmUbrMvWLAk42D9OO3H2H9QVmQ0JcGGuWnHZ99UJlAYT8_hUbJakBBvwWMCn7Ztlamrd-ccxL-ZB96l17wF8YLv9DLZsAiMDsyzLwfeAWPDNLwrkCdBcboSejRk3gMPOLOeI_1F0zlphMTW8IWVYb6VYvr-a3o2';
 
-if (empty($orbitCoins)) {
-    $orbitCoins = [
-        ['symbol' => 'BTC', 'logo' => 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png'],
-        ['symbol' => 'ETH', 'logo' => 'https://assets.coingecko.com/coins/images/279/large/ethereum.png'],
-        ['symbol' => 'USDT', 'logo' => 'https://assets.coingecko.com/coins/images/325/large/Tether.png'],
-        ['symbol' => 'BNB', 'logo' => 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png'],
-        ['symbol' => 'SOL', 'logo' => 'https://assets.coingecko.com/coins/images/4128/large/solana.png'],
-        ['symbol' => 'XRP', 'logo' => 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png'],
-        ['symbol' => 'ADA', 'logo' => 'https://assets.coingecko.com/coins/images/975/large/cardano.png'],
-        ['symbol' => 'DOGE', 'logo' => 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png'],
-        ['symbol' => 'DOT', 'logo' => 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png'],
-        ['symbol' => 'AVAX', 'logo' => 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png'],
-        ['symbol' => 'LINK', 'logo' => 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png'],
-        ['symbol' => 'MATIC', 'logo' => 'https://assets.coingecko.com/coins/images/4713/large/polygon.png'],
-        ['symbol' => 'LTC', 'logo' => 'https://assets.coingecko.com/coins/images/2/large/litecoin.png'],
-        ['symbol' => 'UNI', 'logo' => 'https://assets.coingecko.com/coins/images/12504/large/uni.jpg'],
-    ];
+$orbitLogoPool = [
+    ['symbol' => 'TSLA', 'logo' => '/uploads/images/tesla.png'],
+    ['symbol' => 'SPCX', 'logo' => '/uploads/images/spacex.png'],
+    ['symbol' => 'GOOGL', 'logo' => '/uploads/images/Alphabet.png'],
+    ['symbol' => 'NRLK', 'logo' => '/uploads/images/Neuralink.png'],
+];
+$orbitCoins = [];
+for ($i = 0; $i < 14; $i++) {
+    $orbitCoins[] = $orbitLogoPool[$i % count($orbitLogoPool)];
 }
 $orbitRing1 = array_slice($orbitCoins, 0, 6);
 $orbitRing2 = array_slice($orbitCoins, 6, 4);
@@ -209,7 +187,31 @@ View Live Market
 </div>
 </section>
 
-<?php if (!empty($homePlans)): ?>
+<!-- Live Market Performance -->
+<section id="markets" class="section-medium bg-surface-container-lowest/50 border-y border-white/5 relative">
+<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent pointer-events-none"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
+<div class="mb-12 reveal-up text-center md:text-left">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Market Monitor</span>
+<h2 class="font-display-sm text-display-sm text-white">Live Market Performance</h2>
+</div>
+
+<div class="mb-10">
+<h3 class="font-headline-md text-white mb-6">Stocks &amp; Equities</h3>
+<div class="market-slider" data-market-slider>
+<div class="market-slider-track market-stocks">
+<?php foreach (get_markets_by_category('stock') as $instrument): ?>
+<div class="market-slider-slide">
+<?php require __DIR__ . '/includes/market-home-card.php'; ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<?php if (!empty($homePlansPreview)): ?>
 <!-- Investment Plans -->
 <section id="investment-plans" class="section-large bg-surface border-y border-white/5 relative">
 <div class="absolute inset-0 refined-gradient pointer-events-none"></div>
@@ -220,13 +222,14 @@ View Live Market
 <h2 class="font-display-sm text-display-sm text-white">Choose Your Plan</h2>
 <p class="mt-4 text-on-surface-variant font-body-md max-w-[42rem]">Select a plan to open it in your dashboard and invest with your account balance. Your selection is kept when you sign in.</p>
 </div>
-<a href="/plans" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center shrink-0">Compare Plans</a>
+<a href="/dashboard/user/investment-plans" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center shrink-0">View All</a>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
 <?php
 $homePlanIndex = 0;
-foreach ($homePlans as $plan):
-    $isHighlight = ($homePlanIndex === 1 && count($homePlans) >= 2);
+$homePlansCount = count($homePlansPreview);
+foreach ($homePlansPreview as $plan):
+    $isHighlight = ($homePlanIndex === 1 && $homePlansCount >= 2);
     $homePlanIndex++;
     $minFmt = format_usd_amount($plan['min_deposit']);
     $maxFmt = !empty($plan['max_deposit']) ? format_usd_amount($plan['max_deposit']) : null;
@@ -278,33 +281,17 @@ Select Plan
 </a>
 <?php endforeach; ?>
 </div>
+<?php if (count($homePlans) > 3): ?>
+<div class="mt-10 flex justify-center reveal-up">
+<a href="/dashboard/user/investment-plans" class="btn-secondary px-8 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
+View All
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<?php endif; ?>
 </div>
 </section>
 <?php endif; ?>
-
-<!-- Live Market Performance -->
-<section id="markets" class="section-medium bg-surface-container-lowest/50 border-y border-white/5 relative">
-<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent pointer-events-none"></div>
-<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
-<div class="mb-12 reveal-up text-center md:text-left">
-<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Market Monitor</span>
-<h2 class="font-display-sm text-display-sm text-white">Live Market Performance</h2>
-</div>
-
-<div class="mb-10">
-<h3 class="font-headline-md text-white mb-6">Stocks &amp; Equities</h3>
-<div class="market-slider" data-market-slider>
-<div class="market-slider-track market-stocks">
-<?php foreach (get_markets_by_category('stock') as $instrument): ?>
-<div class="market-slider-slide">
-<?php require __DIR__ . '/includes/market-home-card.php'; ?>
-</div>
-<?php endforeach; ?>
-</div>
-</div>
-</div>
-</div>
-</section>
 
 <!-- AI Market Intelligence Orbit -->
 <section class="section-large bg-surface border-y border-white/5 overflow-hidden relative">
