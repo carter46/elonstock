@@ -28,7 +28,12 @@ try {
 }
 $homePlansPreview = array_slice($homePlans, 0, 3);
 
-$heroBgImg = '/uploads/images/Business-Endeavors-03.jpg';
+$heroSlides = [
+    '/uploads/images/Business-Endeavors-03.jpg',
+    '/uploads/images/psace_xx.jpg',
+    '/uploads/images/fleets_tuk.webp',
+    '/uploads/images/msjd_spadd.jpg',
+];
 $eduBeginner = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClXum0n5B3Fys7n6VOV6KZhwxyShVM0LCSKgB8SowoEgxrXjNTakjFaTonTQVYfKAxjWY0GZbcHevK4tuOw6eXiW_-7bKuWD4lewm9wxl51RDLOHQa7vH3fDiQA6sUQeFVJvw9D8-CjyPJELlqVFFfRcZyL7MnmMiA9HA_An3Ae4jBpRn2BWE7G1Pk7VM_vdjw8YHZh7bO0EzfAj0XZ7tDSkBPaK_CKJXq6P_pa9rM1ALr5vlx69f4';
 $eduIntermediate = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBAU594TAbyPKlG5KWutbMwCqXGdyxGubJNUFDO6FzVvF575dnmQkeOqmtDdTTaubPeTzJY1hR1B5vTbDoUaHWJJUe3iugxmlKGiko7VeZN03x2xTcUKkQdP1tEgbYiEt8BEVj3N4PCFw0s-sPyfeWTY3gbnQOYVLq7vV1mDxbmVgJhk_70tfiPXVKHzSxNrcWHBMC_9KjaBGAsAaAwJwMdyThozujO_EMfI6WHBxpaHgkN-_8YNJrX';
 $eduAdvanced = 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0RFiVG3wXTjeBaz-FYpuIcbtXW_-rbo6AcxjJgKfVR2jecI-nQ1lrSn8fWdmLi-t99OUPHZgN_NO7hSRwNbbteLmUbrMvWLAk42D9OO3H2H9QVmQ0JcGGuWnHZ99UJlAYT8_hUbJakBBvwWMCn7Ztlamrd-ccxL-ZB96l17wF8YLv9DLZsAiMDsyzLwfeAWPDNLwrkCdBcboSejRk3gMPOLOeI_1F0zlphMTW8IWVYb6VYvr-a3o2';
@@ -77,15 +82,17 @@ if (is_dir($partnerDir)) {
 <main class="relative pt-20">
 
 <!-- Hero -->
-<section class="relative min-h-[88vh] lg:min-h-screen w-full flex items-center justify-center overflow-hidden hero-section">
-<div class="absolute inset-0 hero-bg" style="background-image: url('<?php echo htmlspecialchars($heroBgImg); ?>');"></div>
+<section class="relative min-h-[88vh] lg:min-h-screen w-full flex items-center justify-center overflow-hidden hero-section" data-hero-slider>
+<?php foreach ($heroSlides as $i => $slideSrc): ?>
+<div class="absolute inset-0 hero-bg hero-slide<?php echo $i === 0 ? ' is-active' : ''; ?>" style="background-image: url('<?php echo htmlspecialchars($slideSrc); ?>');"></div>
+<?php endforeach; ?>
 <div class="absolute inset-0 hero-bg-overlay"></div>
 <div class="relative z-10 text-center max-w-5xl px-margin-mobile py-24 md:py-32">
 <h1 class="hero-headline font-display-lg text-display-lg text-white mb-6 tracking-tight leading-[1.05] reveal-up">
-Secure Capital. <br/> <span class="italic font-normal text-on-surface-variant">Intelligent Growth.</span>
+Secure Capital. <br/> <span class="italic font-normal hero-orange-gradient">Intelligent Growth.</span>
 </h1>
 <p class="font-body-md md:font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-8 md:mb-unit-xl reveal-up text-base md:text-lg">
-<?php echo htmlspecialchars($siteName); ?> provides professional access to stocks, equities, real estate investment, and automated trading. Sit back and enjoy how your profit grows on a daily basis — with transparency as our number one priority.
+<?php echo htmlspecialchars($siteName); ?> provides professional access to stocks, equities, real estate investment, and automated trading.
 </p>
 <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-unit-md reveal-up w-full max-w-md sm:max-w-none mx-auto">
 <a href="/register" class="gradient-button w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 rounded-full font-label-sm md:font-label-md text-label-sm md:text-label-md uppercase tracking-widest group inline-flex items-center justify-center gap-2 text-white">
@@ -144,7 +151,7 @@ View Live Market
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 <div class="trading-card p-8 reveal-up">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#e11d48">electric_car</span>
+<img src="/uploads/images/tesla.png" alt="Tesla" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
 <h3 class="font-headline-md text-white mb-2">Tesla, Inc. ($TSLA)</h3>
 <ul class="text-on-surface-variant text-sm space-y-1.5 list-disc list-inside">
 <li>Electric Vehicles (EVs)</li>
@@ -154,7 +161,7 @@ View Live Market
 </ul>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.05s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#fbbf24">rocket_launch</span>
+<img src="/uploads/images/spacex.png" alt="SpaceX" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
 <h3 class="font-headline-md text-white mb-2">SpaceX ($SPCX)</h3>
 <ul class="text-on-surface-variant text-sm space-y-1.5 list-disc list-inside">
 <li>Rocket Launch (Falcon 9 / Starship)</li>
@@ -169,7 +176,7 @@ View Live Market
 <p class="text-on-surface-variant text-sm">Automated trading strategies across listed equities and commercial stocks, built to pursue consistent daily growth without constant manual oversight.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.15s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#4285f4">search</span>
+<img src="/uploads/images/Alphabet.png" alt="Alphabet" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
 <h3 class="font-headline-md text-white mb-2">Alphabet Inc.</h3>
 <p class="text-on-surface-variant text-sm">Alphabet Inc. is an American multinational technology conglomerate and the parent holding company of Google.</p>
 </div>
@@ -179,7 +186,7 @@ View Live Market
 <p class="text-on-surface-variant text-sm">Venture capital, private credit, and specialized commodities providing non-correlated returns for sophisticated portfolios.</p>
 </div>
 <div class="trading-card p-8 reveal-up" style="transition-delay:0.25s">
-<span class="material-symbols-outlined mb-4 text-3xl" style="color:#2dd4bf">neurology</span>
+<img src="/uploads/images/Neuralink.png" alt="Neuralink" class="w-12 h-12 object-contain mb-4 rounded-lg"/>
 <h3 class="font-headline-md text-white mb-2">Neuralink</h3>
 <p class="text-on-surface-variant text-sm">Musk's brain-computer interface venture. While achieving massive milestones with human implants, it is funded entirely through private venture capital.</p>
 </div>
@@ -456,46 +463,41 @@ endforeach;
 </div>
 </section>
 
-<!-- Learn and Earn -->
+<!-- Our Team & Management -->
 <section class="section-large relative">
 <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 reveal-up">
-<div>
-<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Education</span>
-<h2 class="font-display-sm text-display-sm text-white">Learn and Earn</h2>
-</div>
-<a href="/help_centre" class="text-primary font-label-md uppercase tracking-widest inline-flex items-center gap-2 hover:gap-4 transition-all">
-Explore Modules <span class="material-symbols-outlined">arrow_forward</span>
-</a>
+<div class="mb-16 reveal-up">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Leadership</span>
+<h2 class="font-display-sm text-display-sm text-white">Our Team &amp; Management</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-<a href="/help_centre" class="group reveal-up">
+<div class="group reveal-up">
 <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6 institutional-border">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 img-institutional" style="background-image: url('<?php echo htmlspecialchars($eduBeginner); ?>')"></div>
 <div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
-<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Beginner</div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Chief Executive Officer</div>
 </div>
-<h3 class="font-headline-md text-white mb-3 group-hover:text-primary transition-colors">Fundamentals of Digital Assets</h3>
-<p class="font-body-md text-on-surface-variant">Master the core concepts of blockchain technology and portfolio diversification.</p>
-</a>
-<a href="/help_centre" class="group reveal-up" style="transition-delay:0.1s">
+<h3 class="font-headline-md text-white mb-3">Marcus Hale</h3>
+<p class="font-body-md text-on-surface-variant">Leads overall strategy and capital growth initiatives across the platform.</p>
+</div>
+<div class="group reveal-up" style="transition-delay:0.1s">
 <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6 institutional-border">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 img-institutional" style="background-image: url('<?php echo htmlspecialchars($eduIntermediate); ?>')"></div>
 <div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
-<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Intermediate</div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Chief Investment Officer</div>
 </div>
-<h3 class="font-headline-md text-white mb-3 group-hover:text-primary transition-colors">Advanced Technical Analysis</h3>
-<p class="font-body-md text-on-surface-variant">Understand order flow, market depth, and institutional liquidity zones.</p>
-</a>
-<a href="/help_centre" class="group reveal-up" style="transition-delay:0.2s">
+<h3 class="font-headline-md text-white mb-3">Elena Vargas</h3>
+<p class="font-body-md text-on-surface-variant">Oversees portfolio construction, risk allocation, and market research.</p>
+</div>
+<div class="group reveal-up" style="transition-delay:0.2s">
 <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6 institutional-border">
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 img-institutional" style="background-image: url('<?php echo htmlspecialchars($eduAdvanced); ?>')"></div>
 <div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors"></div>
-<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Advanced</div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-primary text-on-primary font-label-sm text-[10px] uppercase rounded">Head of Trading</div>
 </div>
-<h3 class="font-headline-md text-white mb-3 group-hover:text-primary transition-colors">Algorithmic Strategies</h3>
-<p class="font-body-md text-on-surface-variant">Learn to deploy automated trading approaches with institutional risk controls.</p>
-</a>
+<h3 class="font-headline-md text-white mb-3">Julian Crowe</h3>
+<p class="font-body-md text-on-surface-variant">Manages execution systems and day-to-day trading operations.</p>
+</div>
 </div>
 </div>
 </section>
@@ -547,6 +549,19 @@ Join investors who trust <?php echo htmlspecialchars($siteName); ?> for stocks, 
 <?php require_once __DIR__ . '/includes/marketing-footer.php'; ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  (function initHeroSlider() {
+    var root = document.querySelector('[data-hero-slider]');
+    if (!root) return;
+    var slides = Array.prototype.slice.call(root.querySelectorAll('.hero-slide'));
+    if (slides.length < 2) return;
+    var index = 0;
+    setInterval(function () {
+      slides[index].classList.remove('is-active');
+      index = (index + 1) % slides.length;
+      slides[index].classList.add('is-active');
+    }, 5000);
+  })();
+
   // Mobile market carousels: peek next slide + auto-advance when in view
   (function initMarketSliders() {
     var mq = window.matchMedia('(max-width: 639px)');

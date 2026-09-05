@@ -246,7 +246,18 @@ body.marketing-page {
   background-position: center;
   background-repeat: no-repeat;
 }
+.hero-slide {
+  opacity: 0;
+  transition: opacity 1.1s ease-in-out;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-slide.is-active {
+  opacity: 1;
+  z-index: 1;
+}
 .hero-bg-overlay {
+  z-index: 2;
   background:
     linear-gradient(
       to top,
@@ -260,6 +271,13 @@ body.marketing-page {
       rgba(11, 14, 17, 0) 100%
     ),
     rgba(4, 6, 12, 0.16);
+}
+.hero-orange-gradient {
+  background: linear-gradient(135deg, #ff8a3d 0%, #ff5c1a 45%, #e03d00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 .hero-image-animate {
   opacity: 0;
