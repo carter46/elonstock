@@ -545,6 +545,38 @@ body.marketing-page {
   border: 0;
   pointer-events: none !important;
 }
+.home-yt-sound-btn {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(8, 20, 34, 0.88);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+.home-yt-sound-btn:hover {
+  background: rgba(12, 28, 46, 0.95);
+  transform: translateY(-1px);
+}
+.home-yt-sound-btn[hidden] {
+  display: none !important;
+}
+.home-yt-sound-btn .material-symbols-outlined {
+  font-size: 16px;
+  line-height: 1;
+}
 .section-photo-bg {
   position: absolute;
   inset: 0;

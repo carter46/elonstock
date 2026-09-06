@@ -248,6 +248,10 @@ Get Started
   class="home-yt-player"
   data-yt-id="<?php echo htmlspecialchars($homepageYoutubeId); ?>"
   data-yt-start="<?php echo (int) $homepageYoutubeStart; ?>"></div>
+<button type="button" class="home-yt-sound-btn" data-home-yt-sound hidden>
+<span class="material-symbols-outlined" data-home-yt-sound-icon>volume_off</span>
+<span data-home-yt-sound-label>Tap for sound</span>
+</button>
 </div>
 </div>
 </div>
@@ -645,6 +649,9 @@ document.addEventListener('DOMContentLoaded', function () {
 (function () {
   var mount = document.getElementById('home-yt-player');
   var section = document.querySelector('[data-home-video-section]');
+  var soundBtn = document.querySelector('[data-home-yt-sound]');
+  var soundIcon = document.querySelector('[data-home-yt-sound-icon]');
+  var soundLabel = document.querySelector('[data-home-yt-sound-label]');
   if (!mount || !section) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     section.setAttribute('hidden', '');
@@ -659,11 +666,26 @@ document.addEventListener('DOMContentLoaded', function () {
   var player = null;
   var inView = false;
   var ready = false;
+  var soundOn = false;
 
-  function playInView() {
+  function updateSoundUi() {
+    if (!soundBtn) return;
+    if (soundIcon) soundIcon.textContent = soundOn ? 'volume_up' : 'volume_off';
+    if (soundLabel) soundLabel.textContent = soundOn ? 'Sound on' : 'Tap for sound';
+    soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+  }
+
+  function showSoundBtn(show) {
+    if (!soundBtn) return;
+    if (show) soundBtn.removeAttribute('hidden');
+    else soundBtn.setAttribute('hidden', '');
+  }
+
+  function playMutedInView() {
     if (!ready || !player || !inView) return;
     try {
-      if (typeof player.mute === 'function') player.mute();
+      // Keep current mute state: only force mute if user has not enabled sound yet.
+      if (!soundOn && typeof player.mute === 'function') player.mute();
       if (typeof player.playVideo === 'function') player.playVideo();
     } catch (e) {}
   }
@@ -675,17 +697,37 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (e) {}
   }
 
+  function enableSound() {
+    if (!ready || !player) return;
+    soundOn = true;
+    updateSoundUi();
+    try {
+      if (typeof player.unMute === 'function') player.unMute();
+      if (typeof player.setVolume === 'function') player.setVolume(100);
+      // Do not pause — only unmute. Resume if somehow paused.
+      var state = typeof player.getPlayerState === 'function' ? player.getPlayerState() : null;
+      if (window.YT && state !== YT.PlayerState.PLAYING && inView) {
+        player.playVideo();
+      }
+    } catch (e) {}
+  }
+
   function bindObserver() {
     if (!('IntersectionObserver' in window)) {
       inView = true;
-      playInView();
+      playMutedInView();
+      showSoundBtn(true);
       return;
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         inView = entry.isIntersecting && entry.intersectionRatio >= 0.25;
-        if (inView) playInView();
-        else pauseOutOfView();
+        if (inView) {
+          playMutedInView();
+          showSoundBtn(true);
+        } else {
+          pauseOutOfView();
+        }
       });
     }, { threshold: [0, 0.25, 0.5, 0.75] });
     io.observe(section);
@@ -727,20 +769,38 @@ document.addEventListener('DOMContentLoaded', function () {
               event.target.seekTo(startAt, true);
             }
           } catch (e) {}
+          updateSoundUi();
           bindObserver();
-          if (inView) playInView();
+          if (inView) playMutedInView();
+          showSoundBtn(true);
         },
         onStateChange: function (event) {
           if (!window.YT) return;
+          if (event.data === YT.PlayerState.PLAYING && soundOn) {
+            try {
+              if (typeof event.target.isMuted === 'function' && event.target.isMuted()) {
+                event.target.unMute();
+                event.target.setVolume(100);
+              }
+            } catch (e) {}
+          }
           if (event.data === YT.PlayerState.ENDED && inView) {
             try {
               if (typeof event.target.seekTo === 'function') event.target.seekTo(startAt, true);
-              event.target.mute();
+              if (!soundOn) event.target.mute();
               event.target.playVideo();
             } catch (e) {}
           }
         }
       }
+    });
+  }
+
+  if (soundBtn) {
+    soundBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      enableSound();
     });
   }
 
