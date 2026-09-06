@@ -184,16 +184,49 @@ function get_default_og_image_path(): string {
 }
 
 /**
- * Extract a YouTube video ID from common URL formats.
+ * Extract a YouTube video ID from common URL formats (or a bare 11-char ID).
  */
 function get_youtube_video_id(?string $url): ?string {
-    if (empty($url) || !is_string($url)) {
+    if ($url === null || !is_string($url)) {
         return null;
     }
-    $url = trim($url);
-    if (preg_match('#(?:youtube\.com/watch\?(?:[^#]*&)?v=|youtu\.be/|youtube\.com/embed/|youtube\.com/shorts/)([a-zA-Z0-9_-]{11})#', $url, $m)) {
+    $url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    $url = preg_replace('/\s+/u', '', $url) ?? $url;
+    if ($url === '') {
+        return null;
+    }
+
+    // Bare video ID
+    if (preg_match('/^[A-Za-z0-9_-]{11}$/', $url)) {
+        return $url;
+    }
+
+    // iframe / embed HTML paste
+    if (preg_match('#(?:youtube(?:-nocookie)?\.com/embed/|youtu\.be/)([A-Za-z0-9_-]{11})#i', $url, $m)) {
         return $m[1];
     }
+
+    // watch?v= / &v=
+    if (preg_match('/(?:[?&]v=|\/v\/)([A-Za-z0-9_-]{11})/i', $url, $m)) {
+        return $m[1];
+    }
+
+    // youtu.be / shorts / live / embed path
+    if (preg_match('#(?:youtu\.be/|youtube(?:-nocookie)?\.com/(?:embed|shorts|live|v)/)([A-Za-z0-9_-]{11})#i', $url, $m)) {
+        return $m[1];
+    }
+
+    // Last resort: any 11-char YouTube-like token in the string
+    if (preg_match_all('/[A-Za-z0-9_-]{11}/', $url, $all) && !empty($all[0])) {
+        foreach ($all[0] as $candidate) {
+            // Prefer tokens that look like typical YouTube IDs (mixed case / digits / underscore / hyphen)
+            if (preg_match('/[A-Za-z]/', $candidate) && preg_match('/[0-9_-]/', $candidate)) {
+                return $candidate;
+            }
+        }
+        return $all[0][0];
+    }
+
     return null;
 }
 

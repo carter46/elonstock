@@ -130,8 +130,8 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 </div>
 <div class="md:col-span-2">
 <label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Homepage YouTube Video URL</label>
-<input id="settings-homepage-youtube" type="url" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['homepage_youtube_url']); ?>" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."/>
-<p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Shown in the homepage video section (after Live Market Performance). Leave empty to hide the section.</p>
+<input id="settings-homepage-youtube" type="text" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['homepage_youtube_url']); ?>" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."/>
+<p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Shown on the homepage between <strong>Live Market Performance</strong> and <strong>Choose Your Plan</strong>. Click <strong>Save Branding</strong> after pasting. Leave empty to hide.</p>
 </div>
 <div>
 <label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Homepage Video Start Time (seconds)</label>
@@ -476,7 +476,7 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
         deposit_bonus_percentage: depositBonusPct
       })
     }).then(function(r){ return r.json(); }).then(function(res){
-      showMsg(document.getElementById('settings-branding-msg'), res.success ? 'Branding saved.' : (res.error || 'Failed'), res.success);
+      showMsg(document.getElementById('settings-branding-msg'), res.success ? 'Branding saved. Homepage video appears between Live Market Performance and Choose Your Plan.' : (res.error || 'Failed'), res.success);
       btn.disabled = false;
     }).catch(function(){
       showMsg(document.getElementById('settings-branding-msg'), 'Request failed.', false);

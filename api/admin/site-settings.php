@@ -8,6 +8,7 @@
 header('Content-Type: application/json');
 
 require_once dirname(__DIR__, 2) . '/includes/session-bootstrap.php';
+require_once dirname(__DIR__, 2) . '/includes/helpers.php';
 require_once dirname(__DIR__, 2) . '/includes/admin-audit-log.php';
 if (($_SESSION['role'] ?? '') !== 'admin') {
     http_response_code(401);
@@ -186,6 +187,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if ($k === 'homepage_youtube_start_seconds') {
             $v = (string) max(0, (int) $v);
+        }
+        if ($k === 'homepage_youtube_url') {
+            // Accept bare IDs and normalize to a canonical watch URL when possible.
+            $ytId = get_youtube_video_id($v);
+            if ($v !== '' && $ytId === null) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Invalid Homepage YouTube URL. Paste a youtube.com or youtu.be link.']);
+                exit;
+            }
+            if ($ytId) {
+                $v = 'https://www.youtube.com/watch?v=' . $ytId;
+            } else {
+                $v = '';
+            }
         }
         $updates[$k] = $v;
     }

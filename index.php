@@ -28,9 +28,10 @@ try {
 }
 $homePlansPreview = array_slice($homePlans, 0, 3);
 
-$homepageYoutubeUrl = get_site_setting('homepage_youtube_url', '');
+$homepageYoutubeUrl = trim((string) (get_site_setting('homepage_youtube_url', '') ?? ''));
 $homepageYoutubeId = get_youtube_video_id($homepageYoutubeUrl);
 $homepageYoutubeStart = max(0, (int) get_site_setting('homepage_youtube_start_seconds', '0'));
+$showHomepageVideo = is_string($homepageYoutubeId) && $homepageYoutubeId !== '';
 
 $heroSlides = [
     '/uploads/images/Business-Endeavors-03.jpg',
@@ -221,13 +222,13 @@ Login
 </div>
 </section>
 
-<?php if ($homepageYoutubeId): ?>
+<?php if ($showHomepageVideo): ?>
 <!-- Platform video -->
 <section id="platform-video" class="section-medium bg-surface border-y border-white/5 relative overflow-hidden" data-home-video-section>
 <div class="absolute inset-0 refined-gradient pointer-events-none opacity-60"></div>
 <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-<div class="order-2 lg:order-1 reveal-up">
+<div class="order-2 lg:order-1">
 <span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Platform Overview</span>
 <h2 class="font-display-sm text-display-sm text-white mb-5 leading-tight">Invest with clarity across global markets</h2>
 <p class="font-body-md text-on-surface-variant mb-4 max-w-xl">
@@ -241,12 +242,20 @@ Get Started
 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
 </a>
 </div>
-<div class="order-1 lg:order-2 reveal-up">
+<div class="order-1 lg:order-2">
 <div class="home-yt-frame rounded-2xl overflow-hidden border border-white/10 bg-surface-container-lowest shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
 <div id="home-yt-player"
   class="home-yt-player"
   data-yt-id="<?php echo htmlspecialchars($homepageYoutubeId); ?>"
   data-yt-start="<?php echo (int) $homepageYoutubeStart; ?>"></div>
+<noscript>
+<iframe
+  title="Platform video"
+  src="https://www.youtube.com/embed/<?php echo htmlspecialchars($homepageYoutubeId); ?>?start=<?php echo (int) $homepageYoutubeStart; ?>&amp;mute=1&amp;loop=1&amp;playlist=<?php echo htmlspecialchars($homepageYoutubeId); ?>"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  loading="lazy"></iframe>
+</noscript>
 </div>
 </div>
 </div>
