@@ -184,6 +184,7 @@ foreach ($adminPlans as $idx => $p):
 <button type="button" id="global-settings-save" class="w-full bg-primary/20 hover:bg-primary/30 text-zinc-900 font-semibold py-2.5 rounded-lg transition-colors">Update Global Settings</button>
 </div>
 </div>
+<p id="global-settings-msg" class="text-sm mt-4 hidden"></p>
 </div>
 </section>
 
@@ -503,10 +504,16 @@ if (drawer) {
     if (planFormSubmitting) return;
     planFormSubmitting = true;
     var submitBtns = document.querySelectorAll('button[form="admin-plan-form"], #admin-plan-form button[type="submit"]');
-    submitBtns.forEach(function(b){ b.disabled = true; b.classList.add('opacity-60','cursor-not-allowed'); });
+    submitBtns.forEach(function(b){
+      if (window.AdminUI) window.AdminUI.setButtonLoading(b, true, 'Saving…');
+      else { b.disabled = true; b.classList.add('opacity-60','cursor-not-allowed'); }
+    });
     var releaseSubmit = function(){
       planFormSubmitting = false;
-      submitBtns.forEach(function(b){ b.disabled = false; b.classList.remove('opacity-60','cursor-not-allowed'); });
+      submitBtns.forEach(function(b){
+        if (window.AdminUI) window.AdminUI.setButtonLoading(b, false);
+        else { b.disabled = false; b.classList.remove('opacity-60','cursor-not-allowed'); }
+      });
     };
     var id = document.getElementById('plan-form-id').value;
     var featuresText = document.getElementById('plan-form-features').value || '';
@@ -550,16 +557,29 @@ if (drawer) {
   var globalSaveBtn = document.getElementById('global-settings-save');
   if (globalSaveBtn) globalSaveBtn.addEventListener('click', function(){
     var btn = this;
-    btn.disabled = true;
+    var msgEl = document.getElementById('global-settings-msg');
+    if (window.AdminUI) window.AdminUI.setButtonLoading(btn, true, 'Saving…');
+    else btn.disabled = true;
+    if (window.AdminUI) window.AdminUI.showMsg(msgEl, 'Saving global settings…', true);
     var data = {
       max_active_plans_per_user: document.getElementById('global-max-plans').value,
       compounding_enabled: document.getElementById('global-compounding').checked ? '1' : '0'
     };
     fetch('/api/admin/site-settings.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(data) })
       .then(function(r){ return r.json(); })
-      .then(function(res){ if (res.success) alert('Settings updated'); else alert(res.error || 'Failed'); })
-      .catch(function(){ alert('Error'); })
-      .finally(function(){ btn.disabled = false; });
+      .then(function(res){
+        if (window.AdminUI) window.AdminUI.showMsg(msgEl, res.success ? 'Global settings updated.' : (res.error || 'Failed'), !!res.success);
+        else if (res.success) alert('Settings updated');
+        else alert(res.error || 'Failed');
+      })
+      .catch(function(){
+        if (window.AdminUI) window.AdminUI.showMsg(msgEl, 'Request failed.', false);
+        else alert('Error');
+      })
+      .finally(function(){
+        if (window.AdminUI) window.AdminUI.setButtonLoading(btn, false);
+        else btn.disabled = false;
+      });
   });
 }
 })();

@@ -113,7 +113,7 @@ Manual Distribution
 <span class="material-symbols-outlined text-lg">send</span>
 Run Manual Distribution
 </button>
-<div id="ai-manual-result" class="mt-4 hidden text-sm"></div>
+<div id="ai-manual-result" class="mt-4 hidden text-sm" data-msg-base-class="mt-4 text-sm"></div>
 </section>
 </div>
 
@@ -133,7 +133,8 @@ Run Manual Distribution
 
   document.getElementById('ai-save-settings').addEventListener('click', function(){
     var btn = this;
-    btn.disabled = true;
+    if (window.AdminUI) window.AdminUI.setButtonLoading(btn, true, 'Saving…');
+    else btn.disabled = true;
     var timeInput = document.getElementById('ai-distribution-start-time');
     var timeVal = timeInput.value || '09:00';
     if (timeVal.length === 5) timeVal += ':00';
@@ -151,39 +152,62 @@ Run Manual Distribution
           var t = document.getElementById('ai-toast');
           t.textContent = res.data && res.data.message ? res.data.message : 'Settings saved';
           t.classList.remove('hidden');
+          t.classList.remove('admin-feedback-pop');
+          void t.offsetWidth;
+          t.classList.add('admin-feedback-pop');
           setTimeout(function(){ t.classList.add('hidden'); }, 2500);
           window.location.reload();
-        } else alert(res.error || 'Failed');
+        } else {
+          alert(res.error || 'Failed');
+          if (window.AdminUI) window.AdminUI.setButtonLoading(btn, false);
+          else btn.disabled = false;
+        }
       })
-      .catch(function(){ alert('Error'); })
-      .finally(function(){ btn.disabled = false; });
+      .catch(function(){
+        alert('Error');
+        if (window.AdminUI) window.AdminUI.setButtonLoading(btn, false);
+        else btn.disabled = false;
+      });
   });
 
   document.getElementById('ai-manual-distribute').addEventListener('click', function(){
     var btn = this;
     var resultEl = document.getElementById('ai-manual-result');
     if (!confirm('Run manual distribution now? This will credit all eligible investments immediately.')) return;
-    btn.disabled = true;
+    if (window.AdminUI) window.AdminUI.setButtonLoading(btn, true, 'Running…');
+    else btn.disabled = true;
     resultEl.classList.add('hidden');
     fetch('/api/admin/ai-bot-config.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'manual_distribute' }) })
       .then(function(r){ return r.json(); })
       .then(function(res){
         if (res.success) {
-          resultEl.textContent = res.data.message || 'Done.';
-          resultEl.className = 'mt-4 text-sm text-emerald-600 dark:text-emerald-400';
-          resultEl.classList.remove('hidden');
+          if (window.AdminUI) window.AdminUI.showMsg(resultEl, res.data.message || 'Done.', true);
+          else {
+            resultEl.textContent = res.data.message || 'Done.';
+            resultEl.className = 'mt-4 text-sm text-emerald-600 dark:text-emerald-400';
+            resultEl.classList.remove('hidden');
+          }
         } else {
-          resultEl.textContent = res.error || 'Failed';
-          resultEl.className = 'mt-4 text-sm text-red-600 dark:text-red-400';
-          resultEl.classList.remove('hidden');
+          if (window.AdminUI) window.AdminUI.showMsg(resultEl, res.error || 'Failed', false);
+          else {
+            resultEl.textContent = res.error || 'Failed';
+            resultEl.className = 'mt-4 text-sm text-red-600 dark:text-red-400';
+            resultEl.classList.remove('hidden');
+          }
         }
       })
       .catch(function(){
-        resultEl.textContent = 'Request failed';
-        resultEl.className = 'mt-4 text-sm text-red-600';
-        resultEl.classList.remove('hidden');
+        if (window.AdminUI) window.AdminUI.showMsg(resultEl, 'Request failed', false);
+        else {
+          resultEl.textContent = 'Request failed';
+          resultEl.className = 'mt-4 text-sm text-red-600';
+          resultEl.classList.remove('hidden');
+        }
       })
-      .finally(function(){ btn.disabled = false; });
+      .finally(function(){
+        if (window.AdminUI) window.AdminUI.setButtonLoading(btn, false);
+        else btn.disabled = false;
+      });
   });
 })();
 </script>

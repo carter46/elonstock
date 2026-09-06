@@ -26,23 +26,23 @@ if ($siteLogo !== '' && strpos($siteLogo, 'http') !== 0 && rtrim((string) $site_
 <title><?= htmlspecialchars($siteName) ?> | Transactional Email</title>
 <style>
 body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background-color:#eef2f8;color:#081422}
-a{color:#4b8eff;text-decoration:none}
+a{color:#c41e0a;text-decoration:none}
 </style>
 </head>
 <body style="font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background-color:#eef2f8;color:#081422;line-height:1.6">
 <div style="max-width:600px;margin:0 auto;padding:24px">
 <div style="background:#fff;border:1px solid #d5dde8;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(8,20,34,0.08)">
-<div style="height:6px;width:100%;background:linear-gradient(90deg,#4b8eff 0%,#002e69 100%);background-color:#4b8eff"></div>
+<div style="height:6px;width:100%;background:linear-gradient(90deg,#ff5c1a 0%,#c41e0a 55%,#8b0000 100%);background-color:#c41e0a"></div>
 <div style="padding:32px 40px 24px;background:#fff;border-bottom:1px solid #e8eef6;text-align:center">
 <?php if ($siteLogo !== ''): ?>
 <img src="<?= htmlspecialchars($siteLogo) ?>" alt="<?= htmlspecialchars($siteName) ?>" style="max-height:48px;max-width:220px;width:auto;height:auto;display:inline-block"/>
 <?php else: ?>
-<span style="font-size:32px;font-weight:700;color:#081422;letter-spacing:-0.02em;line-height:1.2"><?= htmlspecialchars($brandBase) ?><?php if ($brandAccent !== ''): ?><span style="color:#4b8eff"><?= htmlspecialchars($brandAccent) ?></span><?php endif; ?></span>
+<span style="font-size:32px;font-weight:700;color:#081422;letter-spacing:-0.02em;line-height:1.2"><?= htmlspecialchars($brandBase) ?><?php if ($brandAccent !== ''): ?><span style="color:#c41e0a"><?= htmlspecialchars($brandAccent) ?></span><?php endif; ?></span>
 <?php endif; ?>
 </div>
 <div style="padding:32px 40px">
 <div style="margin-bottom:24px;text-align:center">
-<span style="display:inline-block;padding:6px 12px;background:rgba(75,142,255,0.12);color:#005bc1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:9999px"><?= htmlspecialchars($badge) ?></span>
+<span style="display:inline-block;padding:6px 12px;background:rgba(196,30,10,0.12);color:#c41e0a;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:9999px"><?= htmlspecialchars($badge) ?></span>
 </div>
 <h2 style="margin:0 0 24px;font-size:28px;font-weight:700;color:#081422;line-height:1.3"><?= htmlspecialchars($heading) ?></h2>
 <div style="color:#5a6578;font-size:16px;line-height:1.7">
@@ -50,7 +50,7 @@ a{color:#4b8eff;text-decoration:none}
 </div>
 <?php if ($cta_text): ?>
 <div style="margin-top:32px;margin-bottom:32px;text-align:center">
-<a href="<?= htmlspecialchars($cta_url) ?>" style="display:inline-block;padding:16px 32px;background:#4b8eff;color:#ffffff;font-weight:700;font-size:16px;border-radius:8px;text-decoration:none;box-shadow:0 4px 14px rgba(75,142,255,0.35)"><?= htmlspecialchars($cta_text) ?> →</a>
+<a href="<?= htmlspecialchars($cta_url) ?>" style="display:inline-block;padding:16px 32px;background:linear-gradient(135deg,#ff5c1a 0%,#c41e0a 55%,#8b0000 100%);background-color:#c41e0a;color:#ffffff;font-weight:700;font-size:16px;border-radius:8px;text-decoration:none;box-shadow:0 4px 14px rgba(196,30,10,0.35)"><?= htmlspecialchars($cta_text) ?> →</a>
 </div>
 <?php endif; ?>
 <hr style="border:none;border-top:1px solid #d5dde8;margin:24px 0"/>

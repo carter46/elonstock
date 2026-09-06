@@ -1,6 +1,40 @@
 </div>
 </main>
 <script>
+window.DashUI = window.DashUI || {
+  setButtonLoading: function (btn, loading, opts) {
+    if (!btn) return;
+    if (typeof opts === 'string') opts = { label: opts };
+    opts = opts || {};
+    if (loading) {
+      if (!btn.dataset.dashLabel) btn.dataset.dashLabel = btn.innerHTML;
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.classList.add('is-saving');
+      var label = opts.label || 'Saving…';
+      btn.innerHTML = '<span class="dash-btn-spinner" aria-hidden="true"></span><span>' + label + '</span>';
+    } else {
+      btn.disabled = false;
+      btn.removeAttribute('aria-busy');
+      btn.classList.remove('is-saving');
+      if (btn.dataset.dashLabel) {
+        btn.innerHTML = btn.dataset.dashLabel;
+        delete btn.dataset.dashLabel;
+      }
+    }
+  },
+  showMsg: function (el, text, ok) {
+    if (!el) return;
+    var base = el.getAttribute('data-msg-base-class') || 'text-sm';
+    el.textContent = text || '';
+    el.className = base + ' dash-feedback-msg ' + (ok ? 'text-green-600' : 'text-red-600');
+    el.classList.remove('hidden');
+    el.classList.remove('dash-feedback-pop');
+    void el.offsetWidth;
+    el.classList.add('dash-feedback-pop');
+  }
+};
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.glass-panel, .glass-card').forEach(function (card) {
     card.addEventListener('mouseenter', function () { card.style.borderColor = 'rgba(75, 142, 255, 0.28)'; });

@@ -228,7 +228,7 @@ function escapeHtml(text) {
 function showMessage(msg, type) {
   var el = document.getElementById('messageContainer');
   var bg = type === 'success' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400';
-  el.innerHTML = '<div class="' + bg + ' px-4 py-3 rounded-lg text-sm">' + escapeHtml(msg) + '</div>';
+  el.innerHTML = '<div class="' + bg + ' px-4 py-3 rounded-lg text-sm admin-feedback-msg admin-feedback-pop">' + escapeHtml(msg) + '</div>';
   setTimeout(function(){ el.innerHTML = ''; }, 5000);
 }
 
@@ -597,13 +597,20 @@ function saveMethod(e) {
   var url = '/api/admin/addresses.php';
   var method = editingId ? 'PUT' : 'POST';
   if (editingId) url += '?id=' + editingId;
+  var submitBtn = methodForm.querySelector('button[type="submit"]');
+  if (window.AdminUI) window.AdminUI.setButtonLoading(submitBtn, true, 'Saving…');
+  else if (submitBtn) submitBtn.disabled = true;
   fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     .then(function(r){ return r.json(); })
     .then(function(d){
       if (d.success) { closeModal(); showMessage(editingId ? 'Payment method updated' : 'Payment method added', 'success'); loadMethods(); }
       else showMessage(d.error || 'Failed', 'error');
     })
-    .catch(function(){ showMessage('Error', 'error'); });
+    .catch(function(){ showMessage('Error', 'error'); })
+    .finally(function(){
+      if (window.AdminUI) window.AdminUI.setButtonLoading(submitBtn, false);
+      else if (submitBtn) submitBtn.disabled = false;
+    });
 }
 
 function confirmDelete(id) {

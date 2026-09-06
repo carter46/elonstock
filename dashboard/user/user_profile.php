@@ -308,15 +308,21 @@ else echo 'Complete verification to withdraw';
   if (profileForm) {
     profileForm.addEventListener('submit', function(e){
       e.preventDefault();
+      var btn = profileForm.querySelector('button[type="submit"]');
       var fd = new FormData(profileForm);
       var payload = { name: fd.get('name') || '', phone_number: fd.get('phone_number') || '', country: fd.get('country') || '' };
+      if (window.DashUI) {
+        window.DashUI.setButtonLoading(btn, true, { label: 'Saving…' });
+        window.DashUI.showMsg(profileMsg, 'Saving…', true);
+      } else if (btn) btn.disabled = true;
       fetch('/api/user/profile.php', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
         body: JSON.stringify(payload)
       }).then(function(r){ return r.json(); }).then(function(res){
-        if (profileMsg) {
+        if (window.DashUI) window.DashUI.showMsg(profileMsg, res.success ? 'Profile saved.' : (res.error || 'Failed to save'), !!res.success);
+        else if (profileMsg) {
           profileMsg.classList.remove('hidden');
           profileMsg.className = 'text-sm ' + (res.success ? 'text-green-600' : 'text-red-600');
           profileMsg.textContent = res.success ? 'Profile saved.' : (res.error || 'Failed to save');
@@ -324,7 +330,13 @@ else echo 'Complete verification to withdraw';
         if (res.success && res.data) {
           var n = document.querySelector('[data-profile-name]'); if (n) n.textContent = res.data.name || 'User';
         }
-      }).catch(function(){ if (profileMsg) { profileMsg.classList.remove('hidden'); profileMsg.className = 'text-sm text-red-600'; profileMsg.textContent = 'Network error'; } });
+      }).catch(function(){
+        if (window.DashUI) window.DashUI.showMsg(profileMsg, 'Network error', false);
+        else if (profileMsg) { profileMsg.classList.remove('hidden'); profileMsg.className = 'text-sm text-red-600'; profileMsg.textContent = 'Network error'; }
+      }).finally(function(){
+        if (window.DashUI) window.DashUI.setButtonLoading(btn, false);
+        else if (btn) btn.disabled = false;
+      });
     });
   }
 
@@ -352,27 +364,42 @@ else echo 'Complete verification to withdraw';
       var curr = document.getElementById('pw-current').value;
       var pass = document.getElementById('pw-new').value;
       var conf = document.getElementById('pw-confirm').value;
-      if (pass.length < 8) { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = 'New password must be at least 8 characters'; return; }
-      if (pass !== conf) { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = 'Passwords do not match'; return; }
-      pwMsg.classList.add('hidden');
+      var pwBtn = pwForm.querySelector('button[type="submit"]');
+      if (pass.length < 8) {
+        if (window.DashUI) window.DashUI.showMsg(pwMsg, 'New password must be at least 8 characters', false);
+        else { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = 'New password must be at least 8 characters'; }
+        return;
+      }
+      if (pass !== conf) {
+        if (window.DashUI) window.DashUI.showMsg(pwMsg, 'Passwords do not match', false);
+        else { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = 'Passwords do not match'; }
+        return;
+      }
+      if (window.DashUI) {
+        window.DashUI.setButtonLoading(pwBtn, true, { label: 'Updating…' });
+        window.DashUI.showMsg(pwMsg, 'Updating…', true);
+      } else if (pwBtn) pwBtn.disabled = true;
       fetch('/api/user/profile.php', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
         body: JSON.stringify({ current_password: curr, password: pass })
       }).then(function(r){ return r.json(); }).then(function(res){
-        pwMsg.classList.remove('hidden');
         if (res.success) {
-          pwMsg.className = 'text-sm text-green-600';
-          pwMsg.textContent = 'Password changed successfully.';
+          if (window.DashUI) window.DashUI.showMsg(pwMsg, 'Password changed successfully.', true);
+          else { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-green-600'; pwMsg.textContent = 'Password changed successfully.'; }
           pwForm.reset();
           setTimeout(hidePasswordModal, 1500);
         } else {
-          pwMsg.className = 'text-sm text-red-600';
-          pwMsg.textContent = res.error || 'Failed to update password';
+          if (window.DashUI) window.DashUI.showMsg(pwMsg, res.error || 'Failed to update password', false);
+          else { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = res.error || 'Failed to update password'; }
         }
       }).catch(function(){
-        pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = 'Network error';
+        if (window.DashUI) window.DashUI.showMsg(pwMsg, 'Network error', false);
+        else { pwMsg.classList.remove('hidden'); pwMsg.className = 'text-sm text-red-600'; pwMsg.textContent = 'Network error'; }
+      }).finally(function(){
+        if (window.DashUI) window.DashUI.setButtonLoading(pwBtn, false);
+        else if (pwBtn) pwBtn.disabled = false;
       });
     });
   }

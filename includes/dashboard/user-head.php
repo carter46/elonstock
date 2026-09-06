@@ -321,5 +321,34 @@ a.bg-primary-container .material-symbols-outlined {
   max-height: none;
   overflow: hidden;
 }
+@keyframes dash-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes dash-feedback-pop {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.dash-btn-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: dash-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+button.is-saving {
+  opacity: 0.88;
+  cursor: wait;
+  pointer-events: none;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+.dash-feedback-msg.dash-feedback-pop {
+  animation: dash-feedback-pop 0.35s ease;
+}
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

@@ -258,5 +258,35 @@ body.admin-dashboard {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes admin-feedback-pop {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.admin-btn-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: admin-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+button.is-saving,
+.admin-dashboard button.is-saving {
+  opacity: 0.88;
+  cursor: wait;
+  pointer-events: none;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+.admin-feedback-msg.admin-feedback-pop {
+  animation: admin-feedback-pop 0.35s ease;
+}
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

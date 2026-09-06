@@ -180,8 +180,11 @@ $nextPage = min((int) $pagination['total_pages'], (int) $pagination['page'] + 1)
   btn.addEventListener('click', function () {
     var ok = window.confirm('Clear every audit log entry? This cannot be undone.');
     if (!ok) return;
-    btn.disabled = true;
-    btn.textContent = 'Clearing…';
+    if (window.AdminUI) window.AdminUI.setButtonLoading(btn, true, 'Clearing…');
+    else {
+      btn.disabled = true;
+      btn.textContent = 'Clearing…';
+    }
     fetch('/api/admin/audit-log.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -197,8 +200,11 @@ $nextPage = min((int) $pagination['total_pages'], (int) $pagination['page'] + 1)
       })
       .catch(function (err) {
         alert(err.message || 'Unable to clear audit log');
-        btn.disabled = false;
-        btn.textContent = 'Reset log history';
+        if (window.AdminUI) window.AdminUI.setButtonLoading(btn, false);
+        else {
+          btn.disabled = false;
+          btn.textContent = 'Reset log history';
+        }
       });
   });
 })();

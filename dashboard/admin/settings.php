@@ -373,10 +373,22 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
 <script>
 (function(){
   var showMsg = function(el, text, ok){
+    if (window.AdminUI && typeof window.AdminUI.showMsg === 'function') {
+      window.AdminUI.showMsg(el, text, ok);
+      return;
+    }
     if (!el) return;
     el.textContent = text;
     el.className = 'text-sm mt-2 ' + (ok ? 'text-green-600' : 'text-red-600');
     el.classList.remove('hidden');
+  };
+  var setLoading = function(btn, loading, label){
+    if (window.AdminUI && typeof window.AdminUI.setButtonLoading === 'function') {
+      window.AdminUI.setButtonLoading(btn, loading, { label: label || 'Saving…' });
+      return;
+    }
+    if (!btn) return;
+    btn.disabled = !!loading;
   };
 
   // Tabs
@@ -454,7 +466,9 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
     var depositBonusPct = (document.getElementById('settings-deposit-bonus-percentage') || {}).value;
     if (depositBonusPct === '' || isNaN(parseFloat(depositBonusPct))) depositBonusPct = '10';
     var btn = this;
-    btn.disabled = true;
+    var msgEl = document.getElementById('settings-branding-msg');
+    showMsg(msgEl, 'Saving branding…', true);
+    setLoading(btn, true, 'Saving…');
     fetch('/api/admin/site-settings.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -476,11 +490,11 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
         deposit_bonus_percentage: depositBonusPct
       })
     }).then(function(r){ return r.json(); }).then(function(res){
-      showMsg(document.getElementById('settings-branding-msg'), res.success ? 'Branding saved. Homepage video appears between Live Market Performance and Choose Your Plan.' : (res.error || 'Failed'), res.success);
-      btn.disabled = false;
+      showMsg(msgEl, res.success ? 'Branding saved successfully.' : (res.error || 'Failed'), res.success);
+      setLoading(btn, false);
     }).catch(function(){
-      showMsg(document.getElementById('settings-branding-msg'), 'Request failed.', false);
-      btn.disabled = false;
+      showMsg(msgEl, 'Request failed.', false);
+      setLoading(btn, false);
     });
   });
 
@@ -556,7 +570,8 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
     var payload = { email: email || undefined };
     if (pw) { payload.current_password = curr; payload.password = pw; }
     var btn = this;
-    btn.disabled = true;
+    showMsg(msgEl, 'Updating account…', true);
+    setLoading(btn, true, 'Updating…');
     fetch('/api/admin/admin-account.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -564,10 +579,10 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
       body: JSON.stringify(payload)
     }).then(function(r){ return r.json(); }).then(function(res){
       showMsg(msgEl, res.success ? 'Account updated.' : (res.error || 'Failed'), res.success);
-      btn.disabled = false;
+      setLoading(btn, false);
     }).catch(function(){
       showMsg(msgEl, 'Request failed.', false);
-      btn.disabled = false;
+      setLoading(btn, false);
     });
   });
 
@@ -576,7 +591,8 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
     var msgEl = document.getElementById('settings-test-msg');
     var emailTo = (document.getElementById('settings-test-email-to') || {}).value.trim();
     if (!emailTo) { showMsg(msgEl, 'Enter an email address to receive the test.', false); return; }
-    btn.disabled = true;
+    showMsg(msgEl, 'Sending test email…', true);
+    setLoading(btn, true, 'Sending…');
     fetch('/api/admin/send-test-email.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -586,11 +602,11 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
       .then(function(r){ return r.json(); })
       .then(function(res){
         showMsg(msgEl, res.success ? (res.data && res.data.message) : (res.error || 'Failed'), res.success);
-        btn.disabled = false;
+        setLoading(btn, false);
       })
       .catch(function(){
         showMsg(msgEl, 'Request failed.', false);
-        btn.disabled = false;
+        setLoading(btn, false);
       });
   });
 
@@ -629,7 +645,8 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
     // Don't send blank passwords (keeps existing)
     if (!payload.mail_smtp_password) delete payload.mail_smtp_password;
     if (!payload.mail_imap_password) delete payload.mail_imap_password;
-    btn.disabled = true;
+    showMsg(msgEl, 'Saving email settings…', true);
+    setLoading(btn, true, 'Saving…');
     fetch('/api/admin/site-settings.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -640,7 +657,7 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
       // clear password fields after save
       var sp = document.getElementById('settings-smtp-password'); if (sp) sp.value = '';
       var ip = document.getElementById('settings-imap-password'); if (ip) ip.value = '';
-      btn.disabled = false;
+      setLoading(btn, false);
       if (res && res.success) {
         // refresh password-set flags
         fetch('/api/admin/site-settings.php', { credentials: 'same-origin' }).then(function(r){ return r.json(); }).then(function(r2){
@@ -653,7 +670,7 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
       }
     }).catch(function(){
       showMsg(msgEl, 'Request failed.', false);
-      btn.disabled = false;
+      setLoading(btn, false);
     });
   });
 })();
