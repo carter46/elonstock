@@ -243,19 +243,13 @@ Get Started
 </a>
 </div>
 <div class="order-1 lg:order-2">
-<div class="home-yt-frame rounded-2xl overflow-hidden border border-white/10 bg-surface-container-lowest shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+<div class="home-yt-frame rounded-2xl overflow-hidden border border-white/10 bg-surface-container-lowest shadow-[0_24px_80px_rgba(0,0,0,0.35)] is-waiting-sound" data-home-yt-frame>
 <div id="home-yt-player"
   class="home-yt-player"
   data-yt-id="<?php echo htmlspecialchars($homepageYoutubeId); ?>"
   data-yt-start="<?php echo (int) $homepageYoutubeStart; ?>"></div>
-<noscript>
-<iframe
-  title="Platform video"
-  src="https://www.youtube.com/embed/<?php echo htmlspecialchars($homepageYoutubeId); ?>?start=<?php echo (int) $homepageYoutubeStart; ?>&amp;mute=1&amp;loop=1&amp;playlist=<?php echo htmlspecialchars($homepageYoutubeId); ?>"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen
-  loading="lazy"></iframe>
-</noscript>
+<button type="button" class="home-yt-ui-mask" data-home-yt-gate aria-label="Enable video sound"></button>
+<span class="home-yt-sound-hint">Tap for sound</span>
 </div>
 </div>
 </div>
@@ -648,11 +642,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
-<?php if ($homepageYoutubeId): ?>
+<?php if ($showHomepageVideo): ?>
 <script>
 (function () {
   var mount = document.getElementById('home-yt-player');
   var section = document.querySelector('[data-home-video-section]');
+  var frame = document.querySelector('[data-home-yt-frame]');
+  var gate = document.querySelector('[data-home-yt-gate]');
   if (!mount || !section) return;
 
   var videoId = mount.getAttribute('data-yt-id') || '';
@@ -663,11 +659,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var player = null;
   var inView = false;
   var ready = false;
+  var soundUnlocked = false;
 
-  function playInView() {
+  function setWaiting(waiting) {
+    if (!frame) return;
+    frame.classList.toggle('is-waiting-sound', !!waiting);
+    if (gate) gate.setAttribute('data-unlocked', waiting ? '0' : '1');
+  }
+
+  function playWithSound() {
     if (!ready || !player) return;
     try {
-      if (typeof player.mute === 'function') player.mute();
+      if (typeof player.unMute === 'function') player.unMute();
+      if (typeof player.setVolume === 'function') player.setVolume(100);
       if (typeof player.playVideo === 'function') player.playVideo();
     } catch (e) {}
   }
@@ -679,8 +683,27 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (e) {}
   }
 
+  function playInView() {
+    if (!ready || !player || !inView) return;
+    if (!soundUnlocked) {
+      // Browsers block unmuted autoplay until a tap/click — show hint, do not mute.
+      setWaiting(true);
+      return;
+    }
+    setWaiting(false);
+    playWithSound();
+  }
+
+  function unlockSound() {
+    if (soundUnlocked) return;
+    soundUnlocked = true;
+    setWaiting(false);
+    if (inView) playWithSound();
+  }
+
   function bindObserver() {
     if (!('IntersectionObserver' in window)) {
+      inView = true;
       playInView();
       return;
     }
@@ -695,15 +718,19 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function createPlayer() {
-    if (!window.YT || !YT.Player) return;
+    if (!window.YT || !YT.Player || player) return;
     player = new YT.Player('home-yt-player', {
       videoId: videoId,
       width: '100%',
       height: '100%',
       playerVars: {
         autoplay: 0,
-        mute: 1,
-        controls: 1,
+        mute: 0,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        iv_load_policy: 3,
+        cc_load_policy: 0,
         rel: 0,
         modestbranding: 1,
         playsinline: 1,
@@ -716,22 +743,49 @@ document.addEventListener('DOMContentLoaded', function () {
         onReady: function () {
           ready = true;
           try {
-            if (typeof player.mute === 'function') player.mute();
             if (startAt > 0 && typeof player.seekTo === 'function') player.seekTo(startAt, true);
+            if (typeof player.unMute === 'function') player.unMute();
+            if (typeof player.setVolume === 'function') player.setVolume(100);
           } catch (e) {}
           bindObserver();
           if (inView) playInView();
         },
         onStateChange: function (e) {
-          if (!window.YT || e.data !== YT.PlayerState.ENDED) return;
-          try {
-            if (typeof player.seekTo === 'function') player.seekTo(startAt, true);
-            if (inView && typeof player.playVideo === 'function') player.playVideo();
-          } catch (err) {}
+          if (!window.YT) return;
+          if (e.data === YT.PlayerState.PLAYING) {
+            setWaiting(false);
+            try {
+              if (typeof player.isMuted === 'function' && player.isMuted() && soundUnlocked) {
+                player.unMute();
+                player.setVolume(100);
+              }
+            } catch (err) {}
+          }
+          if (e.data === YT.PlayerState.ENDED) {
+            try {
+              if (typeof player.seekTo === 'function') player.seekTo(startAt, true);
+              if (inView && soundUnlocked) playWithSound();
+            } catch (err) {}
+          }
+        },
+        onError: function () {
+          setWaiting(true);
         }
       }
     });
   }
+
+  if (gate) {
+    gate.addEventListener('click', function (e) {
+      e.preventDefault();
+      unlockSound();
+    });
+  }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
+    document.addEventListener(evt, function () {
+      unlockSound();
+    }, { once: true, passive: true });
+  });
 
   var prevReady = window.onYouTubeIframeAPIReady;
   window.onYouTubeIframeAPIReady = function () {

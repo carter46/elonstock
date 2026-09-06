@@ -534,6 +534,8 @@ body.marketing-page {
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #0a1018;
+  overflow: hidden;
+  isolation: isolate;
 }
 .home-yt-player,
 .home-yt-frame iframe {
@@ -542,6 +544,48 @@ body.marketing-page {
   width: 100%;
   height: 100%;
   border: 0;
+  /* Crop YouTube chrome (title, watch later, share, bottom bar) */
+  transform: scale(1.45);
+  transform-origin: center center;
+  pointer-events: none !important;
+}
+.home-yt-ui-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.home-yt-ui-mask[data-unlocked="1"] {
+  cursor: default;
+}
+.home-yt-sound-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  background: rgba(8, 20, 34, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+.home-yt-frame.is-waiting-sound .home-yt-sound-hint {
+  opacity: 1;
+}
+.home-yt-frame.is-waiting-sound .home-yt-ui-mask {
+  background: linear-gradient(to top, rgba(0,0,0,0.35), transparent 45%);
 }
 .section-photo-bg {
   position: absolute;
