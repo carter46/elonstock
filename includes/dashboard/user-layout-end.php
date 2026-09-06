@@ -3,7 +3,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.glass-panel, .glass-card').forEach(function (card) {
-    card.addEventListener('mouseenter', function () { card.style.borderColor = 'rgba(255, 92, 26, 0.35)'; });
+    card.addEventListener('mouseenter', function () { card.style.borderColor = 'rgba(75, 142, 255, 0.28)'; });
     card.addEventListener('mouseleave', function () { card.style.borderColor = 'rgba(255, 255, 255, 0.08)'; });
   });
 

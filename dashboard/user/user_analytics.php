@@ -363,11 +363,11 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
     to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in { animation: fadeIn 0.5s ease forwards; }
-.analytics-filter-btn.is-active { background: rgba(255, 92, 26, 0.15); color: #ff8a5c; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
-.dark .analytics-filter-btn.is-active { background: rgba(255, 92, 26, 0.18); color: #ff8a5c; }
-.analytics-filter-btn.is-active:hover { background: rgba(255, 92, 26, 0.22); }
-.dark .analytics-filter-btn.is-active:hover { background: rgba(255, 92, 26, 0.22); }
-.portfolio-tab.is-active { color: #ff8a5c; border-bottom-color: #c41e0a; }
+.analytics-filter-btn.is-active { background: rgba(75, 142, 255, 0.15); color: #adc6ff; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.dark .analytics-filter-btn.is-active { background: rgba(75, 142, 255, 0.18); color: #adc6ff; }
+.analytics-filter-btn.is-active:hover { background: rgba(75, 142, 255, 0.22); }
+.dark .analytics-filter-btn.is-active:hover { background: rgba(75, 142, 255, 0.22); }
+.portfolio-tab.is-active { color: #adc6ff; border-bottom-color: #4b8eff; }
 </style>
 <div class="dash-page w-full min-w-0">
 <!-- Top Stats Grid -->

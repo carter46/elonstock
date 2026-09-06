@@ -243,7 +243,7 @@ if (!empty($chartData)) {
     $pathD = 'M' . implode(' L', $svgPts);
 ?>
 <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300">
-<path class="glow-line" d="<?php echo htmlspecialchars($pathD); ?>" fill="none" stroke="#ff8a5c" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<path class="glow-line" d="<?php echo htmlspecialchars($pathD); ?>" fill="none" stroke="#adc6ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
 </svg>
 <?php } else { ?>
 <div class="absolute inset-0 flex items-center justify-center text-on-surface-variant text-sm">No data available</div>
@@ -510,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var y = 250 - ((point.value - minVal) / range) * 200;
             points.push(x.toFixed(1) + ',' + y.toFixed(1));
         });
-        chartContainer.innerHTML = '<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300"><path class="glow-line" d="M' + points.join(' L') + '" fill="none" stroke="#ff8a5c" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>';
+        chartContainer.innerHTML = '<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 300"><path class="glow-line" d="M' + points.join(' L') + '" fill="none" stroke="#adc6ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg>';
     }
 
     function setChartBtnActive(btn) {
