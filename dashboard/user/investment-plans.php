@@ -72,8 +72,8 @@ include __DIR__ . '/../../includes/dashboard/user-page-title.php';
 
 <style>
 .plan-type-tab.is-active {
-  color: #adc6ff;
-  border-bottom-color: #4b8eff;
+  color: #ff8a5c;
+  border-bottom-color: #c41e0a;
   font-weight: 700;
 }
 .plan-type-panel { display: none; }

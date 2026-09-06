@@ -146,6 +146,19 @@ function admin_audit_log(
     }
 }
 
+function clear_admin_audit_logs(PDO $pdo): int
+{
+    ensure_admin_audit_log_schema($pdo);
+    $count = (int) $pdo->query('SELECT COUNT(*) FROM admin_audit_log')->fetchColumn();
+    $pdo->exec('DELETE FROM admin_audit_log');
+    try {
+        $pdo->exec('ALTER TABLE admin_audit_log AUTO_INCREMENT = 1');
+    } catch (Throwable $e) {
+        // Optional reset; ignore if not permitted.
+    }
+    return $count;
+}
+
 function list_admin_audit_logs(
     PDO $pdo,
     int $page = 1,

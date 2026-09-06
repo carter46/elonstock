@@ -24,7 +24,7 @@ try {
     $userBalance = get_user_spendable_usd_balance($pdo, $userId);
 
     $stmt = $pdo->prepare(
-        'SELECT id, name, slug, plan_type, description, logo_url, investment_risk, tv_embed, chart_pair_label,
+        'SELECT id, name, slug, plan_type, description, logo_url, investment_risk, tv_symbol, tv_embed, chart_pair_label,
                 chart_market_type, chart_exchange, chart_hours, chart_volatility, chart_suitable_for,
                 min_deposit, max_deposit,
                 yield_min, yield_max, duration_days, min_duration_days, max_duration_days,
@@ -42,6 +42,7 @@ try {
             'description' => $row['description'] ?? '',
             'logo_url' => $row['logo_url'] ?? null,
             'investment_risk' => normalize_investment_risk($row['investment_risk'] ?? 'mid'),
+            'tv_symbol' => trim((string) ($row['tv_symbol'] ?? '')),
             'tv_embed' => normalize_plan_tv_embed($row['tv_embed'] ?? null),
             'chart_pair_label' => trim((string) ($row['chart_pair_label'] ?? '')) ?: null,
             'chart_market_type' => trim((string) ($row['chart_market_type'] ?? '')) ?: null,
@@ -107,11 +108,17 @@ $pageExtraStyles = <<<'CSS'
 <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
 <style>
 .plan-trading-page { margin-top: -0.25rem; }
+.plan-trading-page .user-dash-content,
+.plan-trading-page.dash-page {
+  overflow: visible;
+}
 .plan-market-chart-wrap tv-mini-chart {
   display: block;
   width: 100% !important;
   max-width: 100%;
+  height: 360px !important;
   min-height: 360px;
+  margin-bottom: -32px;
 }
 .pulse-live {
   animation: plan-pulse-live 1.5s ease-in-out infinite;

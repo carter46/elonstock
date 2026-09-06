@@ -20,29 +20,29 @@ tailwind.config = {
     extend: {
       colors: {
         "on-background": "#d7e3f7",
-        "on-secondary-fixed-variant": "#002ccd",
+        "on-secondary-fixed-variant": "#8b0000",
         "tertiary-fixed": "#e8deff",
-        "secondary-fixed-dim": "#bbc3ff",
+        "secondary-fixed-dim": "#ffb199",
         "error-container": "#93000a",
         "surface-container": "#15202f",
-        "secondary-fixed": "#dee0ff",
-        "surface-tint": "#adc6ff",
+        "secondary-fixed": "#ffe4d6",
+        "surface-tint": "#ff8a5c",
         "on-tertiary-container": "#2f0084",
         "on-surface-variant": "#c1c6d7",
         "surface-bright": "#2f3a49",
         "on-tertiary-fixed-variant": "#4f00d0",
         "surface-container-high": "#1f2b3a",
-        "on-primary-fixed-variant": "#004493",
+        "on-primary-fixed-variant": "#8b0000",
         "surface-variant": "#2a3645",
         "on-error-container": "#ffdad6",
-        "on-primary-container": "#00285c",
-        "inverse-primary": "#005bc1",
-        "on-secondary": "#001d93",
-        "on-primary": "#002e69",
+        "on-primary-container": "#ffffff",
+        "inverse-primary": "#c41e0a",
+        "on-secondary": "#3d0a00",
+        "on-primary": "#ffffff",
         "outline": "#8b90a0",
         "surface-container-low": "#111c2b",
-        "on-secondary-fixed": "#000f5d",
-        "on-secondary-container": "#b1bbff",
+        "on-secondary-fixed": "#3d0a00",
+        "on-secondary-container": "#ffb199",
         "tertiary": "#cdbdff",
         "outline-variant": "#414755",
         "error": "#ffb4ab",
@@ -51,21 +51,21 @@ tailwind.config = {
         "surface-container-lowest": "#040f1d",
         "on-tertiary-fixed": "#20005f",
         "surface-container-highest": "#2a3645",
-        "secondary": "#bbc3ff",
-        "primary-fixed": "#d8e2ff",
+        "secondary": "#ffb199",
+        "primary-fixed": "#ffe4d6",
         "surface-dim": "#081422",
-        "primary-fixed-dim": "#adc6ff",
+        "primary-fixed-dim": "#ff8a5c",
         "on-tertiary": "#370096",
         "on-surface": "#d7e3f7",
         "background": "#081422",
         "tertiary-container": "#9a7bff",
-        "on-primary-fixed": "#001a41",
+        "on-primary-fixed": "#3d0a00",
         "surface": "#081422",
         "inverse-on-surface": "#263140",
-        "secondary-container": "#0231de",
-        "primary": "#adc6ff",
+        "secondary-container": "#8b0000",
+        "primary": "#ff8a5c",
         "on-error": "#690005",
-        "primary-container": "#4b8eff",
+        "primary-container": "#c41e0a",
         "border-low": "rgba(255, 255, 255, 0.08)",
         "text-secondary": "#c1c6d7",
         "text-primary": "#FFFFFF",
@@ -147,7 +147,7 @@ body.user-dashboard {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 .glow-line {
-  filter: drop-shadow(0 0 4px rgba(173, 198, 255, 0.4));
+  filter: drop-shadow(0 0 4px rgba(255, 92, 26, 0.4));
 }
 .status-pill-green {
   background: rgba(34, 197, 94, 0.1);
@@ -155,15 +155,26 @@ body.user-dashboard {
   border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .premium-gradient-btn {
-  background: linear-gradient(135deg, #4B8EFF 0%, #002ccd 100%);
+  background: linear-gradient(135deg, #ff5c1a 0%, #c41e0a 55%, #8b0000 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
   color: #ffffff;
 }
+.premium-gradient-btn:hover {
+  filter: brightness(1.06);
+}
+.text-brand-gradient,
+.gradient-text {
+  background: linear-gradient(135deg, #ff8a3d 0%, #ff5c1a 45%, #e03d00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
 .chart-gradient, .trading-graph-bg {
-  background: linear-gradient(180deg, rgba(75, 142, 255, 0.15) 0%, rgba(75, 142, 255, 0) 100%);
+  background: linear-gradient(180deg, rgba(255, 92, 26, 0.15) 0%, rgba(255, 92, 26, 0) 100%);
 }
 .scanning-animation {
-  background: linear-gradient(90deg, transparent 0%, rgba(75, 142, 255, 0.12) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 92, 26, 0.12) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: dash-scan 2s infinite linear;
 }
@@ -177,7 +188,7 @@ body.user-dashboard {
 }
 .dash-scrollbar::-webkit-scrollbar { width: 4px; }
 .dash-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.dash-scrollbar::-webkit-scrollbar-thumb { background: rgba(75,142,255,0.3); border-radius: 10px; }
+.dash-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,92,26,0.35); border-radius: 10px; }
 .user-dash-main {
   box-sizing: border-box;
   min-width: 0;
@@ -194,9 +205,9 @@ body.user-dashboard {
 }
 .metric-balance-card,
 .metric-balance-card.glass-card {
-  background: linear-gradient(135deg, #0a1f3d 0%, #0d3b6e 45%, #002e69 100%);
-  border: 1px solid rgba(75, 142, 255, 0.25);
-  box-shadow: 0 4px 30px rgba(0, 46, 105, 0.25);
+  background: linear-gradient(135deg, #2a0a08 0%, #5c1208 45%, #8b0000 100%);
+  border: 1px solid rgba(255, 92, 26, 0.35);
+  box-shadow: 0 4px 30px rgba(139, 0, 0, 0.28);
   backdrop-filter: none;
 }
 .dash-page,
@@ -233,8 +244,8 @@ body.user-dashboard {
   transform: translateY(0.5rem);
 }
 .dash-trade-tab.is-active {
-  color: #adc6ff;
-  border-bottom-color: #4b8eff;
+  color: #ff8a5c;
+  border-bottom-color: #c41e0a;
   font-weight: 700;
 }
 @keyframes fade-in {
@@ -255,12 +266,32 @@ body.user-dashboard {
   visibility: hidden !important;
   pointer-events: none !important;
 }
-/* Clip in-iframe TradingView footer when attribution can’t be removed from HTML */
-.plan-tv-embed {
+/* Match homepage mini-chart sizing so the widget is not clipped */
+.plan-market-chart-wrap,
+.market-detail-chart-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.plan-market-chart-wrap tv-mini-chart,
+.market-detail-chart-wrap tv-mini-chart,
+.plan-tv-embed tv-mini-chart {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  height: 360px !important;
+  min-height: 360px;
+  margin-bottom: -32px;
+}
+/* Clip classic iframe embeds only — not tv-mini-chart */
+.plan-tv-embed:not(:has(tv-mini-chart)) {
   max-height: 380px;
 }
-.plan-tv-embed iframe {
+.plan-tv-embed:not(:has(tv-mini-chart)) iframe {
   margin-bottom: -28px !important;
+}
+.plan-tv-embed:has(tv-mini-chart) {
+  max-height: none;
+  overflow: hidden;
 }
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

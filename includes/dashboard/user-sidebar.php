@@ -35,6 +35,10 @@ Switch back to Admin
 <span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('dashboard'); ?>>dashboard</span>
 <span class="font-label-md text-label-md">Dashboard</span>
 </a>
+<a class="<?php echo $navActive('investment-plans'); ?>" href="/dashboard/user/investment-plans">
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('investment-plans'); ?>>auto_awesome</span>
+<span class="font-label-md text-label-md">Investment Plans</span>
+</a>
 <a class="<?php echo $navActive('wallet'); ?>" href="/dashboard/user/wallet">
 <span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('wallet'); ?>>account_balance_wallet</span>
 <span class="font-label-md text-label-md">Wallet</span>
@@ -43,17 +47,13 @@ Switch back to Admin
 <span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('analytics'); ?>>pie_chart</span>
 <span class="font-label-md text-label-md">My Portfolio</span>
 </a>
-<a class="<?php echo $navActive('investment-plans'); ?>" href="/dashboard/user/investment-plans">
-<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('investment-plans'); ?>>auto_awesome</span>
-<span class="font-label-md text-label-md">Investment Plans</span>
+<a class="<?php echo $navActive('history'); ?>" href="/dashboard/user/transactions">
+<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('history'); ?>>receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
 </a>
 <a class="<?php echo $navActive('referrals'); ?>" href="/dashboard/user/referrals">
 <span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('referrals'); ?>>group</span>
 <span class="font-label-md text-label-md">Referrals</span>
-</a>
-<a class="<?php echo $navActive('history'); ?>" href="/dashboard/user/transactions">
-<span class="material-symbols-outlined text-[20px]"<?php echo $iconFill('history'); ?>>history</span>
-<span class="font-label-md text-label-md">Trade History</span>
 </a>
 <div class="px-4 py-6 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">System</div>
 <a class="<?php echo $navActive('profile'); ?>" href="/dashboard/user/profile">

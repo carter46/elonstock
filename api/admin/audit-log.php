@@ -1,7 +1,8 @@
 <?php
 /**
  * Admin audit log API
- * GET /api/admin/audit-log.php?page=1&per_page=30&entity_type=&action=&search=
+ * GET  /api/admin/audit-log.php?page=1&per_page=30&entity_type=&action=&search=
+ * POST /api/admin/audit-log.php { "action": "clear" } — delete every audit log row
  */
 
 header('Content-Type: application/json');
@@ -15,6 +16,36 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     exit;
 }
 
+try {
+    $pdo = require dirname(__DIR__, 2) . '/includes/db.php';
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database unavailable']);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input') ?: '{}', true) ?? $_POST ?? [];
+    $action = trim((string) ($input['action'] ?? ''));
+    if ($action !== 'clear' && $action !== 'reset') {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid action']);
+        exit;
+    }
+    try {
+        $deleted = clear_admin_audit_logs($pdo);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Audit log history cleared',
+            'deleted' => $deleted,
+        ]);
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Unable to clear audit log']);
+    }
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Method not allowed']);
@@ -22,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 try {
-    $pdo = require dirname(__DIR__, 2) . '/includes/db.php';
     $page = max(1, (int) ($_GET['page'] ?? 1));
     $perPage = (int) ($_GET['per_page'] ?? 30);
     $entityType = trim((string) ($_GET['entity_type'] ?? ''));

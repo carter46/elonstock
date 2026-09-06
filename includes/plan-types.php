@@ -220,6 +220,35 @@ function normalize_plan_tv_embed(?string $html): ?string
     return $html;
 }
 
+/** Extract symbol from a pasted <tv-mini-chart symbol="..."> snippet. */
+function plan_extract_tv_mini_symbol(?string $html): ?string
+{
+    $html = (string) $html;
+    if ($html === '') {
+        return null;
+    }
+    if (preg_match('/<tv-mini-chart\b[^>]*\bsymbol\s*=\s*["\']([^"\']+)["\']/i', $html, $m)) {
+        $symbol = trim($m[1]);
+        return $symbol !== '' ? $symbol : null;
+    }
+    return null;
+}
+
+/**
+ * True when embed is only a tv-mini-chart (optional script tag) — prefer native widget render.
+ */
+function plan_tv_embed_is_mini_chart_only(?string $html): bool
+{
+    $html = trim((string) $html);
+    if ($html === '' || stripos($html, 'tv-mini-chart') === false) {
+        return false;
+    }
+    $stripped = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html) ?? $html;
+    $stripped = preg_replace('/<tv-mini-chart\b[^>]*\/?>/i', '', $stripped) ?? $stripped;
+    $stripped = trim(html_entity_decode(strip_tags($stripped), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    return $stripped === '';
+}
+
 /**
  * Build View Trading panel config entirely from the plan row.
  * Chart widget (tv_embed) is optional — page still works without it.
@@ -228,6 +257,18 @@ function plan_market_instrument(array $plan): array
 {
     $slug = strtolower(trim((string) ($plan['slug'] ?? '')));
     $tvEmbed = normalize_plan_tv_embed($plan['tv_embed'] ?? null);
+    $tvSymbol = trim((string) ($plan['tv_symbol'] ?? ''));
+    $miniSymbol = plan_extract_tv_mini_symbol($tvEmbed);
+    if ($tvSymbol === '' && $miniSymbol) {
+        $tvSymbol = $miniSymbol;
+    }
+    // Prefer native <tv-mini-chart> path (homepage-sized) over clipped raw embed HTML.
+    if ($tvEmbed !== null && plan_tv_embed_is_mini_chart_only($tvEmbed)) {
+        if ($tvSymbol === '' && $miniSymbol) {
+            $tvSymbol = $miniSymbol;
+        }
+        $tvEmbed = null;
+    }
     $category = plan_type_market_category($plan['plan_type'] ?? '') ?? 'crypto';
     $defaultType = function_exists('plan_type_label')
         ? plan_type_label($plan['plan_type'] ?? 'crypto')
@@ -246,7 +287,7 @@ function plan_market_instrument(array $plan): array
     return [
         'slug' => $slug !== '' ? $slug : 'custom',
         'name' => $title,
-        'symbol' => '',
+        'symbol' => $tvSymbol,
         'embed_html' => $tvEmbed,
         'category' => $category,
         'coingecko_id' => null,

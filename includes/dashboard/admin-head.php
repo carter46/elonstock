@@ -19,7 +19,7 @@ tailwind.config = {
       colors: {
         "on-background": "#d7e3f7",
         "surface-dim": "#081422",
-        "primary-container": "#4b8eff",
+        "primary-container": "#c41e0a",
         "on-surface": "#d7e3f7",
         "text-secondary": "#c1c6d7",
         "text-primary": "#FFFFFF",
@@ -30,9 +30,9 @@ tailwind.config = {
         "surface-container-highest": "#2a3645",
         "surface-container-lowest": "#040f1d",
         "border-low": "rgba(255, 255, 255, 0.08)",
-        "primary": "#adc6ff",
-        "on-primary": "#002e69",
-        "on-primary-container": "#00285c",
+        "primary": "#ff8a5c",
+        "on-primary": "#ffffff",
+        "on-primary-container": "#ffffff",
         "success": "#20B26C",
         "critical": "#EF454A",
         "bg-subtle": "#111c2b",
@@ -201,15 +201,37 @@ body.admin-dashboard {
 .admin-dashboard .bg-background-light,
 .admin-dashboard .dark\:bg-white\/5 { background-color: #111c2b !important; }
 .admin-dashboard .bg-primary:not(.admin-sidebar-active) {
-  background-color: #4b8eff !important;
-  color: #002e69 !important;
+  background: linear-gradient(135deg, #ff5c1a 0%, #c41e0a 55%, #8b0000 100%) !important;
+  background-color: #c41e0a !important;
+  color: #ffffff !important;
+}
+.admin-dashboard .bg-primary.text-black,
+.admin-dashboard .bg-primary.text-zinc-900,
+.admin-dashboard .bg-primary.text-slate-900,
+.admin-dashboard button.bg-primary,
+.admin-dashboard a.bg-primary {
+  color: #ffffff !important;
 }
 .admin-dashboard .text-amber-500,
 .admin-dashboard .text-amber-400,
-.admin-dashboard .text-yellow-500 { color: #adc6ff !important; }
+.admin-dashboard .text-yellow-500 { color: #ff8a5c !important; }
 .admin-dashboard .bg-amber-500,
-.admin-dashboard .bg-yellow-500 { background-color: #4b8eff !important; }
+.admin-dashboard .bg-yellow-500 { background-color: #c41e0a !important; }
 .admin-dashboard .border-amber-500\/30,
-.admin-dashboard .border-yellow-500\/30 { border-color: rgba(75, 142, 255, 0.3) !important; }
+.admin-dashboard .border-yellow-500\/30 { border-color: rgba(255, 92, 26, 0.3) !important; }
+.premium-gradient-btn,
+.admin-dashboard .premium-gradient-btn {
+  background: linear-gradient(135deg, #ff5c1a 0%, #c41e0a 55%, #8b0000 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+  color: #ffffff;
+}
+.text-brand-gradient,
+.gradient-text {
+  background: linear-gradient(135deg, #ff8a3d 0%, #ff5c1a 45%, #e03d00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
 </style>
 <?php if (!empty($pageExtraStyles)) { echo $pageExtraStyles; } ?>

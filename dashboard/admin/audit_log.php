@@ -61,11 +61,19 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 <?php endforeach; ?>
 </select>
 </div>
-<div class="md:col-span-4 flex gap-2">
+<div class="md:col-span-4 flex flex-wrap gap-2 items-center">
 <button type="submit" class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg">Apply filters</button>
-<a href="/dashboard/admin/audit-log" class="px-4 py-2 border border-slate-200 dark:border-zinc-700 text-sm font-bold rounded-lg">Reset</a>
+<a href="/dashboard/admin/audit-log" class="px-4 py-2 border border-slate-200 dark:border-zinc-700 text-sm font-bold rounded-lg">Clear filters</a>
+<button type="button" id="audit-log-reset-btn" class="px-4 py-2 border border-red-500/40 text-red-400 hover:bg-red-500/10 text-sm font-bold rounded-lg ml-auto">
+Reset log history
+</button>
 </div>
 </form>
+<?php if (!empty($_GET['cleared'])): ?>
+<div class="mb-4 px-4 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium">
+All audit log history has been cleared.
+</div>
+<?php endif; ?>
 
 <div class="bg-white dark:bg-white/5 rounded-xl border border-primary/10 shadow-sm overflow-hidden">
 <div class="p-4 sm:p-6 border-b border-primary/10 flex flex-wrap items-center justify-between gap-2">
@@ -165,4 +173,34 @@ $nextPage = min((int) $pagination['total_pages'], (int) $pagination['page'] + 1)
 
 <?php require_once __DIR__ . '/../../includes/dashboard/admin-layout-end.php'; ?>
 <?php require_once __DIR__ . '/../../includes/app-script.php'; ?>
+<script>
+(function () {
+  var btn = document.getElementById('audit-log-reset-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    var ok = window.confirm('Clear every audit log entry? This cannot be undone.');
+    if (!ok) return;
+    btn.disabled = true;
+    btn.textContent = 'Clearing…';
+    fetch('/api/admin/audit-log.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ action: 'clear' })
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.j || !res.j.success) {
+          throw new Error((res.j && res.j.error) || 'Failed to clear log');
+        }
+        window.location.href = '/dashboard/admin/audit-log?cleared=1';
+      })
+      .catch(function (err) {
+        alert(err.message || 'Unable to clear audit log');
+        btn.disabled = false;
+        btn.textContent = 'Reset log history';
+      });
+  });
+})();
+</script>
 <?php require_once __DIR__ . '/../../includes/dashboard/admin-layout-close.php'; ?>
