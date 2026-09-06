@@ -243,13 +243,11 @@ Get Started
 </a>
 </div>
 <div class="order-1 lg:order-2">
-<div class="home-yt-frame rounded-2xl overflow-hidden border border-white/10 bg-surface-container-lowest shadow-[0_24px_80px_rgba(0,0,0,0.35)] is-waiting-sound" data-home-yt-frame>
+<div class="home-yt-frame rounded-2xl overflow-hidden border border-white/10 bg-surface-container-lowest shadow-[0_24px_80px_rgba(0,0,0,0.35)]" data-home-yt-frame>
 <div id="home-yt-player"
   class="home-yt-player"
   data-yt-id="<?php echo htmlspecialchars($homepageYoutubeId); ?>"
   data-yt-start="<?php echo (int) $homepageYoutubeStart; ?>"></div>
-<button type="button" class="home-yt-ui-mask" data-home-yt-gate aria-label="Enable video sound"></button>
-<span class="home-yt-sound-hint">Tap for sound</span>
 </div>
 </div>
 </div>
@@ -647,9 +645,11 @@ document.addEventListener('DOMContentLoaded', function () {
 (function () {
   var mount = document.getElementById('home-yt-player');
   var section = document.querySelector('[data-home-video-section]');
-  var frame = document.querySelector('[data-home-yt-frame]');
-  var gate = document.querySelector('[data-home-yt-gate]');
   if (!mount || !section) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    section.setAttribute('hidden', '');
+    return;
+  }
 
   var videoId = mount.getAttribute('data-yt-id') || '';
   var startAt = parseInt(mount.getAttribute('data-yt-start') || '0', 10);
@@ -659,19 +659,11 @@ document.addEventListener('DOMContentLoaded', function () {
   var player = null;
   var inView = false;
   var ready = false;
-  var soundUnlocked = false;
 
-  function setWaiting(waiting) {
-    if (!frame) return;
-    frame.classList.toggle('is-waiting-sound', !!waiting);
-    if (gate) gate.setAttribute('data-unlocked', waiting ? '0' : '1');
-  }
-
-  function playWithSound() {
-    if (!ready || !player) return;
+  function playInView() {
+    if (!ready || !player || !inView) return;
     try {
-      if (typeof player.unMute === 'function') player.unMute();
-      if (typeof player.setVolume === 'function') player.setVolume(100);
+      if (typeof player.mute === 'function') player.mute();
       if (typeof player.playVideo === 'function') player.playVideo();
     } catch (e) {}
   }
@@ -681,24 +673,6 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       if (typeof player.pauseVideo === 'function') player.pauseVideo();
     } catch (e) {}
-  }
-
-  function playInView() {
-    if (!ready || !player || !inView) return;
-    if (!soundUnlocked) {
-      // Browsers block unmuted autoplay until a tap/click — show hint, do not mute.
-      setWaiting(true);
-      return;
-    }
-    setWaiting(false);
-    playWithSound();
-  }
-
-  function unlockSound() {
-    if (soundUnlocked) return;
-    soundUnlocked = true;
-    setWaiting(false);
-    if (inView) playWithSound();
   }
 
   function bindObserver() {
@@ -720,72 +694,55 @@ document.addEventListener('DOMContentLoaded', function () {
   function createPlayer() {
     if (!window.YT || !YT.Player || player) return;
     player = new YT.Player('home-yt-player', {
-      videoId: videoId,
       width: '100%',
       height: '100%',
+      videoId: videoId,
       playerVars: {
         autoplay: 0,
-        mute: 0,
+        mute: 1,
         controls: 0,
-        disablekb: 1,
-        fs: 0,
-        iv_load_policy: 3,
-        cc_load_policy: 0,
-        rel: 0,
-        modestbranding: 1,
-        playsinline: 1,
         loop: 1,
         playlist: videoId,
+        playsinline: 1,
+        rel: 0,
+        modestbranding: 1,
+        iv_load_policy: 3,
+        disablekb: 1,
+        fs: 0,
         start: startAt,
-        enablejsapi: 1
+        enablejsapi: 1,
+        origin: window.location.origin || undefined
       },
       events: {
-        onReady: function () {
+        onReady: function (event) {
           ready = true;
+          var frame = mount.querySelector('iframe') || document.querySelector('#home-yt-player iframe');
+          if (frame) {
+            frame.setAttribute('title', 'Platform video');
+            frame.setAttribute('tabindex', '-1');
+          }
           try {
-            if (startAt > 0 && typeof player.seekTo === 'function') player.seekTo(startAt, true);
-            if (typeof player.unMute === 'function') player.unMute();
-            if (typeof player.setVolume === 'function') player.setVolume(100);
+            event.target.mute();
+            if (startAt > 0 && typeof event.target.seekTo === 'function') {
+              event.target.seekTo(startAt, true);
+            }
           } catch (e) {}
           bindObserver();
           if (inView) playInView();
         },
-        onStateChange: function (e) {
+        onStateChange: function (event) {
           if (!window.YT) return;
-          if (e.data === YT.PlayerState.PLAYING) {
-            setWaiting(false);
+          if (event.data === YT.PlayerState.ENDED && inView) {
             try {
-              if (typeof player.isMuted === 'function' && player.isMuted() && soundUnlocked) {
-                player.unMute();
-                player.setVolume(100);
-              }
-            } catch (err) {}
+              if (typeof event.target.seekTo === 'function') event.target.seekTo(startAt, true);
+              event.target.mute();
+              event.target.playVideo();
+            } catch (e) {}
           }
-          if (e.data === YT.PlayerState.ENDED) {
-            try {
-              if (typeof player.seekTo === 'function') player.seekTo(startAt, true);
-              if (inView && soundUnlocked) playWithSound();
-            } catch (err) {}
-          }
-        },
-        onError: function () {
-          setWaiting(true);
         }
       }
     });
   }
-
-  if (gate) {
-    gate.addEventListener('click', function (e) {
-      e.preventDefault();
-      unlockSound();
-    });
-  }
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
-    document.addEventListener(evt, function () {
-      unlockSound();
-    }, { once: true, passive: true });
-  });
 
   var prevReady = window.onYouTubeIframeAPIReady;
   window.onYouTubeIframeAPIReady = function () {
