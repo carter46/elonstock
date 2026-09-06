@@ -248,7 +248,7 @@ foreach ($adminPlans as $idx => $p):
 <div class="col-span-2">
 <label class="block text-sm font-medium mb-1.5">Chart Widget Code <span class="text-slate-400 font-normal">(optional)</span></label>
 <textarea name="tv_embed" id="plan-form-tv-embed" class="w-full min-w-0 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-lg focus:ring-primary focus:border-primary px-3 py-2 text-sm font-mono" rows="5" placeholder="Paste TradingView widget / embed HTML…"></textarea>
-<p class="text-[10px] text-slate-400 mt-1">Shown in the hero chart area. Leave empty to hide the chart (page still opens).</p>
+<p class="text-[10px] text-slate-400 mt-1">Paste a TradingView mini-chart or widget. This overrides any old crypto chart left on the plan. Leave empty to hide the chart.</p>
 </div>
 <div>
 <label class="block text-sm font-medium mb-1.5">Market Type <span class="text-slate-400 font-normal">(optional)</span></label>

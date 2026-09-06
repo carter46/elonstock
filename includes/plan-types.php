@@ -235,6 +235,63 @@ function plan_extract_tv_mini_symbol(?string $html): ?string
 }
 
 /**
+ * Best-effort symbol from pasted TradingView HTML (mini-chart, widget JSON, or copyright links).
+ */
+function plan_extract_tv_symbol_from_embed(?string $html): ?string
+{
+    $mini = plan_extract_tv_mini_symbol($html);
+    if ($mini) {
+        return $mini;
+    }
+    $html = (string) $html;
+    if ($html === '') {
+        return null;
+    }
+    if (preg_match('/"symbol"\s*:\s*"([A-Za-z0-9_.:\-]+)"/', $html, $m)) {
+        $symbol = trim($m[1]);
+        return $symbol !== '' ? $symbol : null;
+    }
+    // Market overview / multi-symbol widgets: [["EXCHANGE:TICKER|1D"]] or [["Label","EXCHANGE:TICKER|1D"]]
+    if (preg_match('/"symbols"\s*:\s*\[\s*\[\s*(?:"[^"]*"\s*,\s*)?"([A-Za-z0-9_.:\-]+)(?:\|[^"]*)?"/', $html, $m)) {
+        $symbol = trim($m[1]);
+        return $symbol !== '' ? $symbol : null;
+    }
+    if (preg_match('#tradingview\.com/symbols/([A-Za-z0-9_]+)-([A-Za-z0-9_]+)/#i', $html, $m)) {
+        return strtoupper($m[1] . ':' . $m[2]);
+    }
+    return null;
+}
+
+/**
+ * Resolve the live chart symbol for a plan.
+ * Pasted embed always wins over a stale tv_symbol left from older crypto plans.
+ */
+function plan_resolve_tv_symbol(array $plan, ?string $tvEmbed = null): string
+{
+    if ($tvEmbed === null && array_key_exists('tv_embed', $plan)) {
+        $tvEmbed = normalize_plan_tv_embed($plan['tv_embed'] ?? null);
+    }
+    $stored = trim((string) ($plan['tv_symbol'] ?? ''));
+    $fromEmbed = plan_extract_tv_symbol_from_embed($tvEmbed);
+    if ($fromEmbed) {
+        return $fromEmbed;
+    }
+    if ($tvEmbed !== null && trim((string) $tvEmbed) !== '') {
+        // Full widget embed drives the chart; ignore leftover DB symbols.
+        return '';
+    }
+    if ($stored === '') {
+        return '';
+    }
+    $planType = normalize_plan_type($plan['plan_type'] ?? 'crypto');
+    // Renamed non-crypto plans often still have BINANCE:BTCUSDT etc. in tv_symbol.
+    if ($planType !== 'crypto' && preg_match('/^(BINANCE|BITSTAMP|COINBASE|KRAKEN|BITFINEX|BYBIT):/i', $stored)) {
+        return '';
+    }
+    return $stored;
+}
+
+/**
  * True when embed is only a tv-mini-chart (optional script tag) — prefer native widget render.
  */
 function plan_tv_embed_is_mini_chart_only(?string $html): bool
@@ -257,16 +314,9 @@ function plan_market_instrument(array $plan): array
 {
     $slug = strtolower(trim((string) ($plan['slug'] ?? '')));
     $tvEmbed = normalize_plan_tv_embed($plan['tv_embed'] ?? null);
-    $tvSymbol = trim((string) ($plan['tv_symbol'] ?? ''));
-    $miniSymbol = plan_extract_tv_mini_symbol($tvEmbed);
-    if ($tvSymbol === '' && $miniSymbol) {
-        $tvSymbol = $miniSymbol;
-    }
+    $tvSymbol = plan_resolve_tv_symbol($plan, $tvEmbed);
     // Prefer native <tv-mini-chart> path (homepage-sized) over clipped raw embed HTML.
     if ($tvEmbed !== null && plan_tv_embed_is_mini_chart_only($tvEmbed)) {
-        if ($tvSymbol === '' && $miniSymbol) {
-            $tvSymbol = $miniSymbol;
-        }
         $tvEmbed = null;
     }
     $category = plan_type_market_category($plan['plan_type'] ?? '') ?? 'crypto';
