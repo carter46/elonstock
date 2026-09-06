@@ -529,6 +529,20 @@ body.marketing-page {
   overflow: hidden !important;
   visibility: hidden !important;
 }
+.home-yt-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0a1018;
+}
+.home-yt-player,
+.home-yt-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
 .section-photo-bg {
   position: absolute;
   inset: 0;

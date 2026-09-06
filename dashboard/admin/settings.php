@@ -22,7 +22,7 @@ $settings = [
     'mail_imap_encryption' => get_site_setting('mail_imap_encryption', 'ssl'),
     'mail_imap_sent_folder' => get_site_setting('mail_imap_sent_folder', 'Sent'),
     'homepage_youtube_url' => get_site_setting('homepage_youtube_url', ''),
-    'about_youtube_url' => get_site_setting('about_youtube_url', ''),
+    'homepage_youtube_start_seconds' => get_site_setting('homepage_youtube_start_seconds', '0'),
     'homepage_modal_image' => get_site_setting('homepage_modal_image', ''),
     'header_image' => get_site_setting('header_image', '/bloombit.jpg'),
     'office_title' => get_site_setting('office_title', 'Registered Office'),
@@ -129,14 +129,14 @@ include __DIR__ . '/../../includes/dashboard/admin-page-title.php';
 </div>
 </div>
 <div class="md:col-span-2">
-<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Homepage Hero YouTube Video URL</label>
+<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Homepage YouTube Video URL</label>
 <input id="settings-homepage-youtube" type="url" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['homepage_youtube_url']); ?>" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."/>
-<p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Shown in the hero section instead of the default image. Leave empty to use the image.</p>
+<p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Shown in the homepage video section (after Live Market Performance). Leave empty to hide the section.</p>
 </div>
-<div class="md:col-span-2">
-<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">About Page YouTube Video URL</label>
-<input id="settings-about-youtube" type="url" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars($settings['about_youtube_url']); ?>" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."/>
-<p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Shown on the About page video section. Leave empty to hide.</p>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Homepage Video Start Time (seconds)</label>
+<input id="settings-homepage-youtube-start" type="number" min="0" step="1" class="w-full bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary" value="<?php echo htmlspecialchars((string) max(0, (int) $settings['homepage_youtube_start_seconds'])); ?>" placeholder="0"/>
+<p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Playback starts at this second when the video enters view (e.g. 30 = 0:30).</p>
 </div>
 <div class="md:col-span-2">
 <label class="block text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Homepage Floating Modal Image</label>
@@ -417,7 +417,8 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
     var siteName = document.getElementById('settings-site-name').value.trim();
     var contactEmail = document.getElementById('settings-contact-email').value.trim();
     var homepageYoutube = document.getElementById('settings-homepage-youtube').value.trim();
-    var aboutYoutube = document.getElementById('settings-about-youtube').value.trim();
+    var homepageYoutubeStart = parseInt((document.getElementById('settings-homepage-youtube-start') || {}).value || '0', 10);
+    if (isNaN(homepageYoutubeStart) || homepageYoutubeStart < 0) homepageYoutubeStart = 0;
     var officeTitle = document.getElementById('settings-office-title').value.trim();
     var officeAddress = document.getElementById('settings-office-address').value.trim();
     var smartsuppKey = document.getElementById('settings-smartsupp-key').value.trim();
@@ -462,7 +463,7 @@ if (!in_array($liveChatProvider, ['smartsupp', 'jivo', 'none'], true)) {
         site_name: siteName || <?php echo json_encode($siteName); ?>,
         contact_email: contactEmail || '',
         homepage_youtube_url: homepageYoutube || '',
-        about_youtube_url: aboutYoutube || '',
+        homepage_youtube_start_seconds: String(homepageYoutubeStart),
         office_title: officeTitle || '',
         office_address: officeAddress || '',
         smartsupp_key: smartsuppKey || '',

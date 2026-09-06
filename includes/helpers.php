@@ -184,16 +184,33 @@ function get_default_og_image_path(): string {
 }
 
 /**
- * Normalize YouTube URL to embed URL. Returns null if not a valid YouTube URL.
+ * Extract a YouTube video ID from common URL formats.
  */
-function get_youtube_embed_url(?string $url): ?string {
-    if (empty($url) || !is_string($url)) return null;
-    $url = trim($url);
-    $id = null;
-    if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})#', $url, $m)) {
-        $id = $m[1];
+function get_youtube_video_id(?string $url): ?string {
+    if (empty($url) || !is_string($url)) {
+        return null;
     }
-    return $id ? 'https://www.youtube.com/embed/' . $id : null;
+    $url = trim($url);
+    if (preg_match('#(?:youtube\.com/watch\?(?:[^#]*&)?v=|youtu\.be/|youtube\.com/embed/|youtube\.com/shorts/)([a-zA-Z0-9_-]{11})#', $url, $m)) {
+        return $m[1];
+    }
+    return null;
+}
+
+/**
+ * Normalize YouTube URL to embed URL. Returns null if not a valid YouTube URL.
+ * Optional $params are appended as query string (e.g. start, mute).
+ */
+function get_youtube_embed_url(?string $url, array $params = []): ?string {
+    $id = get_youtube_video_id($url);
+    if (!$id) {
+        return null;
+    }
+    $base = 'https://www.youtube.com/embed/' . $id;
+    if ($params === []) {
+        return $base;
+    }
+    return $base . '?' . http_build_query($params);
 }
 
 /**

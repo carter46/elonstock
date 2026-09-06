@@ -45,7 +45,7 @@ $allowedKeys = [
     'mail_imap_encryption',
     'mail_imap_sent_folder',
     'homepage_youtube_url',
-    'about_youtube_url',
+    'homepage_youtube_start_seconds',
     'homepage_modal_image',
     'header_image',
     'office_title',
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'mail_imap_encryption' => 'ssl',
         'mail_imap_sent_folder' => 'Sent',
         'homepage_youtube_url' => '',
-        'about_youtube_url' => '',
+        'homepage_youtube_start_seconds' => '0',
         'homepage_modal_image' => '',
         'header_image' => '/bloombit.jpg',
         'office_title' => 'London Office',
@@ -183,6 +183,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pct = (float) $v;
             $pct = max(0, min(100, $pct));
             $v = (string) round($pct, 2);
+        }
+        if ($k === 'homepage_youtube_start_seconds') {
+            $v = (string) max(0, (int) $v);
         }
         $updates[$k] = $v;
     }

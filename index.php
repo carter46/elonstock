@@ -28,6 +28,10 @@ try {
 }
 $homePlansPreview = array_slice($homePlans, 0, 3);
 
+$homepageYoutubeUrl = get_site_setting('homepage_youtube_url', '');
+$homepageYoutubeId = get_youtube_video_id($homepageYoutubeUrl);
+$homepageYoutubeStart = max(0, (int) get_site_setting('homepage_youtube_start_seconds', '0'));
+
 $heroSlides = [
     '/uploads/images/Business-Endeavors-03.jpg',
     '/uploads/images/fleets_tuk.webp',
@@ -216,6 +220,39 @@ Login
 </div>
 </div>
 </section>
+
+<?php if ($homepageYoutubeId): ?>
+<!-- Platform video -->
+<section id="platform-video" class="section-medium bg-surface border-y border-white/5 relative overflow-hidden" data-home-video-section>
+<div class="absolute inset-0 refined-gradient pointer-events-none opacity-60"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+<div class="order-2 lg:order-1 reveal-up">
+<span class="font-label-sm text-primary uppercase tracking-[0.4em] block mb-4">Platform Overview</span>
+<h2 class="font-display-sm text-display-sm text-white mb-5 leading-tight">Invest with clarity across global markets</h2>
+<p class="font-body-md text-on-surface-variant mb-4 max-w-xl">
+<?php echo htmlspecialchars($siteName); ?> brings institutional-style access to equities, alternative assets, and automated portfolio management into one secure terminal.
+</p>
+<p class="font-body-md text-on-surface-variant mb-8 max-w-xl">
+Watch how the platform works — then open an account to explore live plans, wallets, and portfolio tools built for serious growth.
+</p>
+<a href="/register" class="gradient-button inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-label-sm text-label-sm uppercase tracking-widest text-white">
+Get Started
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="order-1 lg:order-2 reveal-up">
+<div class="home-yt-frame rounded-2xl overflow-hidden border border-white/10 bg-surface-container-lowest shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+<div id="home-yt-player"
+  class="home-yt-player"
+  data-yt-id="<?php echo htmlspecialchars($homepageYoutubeId); ?>"
+  data-yt-start="<?php echo (int) $homepageYoutubeStart; ?>"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<?php endif; ?>
 
 <?php if (!empty($homePlansPreview)): ?>
 <!-- Investment Plans -->
@@ -602,5 +639,109 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
+<?php if ($homepageYoutubeId): ?>
+<script>
+(function () {
+  var mount = document.getElementById('home-yt-player');
+  var section = document.querySelector('[data-home-video-section]');
+  if (!mount || !section) return;
+
+  var videoId = mount.getAttribute('data-yt-id') || '';
+  var startAt = parseInt(mount.getAttribute('data-yt-start') || '0', 10);
+  if (!videoId) return;
+  if (isNaN(startAt) || startAt < 0) startAt = 0;
+
+  var player = null;
+  var inView = false;
+  var ready = false;
+
+  function playInView() {
+    if (!ready || !player) return;
+    try {
+      if (typeof player.mute === 'function') player.mute();
+      if (typeof player.playVideo === 'function') player.playVideo();
+    } catch (e) {}
+  }
+
+  function pauseOutOfView() {
+    if (!ready || !player) return;
+    try {
+      if (typeof player.pauseVideo === 'function') player.pauseVideo();
+    } catch (e) {}
+  }
+
+  function bindObserver() {
+    if (!('IntersectionObserver' in window)) {
+      playInView();
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        inView = entry.isIntersecting && entry.intersectionRatio >= 0.25;
+        if (inView) playInView();
+        else pauseOutOfView();
+      });
+    }, { threshold: [0, 0.25, 0.5, 0.75] });
+    io.observe(section);
+  }
+
+  function createPlayer() {
+    if (!window.YT || !YT.Player) return;
+    player = new YT.Player('home-yt-player', {
+      videoId: videoId,
+      width: '100%',
+      height: '100%',
+      playerVars: {
+        autoplay: 0,
+        mute: 1,
+        controls: 1,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        loop: 1,
+        playlist: videoId,
+        start: startAt,
+        enablejsapi: 1
+      },
+      events: {
+        onReady: function () {
+          ready = true;
+          try {
+            if (typeof player.mute === 'function') player.mute();
+            if (startAt > 0 && typeof player.seekTo === 'function') player.seekTo(startAt, true);
+          } catch (e) {}
+          bindObserver();
+          if (inView) playInView();
+        },
+        onStateChange: function (e) {
+          if (!window.YT || e.data !== YT.PlayerState.ENDED) return;
+          try {
+            if (typeof player.seekTo === 'function') player.seekTo(startAt, true);
+            if (inView && typeof player.playVideo === 'function') player.playVideo();
+          } catch (err) {}
+        }
+      }
+    });
+  }
+
+  var prevReady = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = function () {
+    if (typeof prevReady === 'function') {
+      try { prevReady(); } catch (e) {}
+    }
+    createPlayer();
+  };
+
+  if (window.YT && YT.Player) {
+    createPlayer();
+  } else if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    tag.async = true;
+    document.head.appendChild(tag);
+  }
+})();
+</script>
+<?php endif; ?>
 </body>
 </html>
